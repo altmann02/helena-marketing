@@ -1080,10 +1080,11 @@ function enviarPrompt(texto) {
       return null;
     }
     try {
-      _adobeSDK = await window.CCEverywhere.initialize(
-        { clientId: ADOBE_CLIENT_ID, appName: 'Helena Acessórios' },
-        { locale: 'pt_BR' }
-      );
+      // SDK v4: initialize retorna o objeto CCEverywhere
+      _adobeSDK = await window.CCEverywhere.initialize({
+        clientId: ADOBE_CLIENT_ID,
+        appName : 'Helena Acessórios',
+      });
       return _adobeSDK;
     } catch (err) {
       console.error('[Adobe] init error', err);
@@ -1095,41 +1096,79 @@ function enviarPrompt(texto) {
   async function abrirClaudeAdobe() {
     if (!_fotoBase64) { mostrarToast('⚠️ Selecione a foto primeiro.'); return; }
     mostrarLoadingAdobe(true);
+
     const sdk = await initAdobeSDK();
     if (!sdk) { mostrarLoadingAdobe(false); return; }
 
-    const base64puro = _fotoBase64.split(',')[1];
+    try {
+      // SDK v4 — acessa o módulo editor
+      const editor = sdk.editor || sdk;
 
-    const docConfig = {
-      asset: { data: base64puro, dataType: 'base64', type: 'image', mimeType: _fotoMime }
-    };
+      const exportConfig = [{
+        id    : 'salvar-helena',
+        label : '💾 Salvar foto',
+        action: { target: 'publish' },
+        style : { uiType: 'button' },
+      }];
 
-    const callbacks = {
-      onPublish: (_intent, publishParams) => {
-        const asset = publishParams?.asset?.[0];
-        if (asset?.data) {
-          const mime = asset.mimeType || 'image/png';
-          const ext  = mime.split('/')[1] || 'png';
-          const href = asset.data.startsWith('data:') ? asset.data : `data:${mime};base64,${asset.data}`;
-          const a = document.createElement('a');
-          a.href = href; a.download = `helena_foto_editada.${ext}`;
-          document.body.appendChild(a); a.click(); document.body.removeChild(a);
-          mostrarToast('✅ Foto salva com sucesso!');
-        }
+      const callbacks = {
+        onPublish: (_intent, publishParams) => {
+          const asset = publishParams?.asset?.[0];
+          if (asset?.data) {
+            const mime = asset.mimeType || 'image/png';
+            const ext  = mime.split('/')[1] || 'png';
+            const href = asset.data.startsWith('data:')
+              ? asset.data
+              : `data:${mime};base64,${asset.data}`;
+            const a = document.createElement('a');
+            a.href = href; a.download = `helena_foto_editada.${ext}`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            mostrarToast('✅ Foto salva com sucesso!');
+          }
+          mostrarLoadingAdobe(false);
+        },
+        onClose: () => mostrarLoadingAdobe(false),
+        onError: (err) => {
+          console.error('[Adobe]', err);
+          mostrarToast('⚠️ Erro no editor.');
+          mostrarLoadingAdobe(false);
+          // Fallback: abre Adobe Express no browser
+          window.open('https://express.adobe.com', '_blank');
+        },
+        onLoad: () => mostrarLoadingAdobe(false),
+        onLoadStart: () => mostrarLoadingAdobe(false),
+      };
+
+      // Tenta criar projeto com a imagem como asset inicial
+      const base64puro = _fotoBase64.split(',')[1];
+
+      // SDK v4: tenta editor.create() primeiro, fallback para createWithAsset
+      if (typeof editor.create === 'function') {
+        editor.create(
+          { asset: { data: base64puro, dataType: 'base64', type: 'image', mimeType: _fotoMime } },
+          { callbacks, exportConfig }
+        );
+      } else if (typeof sdk.createDesign === 'function') {
+        sdk.createDesign({
+          callbacks,
+          exportConfig,
+          inputParams: {
+            asset: { data: base64puro, dataType: 'base64', type: 'image', mimeType: _fotoMime }
+          }
+        });
+      } else {
+        // Último fallback: abre Adobe Express com link direto
         mostrarLoadingAdobe(false);
-      },
-      onClose: () => mostrarLoadingAdobe(false),
-      onError: (err) => { console.error('[Adobe]', err); mostrarToast('⚠️ Erro no editor.'); mostrarLoadingAdobe(false); },
-      onLoad:  () => mostrarLoadingAdobe(false),
-    };
+        mostrarToast('Abrindo Adobe Express no navegador...');
+        setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 800);
+      }
 
-    sdk.openImageEditor({
-      docConfig,
-      appConfig   : { selectedCategory: 'edit-image' },
-      exportConfig: [{ id:'salvar-helena', label:'💾 Salvar foto', action:{ target:'publish' }, style:{ uiType:'button' } }],
-      callbacks,
-      modalParams : { backgroundColor: 'rgba(74,26,92,0.96)', padding: 0 },
-    });
+    } catch (err) {
+      console.error('[Adobe] open error', err);
+      mostrarLoadingAdobe(false);
+      mostrarToast('Abrindo Adobe Express no navegador...');
+      setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 800);
+    }
   }
 
   function fecharModalAdobe()    { mostrarLoadingAdobe(false); }
