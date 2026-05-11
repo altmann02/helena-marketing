@@ -7,8 +7,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#4A1A5C">
 <title>Helena Acessórios · Painel</title>
-  <!-- Adobe Express Embed SDK -->
-  <script src="https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -1070,117 +1068,45 @@ function enviarPrompt(texto) {
   }
 
   // ── OPÇÃO B: ADOBE EXPRESS ───────────────
-  const ADOBE_CLIENT_ID = 'b50fafca5539467f8572721d11795548';
-  let _adobeSDK = null;
-
-  // Aguarda o SDK carregar com retry
-  function aguardarSDK(tentativas = 0) {
-    console.log('[Adobe] tentativa', tentativas, '| CCEverywhere:', typeof window.CCEverywhere);
-    if (window.CCEverywhere) {
-      window.CCEverywhere.initialize({
-        clientId: ADOBE_CLIENT_ID,
-        appName : 'Helena Acessórios',
-      }).then(sdk => {
-        _adobeSDK = sdk;
-        console.log('[Adobe] ✅ SDK pronto! Métodos:', Object.keys(sdk));
-      }).catch(err => {
-        console.error('[Adobe] ❌ Erro initialize:', err);
-      });
-    } else if (tentativas < 10) {
-      setTimeout(() => aguardarSDK(tentativas + 1), 500);
-    } else {
-      console.error('[Adobe] ❌ CCEverywhere não carregou após 5s');
-    }
-  }
-
-  // Inicia quando DOM estiver pronto
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => aguardarSDK());
-  } else {
-    aguardarSDK();
-  }
+  // O SDK embutido requer servidor próprio com HTTPS configurado.
+  // Solução: salva a foto no dispositivo e abre Adobe Express no navegador.
 
   async function abrirClaudeAdobe() {
     if (!_fotoBase64) { mostrarToast('⚠️ Selecione a foto primeiro.'); return; }
 
-    console.log('[Adobe] Clique no botão | SDK:', _adobeSDK ? '✅' : '❌');
-
-    if (!_adobeSDK) {
-      console.warn('[Adobe] SDK não disponível, abrindo fallback');
-      mostrarToast('Abrindo Adobe Express no navegador...');
-      setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 600);
-      return;
-    }
-
     mostrarLoadingAdobe(true);
-    console.log('[Adobe] Métodos disponíveis:', Object.keys(_adobeSDK));
 
     try {
-      const base64puro = _fotoBase64.split(',')[1];
+      // Passo 1: faz download da foto para o dispositivo
+      const ext  = _fotoMime.split('/')[1] || 'jpg';
+      const a    = document.createElement('a');
+      a.href     = _fotoBase64;
+      a.download = `helena_peca.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
 
-      const exportConfig = [{
-        id    : 'salvar-helena',
-        label : '💾 Salvar foto',
-        action: { target: 'publish' },
-        style : { uiType: 'button' },
-      }];
-
-      const callbacks = {
-        onPublish: (_intent, publishParams) => {
-          console.log('[Adobe] onPublish', publishParams);
-          const asset = publishParams?.asset?.[0];
-          if (asset?.data) {
-            const mime = asset.mimeType || 'image/png';
-            const ext  = mime.split('/')[1] || 'png';
-            const href = asset.data.startsWith('data:')
-              ? asset.data : `data:${mime};base64,${asset.data}`;
-            const a = document.createElement('a');
-            a.href = href; a.download = `helena_foto_editada.${ext}`;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            mostrarToast('✅ Foto salva com sucesso!');
-          }
-          mostrarLoadingAdobe(false);
-        },
-        onClose    : () => { console.log('[Adobe] onClose'); mostrarLoadingAdobe(false); },
-        onError    : (err) => { console.error('[Adobe] onError', err); mostrarLoadingAdobe(false); },
-        onLoad     : () => { console.log('[Adobe] onLoad'); mostrarLoadingAdobe(false); },
-        onLoadStart: () => { console.log('[Adobe] onLoadStart'); },
-      };
-
-      // Testa cada método disponível
-      if (_adobeSDK.editor && typeof _adobeSDK.editor.create === 'function') {
-        console.log('[Adobe] → editor.create()');
-        _adobeSDK.editor.create(
-          { asset: { data: base64puro, dataType: 'base64', type: 'image', mimeType: _fotoMime } },
-          { callbacks, exportConfig }
-        );
-      } else if (typeof _adobeSDK.createDesign === 'function') {
-        console.log('[Adobe] → createDesign()');
-        _adobeSDK.createDesign({
-          callbacks, exportConfig,
-          inputParams: { asset: { data: base64puro, dataType: 'base64', type: 'image', mimeType: _fotoMime } }
-        });
-      } else if (typeof _adobeSDK.openQuickAction === 'function') {
-        console.log('[Adobe] → openQuickAction()');
-        _adobeSDK.openQuickAction({
-          id: 'image-resize',
-          inputParams: { exportOptions: exportConfig },
-          docConfig: { asset: { data: base64puro, dataType: 'base64', type: 'image' } },
-          callbacks,
-        });
-      } else {
-        console.warn('[Adobe] ⚠️ Nenhum método reconhecido. Keys:', JSON.stringify(Object.keys(_adobeSDK)));
+      // Passo 2: aguarda um momento e abre Adobe Express
+      setTimeout(() => {
         mostrarLoadingAdobe(false);
-        mostrarToast('Abrindo Adobe Express no navegador...');
-        setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 600);
-      }
+        // Mostra instrução antes de abrir
+        document.getElementById('instrucaoAdobe').style.display = 'flex';
+      }, 800);
 
     } catch (err) {
-      console.error('[Adobe] Erro ao abrir:', err);
+      console.error('[Adobe]', err);
       mostrarLoadingAdobe(false);
-      mostrarToast('Abrindo Adobe Express no navegador...');
-      setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 600);
+      window.open('https://express.adobe.com/pt-BR', '_blank');
     }
+  }
+
+  function abrirAdobeAgora() {
+    document.getElementById('instrucaoAdobe').style.display = 'none';
+    window.open('https://express.adobe.com/pt-BR/features/image-editor', '_blank');
+  }
+
+  function fecharInstrucaoAdobe() {
+    document.getElementById('instrucaoAdobe').style.display = 'none';
   }
 
   function fecharModalAdobe() { mostrarLoadingAdobe(false); }
@@ -1311,7 +1237,40 @@ document.addEventListener('touchend', function(e) {
   </div>
 </div>
 
-<!-- ════ LOADING OVERLAY (enquanto foto carrega / SDK inicia) ════ -->
+<!-- ════ MODAL: Instrução Adobe Express ════ -->
+<div id="instrucaoAdobe" style="display:none;position:fixed;inset:0;z-index:9900;
+     background:rgba(74,26,92,0.95);align-items:center;justify-content:center;padding:1.5rem;">
+  <div style="background:#fff;border-radius:24px;padding:2rem 1.5rem;max-width:360px;width:100%;text-align:center;">
+
+    <div style="font-size:42px;margin-bottom:0.5rem;">🎨</div>
+    <p style="font-size:17px;font-weight:500;color:#4A1A5C;margin-bottom:0.75rem;">Foto salva! Agora é só editar</p>
+
+    <div style="background:#F7F0FA;border-radius:14px;padding:1rem;margin-bottom:1.25rem;text-align:left;">
+      <p style="font-size:13px;color:#4A1A5C;line-height:1.7;margin:0;">
+        <strong>1.</strong> A foto foi salva na sua galeria 📥<br>
+        <strong>2.</strong> Toque em <strong>"Abrir Adobe Express"</strong> abaixo<br>
+        <strong>3.</strong> No Adobe Express, toque em <strong>"+"</strong> ou <strong>"Editar foto"</strong><br>
+        <strong>4.</strong> Selecione a foto que acabou de salvar<br>
+        <strong>5.</strong> Edite e baixe a arte pronta! ✨
+      </p>
+    </div>
+
+    <button onclick="abrirAdobeAgora()"
+      style="width:100%;padding:1rem;background:#E8657F;color:#fff;border:none;
+             border-radius:14px;font-size:15px;font-weight:500;
+             font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:10px;">
+      🎨 Abrir Adobe Express
+    </button>
+
+    <button onclick="fecharInstrucaoAdobe()"
+      style="width:100%;padding:0.75rem;background:transparent;color:#aaa;border:none;
+             font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">
+      Fechar
+    </button>
+  </div>
+</div>
+
+<!-- ════ LOADING OVERLAY ════ -->
 <div id="adobeLoadingOverlay" style="display:none;position:fixed;inset:0;z-index:9900;
      background:rgba(74,26,92,0.93);flex-direction:column;
      align-items:center;justify-content:center;gap:16px;">
