@@ -500,7 +500,7 @@ html, body {
       <span class="saudacao-emoji">👋✨</span>
       <p class="saudacao-nome">Olá Camila e Rita!</p>
       <p class="saudacao-ia">Sou a Claude IA e estou aqui pra te ajudar em marketing para a loja! Em que posso te ajudar hoje para fazermos excelentes vendas?</p>
-      <p class="saudacao-txt" id="fraseMotivacional">Carregando frase do dia...</p>
+
     </div>
 
     <svg class="home-wave" viewBox="0 0 390 30" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -512,6 +512,8 @@ html, body {
     <p class="section-label">O que vamos criar hoje?</p>
 
     <div class="cards">
+
+      <!-- 01 · Otimizar foto -->
       <div class="card" onclick="ir('novidade')">
         <div class="card-stripe stripe-1"></div>
         <div class="card-inner">
@@ -520,26 +522,28 @@ html, body {
             <p class="card-num">01</p>
             <span class="card-badge badge-1">IA + foto real</span>
             <p class="card-title">Otimizar foto da peça</p>
-            <p class="card-desc">Melhora a foto com corte, brilho, fundo profissional e logo discreto da loja</p>
+            <p class="card-desc">Fundo profissional, brilho, logo e texto — com Claude ou Adobe Express</p>
           </div>
           <span class="card-arrow">›</span>
         </div>
       </div>
 
-      <div class="card" onclick="ir('horario')">
-        <div class="card-stripe stripe-2"></div>
+      <!-- 02 · Slide show -->
+      <div class="card" onclick="ir('slideshow')">
+        <div class="card-stripe" style="background:linear-gradient(90deg,#1565C0,#42A5F5);"></div>
         <div class="card-inner">
-          <div class="card-icon icon-2">🕐</div>
+          <div class="card-icon" style="background:#E3F2FD;">🎞️</div>
           <div class="card-body">
             <p class="card-num">02</p>
-            <span class="card-badge badge-2">Atendimento</span>
-            <p class="card-title">Aviso de horário especial</p>
-            <p class="card-desc">Arte para comunicar horário diferenciado</p>
+            <span class="card-badge" style="background:#E3F2FD;color:#1565C0;">Carrossel</span>
+            <p class="card-title">Criar slide show</p>
+            <p class="card-desc">Sequência de imagens para Stories ou carrossel no Instagram</p>
           </div>
           <span class="card-arrow">›</span>
         </div>
       </div>
 
+      <!-- 03 · Promoção -->
       <div class="card" onclick="ir('promocao')">
         <div class="card-stripe stripe-3"></div>
         <div class="card-inner">
@@ -548,12 +552,13 @@ html, body {
             <p class="card-num">03</p>
             <span class="card-badge badge-3">Promoção</span>
             <p class="card-title">Arte para promoção</p>
-            <p class="card-desc">Brinde, desconto ou oferta especial da loja</p>
+            <p class="card-desc">Brinde, desconto, combo ou oferta especial da loja</p>
           </div>
           <span class="card-arrow">›</span>
         </div>
       </div>
 
+      <!-- 04 · Comemorativa -->
       <div class="card" onclick="ir('comemorativa')">
         <div class="card-stripe" style="background:linear-gradient(90deg,#C2185B,#E91E8C);"></div>
         <div class="card-inner">
@@ -562,11 +567,27 @@ html, body {
             <p class="card-num">04</p>
             <span class="card-badge" style="background:#FCE4EC;color:#C2185B;">Data especial</span>
             <p class="card-title">Folder de data comemorativa</p>
-            <p class="card-desc">Arte com frase especial para datas como Mães, Namorados, Natal e mais</p>
+            <p class="card-desc">Arte com frase especial para Mães, Namorados, Natal e mais</p>
           </div>
           <span class="card-arrow">›</span>
         </div>
       </div>
+
+      <!-- 05 · Horário -->
+      <div class="card" onclick="ir('horario')">
+        <div class="card-stripe stripe-2"></div>
+        <div class="card-inner">
+          <div class="card-icon icon-2">🕐</div>
+          <div class="card-body">
+            <p class="card-num">05</p>
+            <span class="card-badge badge-2">Atendimento</span>
+            <p class="card-title">Aviso de horário especial</p>
+            <p class="card-desc">Arte para comunicar horário diferenciado às clientes</p>
+          </div>
+          <span class="card-arrow">›</span>
+        </div>
+      </div>
+
     </div>
 
     <div class="paleta">
@@ -583,7 +604,7 @@ html, body {
   </div>
 </div>
 
-<!-- ════════════ NOVIDADE ════════════ -->
+<!-- ════════════ OTIMIZAR FOTO ════════════ -->
 <div class="screen" id="novidade">
   <div class="sub-screen">
     <div class="sub-header">
@@ -599,28 +620,56 @@ html, body {
       <div class="claude-bubble">
         <p class="claude-nome">Claude · para Camila e Rita</p>
         <p class="claude-txt">
-          Escolha o fundo e toque em <strong>Abrir no Adobe Express</strong>. 
-          Selecione a foto da peça e edite direto no editor — ajuste cores, brilho, 
-          recorte e baixe pronta para o Instagram! 💜
+          Vamos deixar a foto da peça linda! 💜 Siga os passos abaixo para personalizar tudo antes de gerar a arte.
         </p>
       </div>
 
-      <!-- FUNDO -->
-      <p class="passo-label">Passo 1 — escolha o fundo</p>
+      <!-- ── PASSO 1: FOTO ── -->
+      <p class="passo-label">Passo 1 — a foto da peça</p>
+      <p class="q-titulo">De onde vem a foto?</p>
+      <p class="q-hint">Escolha como quer fornecer a imagem da peça.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
+        <div class="fundo-card" id="opcFotoGaleria" onclick="escolheFoto('galeria')"
+             style="text-align:center;padding:1rem 0.5rem;">
+          🖼️<br><span style="font-size:12px;margin-top:4px;display:block;">Escolher da galeria</span>
+        </div>
+        <div class="fundo-card" id="opcFotoCamera" onclick="escolheFoto('camera')"
+             style="text-align:center;padding:1rem 0.5rem;">
+          📷<br><span style="font-size:12px;margin-top:4px;display:block;">Tirar foto agora</span>
+        </div>
+      </div>
+
+      <!-- preview da foto selecionada -->
+      <div id="fotoPreviewWrap" style="display:none;margin-bottom:1.25rem;text-align:center;">
+        <img id="fotoPreview" src="" alt="Foto selecionada"
+          style="max-width:100%;max-height:180px;border-radius:12px;
+                 border:2px solid #EDE0F2;object-fit:cover;">
+        <p style="font-size:11px;color:#9B5AB5;margin-top:6px;">✅ Foto selecionada!</p>
+      </div>
+
+      <!-- input oculto galeria -->
+      <input type="file" id="inputGaleria" accept="image/*" style="display:none"
+             onchange="processarFoto(this,'galeria')">
+      <!-- input oculto câmera -->
+      <input type="file" id="inputCamera" accept="image/*" capture="environment" style="display:none"
+             onchange="processarFoto(this,'camera')">
+
+      <!-- ── PASSO 2: FUNDO ── -->
+      <p class="passo-label">Passo 2 — fundo da arte</p>
       <p class="q-titulo">Qual fundo para a peça?</p>
       <p class="q-hint">Toque para selecionar.</p>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.75rem;">
         <div class="fundo-card" onclick="escolheFundoAdobe(this,'mármore branco com veios suaves')">🤍 Mármore branco</div>
         <div class="fundo-card" onclick="escolheFundoAdobe(this,'mármore preto sofisticado')">🖤 Mármore preto</div>
         <div class="fundo-card" onclick="escolheFundoAdobe(this,'pétalas de flores delicadas rosé')">🌸 Flores</div>
         <div class="fundo-card" onclick="escolheFundoAdobe(this,'madeira clara natural com textura')">🪵 Madeira clara</div>
         <div class="fundo-card" onclick="escolheFundoAdobe(this,'tecido de veludo elegante')">🪡 Veludo</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'página de revista Vogue, layout editorial sofisticado com tipografia elegante')">📰 Revista Vogue</div>
+        <div class="fundo-card" onclick="escolheFundoAdobe(this,'página de revista Vogue, layout editorial sofisticado')">📰 Revista Vogue</div>
         <div class="fundo-card" onclick="escolheFundoAdobe(this,'fundo branco infinito de estúdio fotográfico profissional')">⬜ Estúdio branco</div>
         <div class="fundo-card" onclick="escolheFundoAdobe(this,'fundo com as cores da identidade visual da Helena Acessórios: violeta escuro e rosa')">💜 Marca Helena</div>
       </div>
-
       <div style="margin-bottom:1.25rem;">
         <div class="fundo-card" id="cardOutroAdobe" onclick="escolheFundoAdobe(this,'outro')"
              style="text-align:left;display:flex;align-items:center;gap:8px;">
@@ -634,26 +683,129 @@ html, body {
         </div>
       </div>
 
-      <!-- LOGO -->
-      <p class="passo-label">Passo 2 — logo</p>
-      <p class="q-titulo">Adicionar logo discreto?</p>
+      <!-- ── PASSO 3: MARCA D'ÁGUA ── -->
+      <p class="passo-label">Passo 3 — marca d'água</p>
+      <p class="q-titulo">Incluir logo da Helena?</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
-        <div class="fundo-card" id="simLogoAdobe" onclick="escolheLogoAdobe(true)" style="text-align:center;">✅ Sim</div>
+        <div class="fundo-card" id="simLogoAdobe" onclick="escolheLogoAdobe(true)" style="text-align:center;">✅ Sim, discreto</div>
         <div class="fundo-card" id="naoLogoAdobe" onclick="escolheLogoAdobe(false)" style="text-align:center;">❌ Não</div>
       </div>
 
-      <!-- BOTÃO -->
-      <button id="btnAbrirAdobe" onclick="abrirClaudeAdobe()" disabled
-        style="width:100%;padding:1.1rem;background:#ccc;color:white;border:none;
-               border-radius:16px;font-size:16px;font-weight:500;
-               font-family:'DM Sans',sans-serif;margin-bottom:10px;
-               transition:background 0.2s;cursor:not-allowed;
-               display:flex;align-items:center;justify-content:center;gap:10px;">
-        ✨ Abrir no Adobe Express
-      </button>
+      <!-- ── PASSO 4: TEXTO ── -->
+      <p class="passo-label">Passo 4 — texto na arte</p>
+      <p class="q-titulo">Quer incluir algum texto?</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.75rem;">
+        <div class="fundo-card" id="simTextoBtn" onclick="escolheTexto(true)" style="text-align:center;">✅ Sim</div>
+        <div class="fundo-card" id="naoTextoBtn" onclick="escolheTexto(false)" style="text-align:center;">❌ Não</div>
+      </div>
+      <div id="textoWrap" style="display:none;margin-bottom:1.25rem;">
+        <input id="textoArte" type="text" placeholder="Ex: Semi joia · R$ 89,90 · @helena_acessorios"
+          style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;
+                 border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;"
+          oninput="atualizaTextoArte(this)">
+      </div>
+
+      <!-- ── PASSO 5: COMO GERAR ── -->
+      <p class="passo-label">Passo 5 — como gerar a arte</p>
+      <p class="q-titulo">Onde prefere criar?</p>
+      <p class="q-hint">Escolha o método de geração da arte.</p>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem;">
+
+        <!-- Opção Claude -->
+        <button id="btnGerarClaude" onclick="gerarComClaude()" disabled
+          style="width:100%;padding:1.1rem 1.2rem;background:#ccc;color:white;border:none;
+                 border-radius:16px;font-size:15px;font-weight:500;cursor:not-allowed;
+                 font-family:'DM Sans',sans-serif;transition:background 0.2s;
+                 display:flex;align-items:center;gap:12px;text-align:left;">
+          <span style="font-size:24px;">🤖</span>
+          <span>
+            <span style="display:block;font-size:15px;font-weight:500;">Gerar arte comigo (Claude)</span>
+            <span style="display:block;font-size:11px;opacity:0.85;font-weight:300;margin-top:2px;">IA remove fundo e monta a composição</span>
+          </span>
+        </button>
+
+        <!-- Opção Adobe Express -->
+        <button id="btnGerarAdobe" onclick="abrirClaudeAdobe()" disabled
+          style="width:100%;padding:1.1rem 1.2rem;background:#ccc;color:white;border:none;
+                 border-radius:16px;font-size:15px;font-weight:500;cursor:not-allowed;
+                 font-family:'DM Sans',sans-serif;transition:background 0.2s;
+                 display:flex;align-items:center;gap:12px;text-align:left;">
+          <span style="font-size:24px;">🎨</span>
+          <span>
+            <span style="display:block;font-size:15px;font-weight:500;">Editar no Adobe Express</span>
+            <span style="display:block;font-size:11px;opacity:0.85;font-weight:300;margin-top:2px;">Abre o editor com a foto já carregada</span>
+          </span>
+        </button>
+
+      </div>
 
       <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
 
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SLIDE SHOW ════════════ -->
+<div class="screen" id="slideshow">
+  <div class="sub-screen">
+    <div class="sub-header">
+      <button class="back-btn" onclick="ir('home')">‹</button>
+      <div class="sub-header-info">
+        <p class="sub-header-title">Criar slide show 🎞️</p>
+        <p class="sub-header-sub">helena acessórios · carrossel instagram</p>
+      </div>
+    </div>
+    <div class="sub-body">
+      <div class="claude-bubble">
+        <p class="claude-nome">Claude · para Camila e Rita</p>
+        <p class="claude-txt">Ótimo! 💜 Vou criar um carrossel lindo para o Instagram. <strong>Qual tipo de slide show você quer?</strong></p>
+      </div>
+
+      <p class="passo-label">Tipo de carrossel</p>
+      <p class="q-titulo">Qual o objetivo do slide show?</p>
+      <p class="q-hint">Cada tipo tem um estilo e estrutura diferentes.</p>
+
+      <div class="opcoes">
+
+        <div class="opc" onclick="enviarPrompt('Quero criar um CARROSSEL DE PRODUTOS para o Instagram da Helena Acessórios. Pergunte uma coisa de cada vez: 1) Quantas peças/produtos quer mostrar?; 2) Tem fotos das peças para enviar?; 3) Quer incluir preços nas imagens?; 4) Tem alguma promoção ou destaque especial?; 5) Fundo preferido (identidade da marca violeta/rosa ou outro tema?). Crie um carrossel elegante com capa chamativa, um slide por produto com foto e informações, e slide final com call-to-action e dados de contato. Estilo editorial do @helena_acessorios_semijoias com logo da Helena discreta em cada slide.')">
+          <div class="opc-icon oi-1">💍</div>
+          <div class="opc-body">
+            <p class="opc-titulo">Vitrine de produtos</p>
+            <p class="opc-desc">Carrossel mostrando peças com preço e destaque</p>
+          </div>
+          <span class="opc-arr">›</span>
+        </div>
+
+        <div class="opc" onclick="enviarPrompt('Quero criar um CARROSSEL DE LANÇAMENTO de coleção nova para o Instagram da Helena Acessórios. Pergunte uma coisa de cada vez: 1) Qual o nome ou tema da coleção?; 2) Quantas peças fazem parte do lançamento?; 3) Tem fotos das peças para enviar?; 4) Tem alguma frase ou slogan para a coleção?; 5) Quer incluir preços?. Crie um carrossel sofisticado com slide de abertura impactante com nome da coleção, slides das peças em destaque, e slide final com convite para ver mais na loja. Estilo editorial luxuoso com cores da Helena Acessórios.')">
+          <div class="opc-icon oi-2">🌟</div>
+          <div class="opc-body">
+            <p class="opc-titulo">Lançamento de coleção</p>
+            <p class="opc-desc">Apresentação impactante de nova coleção</p>
+          </div>
+          <span class="opc-arr">›</span>
+        </div>
+
+        <div class="opc" onclick="enviarPrompt('Quero criar um CARROSSEL EDUCATIVO sobre semi joias para o Instagram da Helena Acessórios — tipo \"dicas de como usar\" ou \"como cuidar das suas joias\". Pergunte uma coisa de cada vez: 1) Qual o tema: cuidados com semi joias, como combinar com looks, diferença entre semi joia e bijuteria, ou outro?; 2) Quantos slides quer (recomendo 5 a 7)?; 3) Quer fotos de peças da Helena como exemplo?. Crie slides informativos e elegantes com dicas práticas, visual educativo mas sofisticado, cores da identidade Helena Acessórios.')">
+          <div class="opc-icon oi-3">💡</div>
+          <div class="opc-body">
+            <p class="opc-titulo">Dicas e conteúdo educativo</p>
+            <p class="opc-desc">Como usar, cuidar ou combinar semi joias</p>
+          </div>
+          <span class="opc-arr">›</span>
+        </div>
+
+        <div class="opc" onclick="enviarPrompt('Quero criar um CARROSSEL PERSONALIZADO para o Instagram da Helena Acessórios. Pergunte uma coisa de cada vez: 1) Qual é o objetivo ou mensagem principal do carrossel?; 2) Quantos slides quer?; 3) Tem fotos para usar?; 4) Tem texto ou frase em mente?; 5) Estilo: elegante, divertido, informativo, promocional?. Depois crie o carrossel no estilo do @helena_acessorios_semijoias com logo da Helena discreta em cada slide, cores violeta #4A1A5C e rosa #E8657F.')">
+          <div class="opc-icon oi-4">✏️</div>
+          <div class="opc-body">
+            <p class="opc-titulo">Carrossel personalizado</p>
+            <p class="opc-desc">Descrevo livremente e o Claude cria</p>
+          </div>
+          <span class="opc-arr">›</span>
+        </div>
+
+      </div>
+      <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
     </div>
   </div>
 </div>
@@ -789,13 +941,43 @@ function enviarPrompt(texto) {
   }
 }
 
-  // ── OPÇÃO 1 ──
+  // ── ESTADO DA TELA OTIMIZAR ──
   let fundoAdobeEscolhido = null;
   let logoAdobeEscolhido  = null;
+  let textoArteValor      = null;
+  let textoAtivado        = null;
+  let _fotoBase64         = null;
+  let _fotoMime           = 'image/jpeg';
 
+  // ── PASSO 1: FOTO ────────────────────────
+  function escolheFoto(tipo) {
+    // Marca seleção visual
+    document.getElementById('opcFotoGaleria').classList.toggle('selecionado', tipo === 'galeria');
+    document.getElementById('opcFotoCamera').classList.toggle('selecionado', tipo === 'camera');
+    if (tipo === 'galeria') document.getElementById('inputGaleria').click();
+    else                    document.getElementById('inputCamera').click();
+  }
+
+  function processarFoto(input, tipo) {
+    const file = input.files[0];
+    if (!file) return;
+    _fotoMime = file.type || 'image/jpeg';
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      _fotoBase64 = ev.target.result;
+      // Mostra preview
+      document.getElementById('fotoPreview').src = _fotoBase64;
+      document.getElementById('fotoPreviewWrap').style.display = 'block';
+      atualizaBotoes();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ── PASSO 2: FUNDO ───────────────────────
   function escolheFundoAdobe(el, valor) {
     document.querySelectorAll('.fundo-card').forEach(c => {
-      if (!['simLogoAdobe','naoLogoAdobe'].includes(c.id))
+      if (!['simLogoAdobe','naoLogoAdobe','simTextoBtn','naoTextoBtn',
+            'opcFotoGaleria','opcFotoCamera'].includes(c.id))
         c.classList.remove('selecionado');
     });
     el.classList.add('selecionado');
@@ -806,44 +988,95 @@ function enviarPrompt(texto) {
       document.getElementById('outroWrapAdobe').style.display = 'none';
       fundoAdobeEscolhido = valor;
     }
-    atualizaBotaoAdobe();
+    atualizaBotoes();
   }
 
   function atualizaOutroAdobe(input) {
     fundoAdobeEscolhido = input.value.trim() || null;
-    atualizaBotaoAdobe();
+    atualizaBotoes();
   }
 
+  // ── PASSO 3: LOGO ────────────────────────
   function escolheLogoAdobe(sim) {
     logoAdobeEscolhido = sim;
-    document.getElementById('simLogoAdobe').className = 'fundo-card' + (sim ? ' logo-sim' : '');
-    document.getElementById('naoLogoAdobe').className  = 'fundo-card' + (!sim ? ' logo-nao' : '');
-    atualizaBotaoAdobe();
+    document.getElementById('simLogoAdobe').className = 'fundo-card' + (sim  ? ' selecionado' : '');
+    document.getElementById('naoLogoAdobe').className = 'fundo-card' + (!sim ? ' selecionado' : '');
+    atualizaBotoes();
   }
 
-  function atualizaBotaoAdobe() {
-    const ok  = fundoAdobeEscolhido && logoAdobeEscolhido !== null;
-    const btn = document.getElementById('btnAbrirAdobe');
-    btn.disabled         = !ok;
-    btn.style.background = ok ? '#E8657F' : '#ccc';
-    btn.style.cursor     = ok ? 'pointer'  : 'not-allowed';
+  // ── PASSO 4: TEXTO ───────────────────────
+  function escolheTexto(sim) {
+    textoAtivado = sim;
+    document.getElementById('simTextoBtn').className = 'fundo-card' + (sim  ? ' selecionado' : '');
+    document.getElementById('naoTextoBtn').className = 'fundo-card' + (!sim ? ' selecionado' : '');
+    document.getElementById('textoWrap').style.display = sim ? 'block' : 'none';
+    if (!sim) textoArteValor = null;
+    atualizaBotoes();
   }
 
-  // ══════════════════════════════════════════
-  //  ADOBE EXPRESS — SDK v4
-  //  Fluxo: seleciona foto → editor abre com
-  //         a imagem já carregada automaticamente
-  // ══════════════════════════════════════════
-  const ADOBE_CLIENT_ID = 'f0e26146c0f04cfbb25a42906a168195';
-  let _adobeSDK   = null;   // instância inicializada
-  let _fotoBase64 = null;   // foto selecionada (base64)
-  let _fotoMime   = 'image/jpeg';
+  function atualizaTextoArte(input) {
+    textoArteValor = input.value.trim() || null;
+    atualizaBotoes();
+  }
 
-  // ── 1. Inicializa SDK (uma só vez) ────────
+  // ── ATIVA/DESATIVA BOTÕES ────────────────
+  function atualizaBotoes() {
+    // Mínimo: foto + fundo + logo + texto definido
+    const textoOk = textoAtivado === false || (textoAtivado === true);
+    const ok = _fotoBase64 && fundoAdobeEscolhido && logoAdobeEscolhido !== null && textoOk;
+
+    const btnC = document.getElementById('btnGerarClaude');
+    const btnA = document.getElementById('btnGerarAdobe');
+
+    [btnC, btnA].forEach(btn => {
+      btn.disabled       = !ok;
+      btn.style.cursor   = ok ? 'pointer' : 'not-allowed';
+    });
+    if (ok) {
+      btnC.style.background = '#4A1A5C';
+      btnA.style.background = '#E8657F';
+    } else {
+      btnC.style.background = '#ccc';
+      btnA.style.background = '#ccc';
+    }
+  }
+
+  // ── OPÇÃO A: GERAR COM CLAUDE ────────────
+  function gerarComClaude() {
+    const logo  = logoAdobeEscolhido
+      ? 'Adicione o logo da Helena Acessórios como marca d\'água bem discreta no canto inferior direito.'
+      : 'Não incluir logo.';
+    const texto = textoArteValor
+      ? `Inclua o seguinte texto na arte: "${textoArteValor}"`
+      : 'Não incluir texto adicional.';
+
+    const prompt =
+      'Olá! Sou da Helena Acessórios.\n\n' +
+      'PASSO 1 — Já tenho a foto da peça, vou enviar agora.\n\n' +
+      'PASSO 2 — Ao receber a foto, gere IMEDIATAMENTE a composição sem fazer perguntas:\n' +
+      '— Mantenha a peça exatamente como está na foto original\n' +
+      '— Recorte a peça com precisão removendo o fundo original\n' +
+      '— Recoloque a peça sobre este fundo: ' + fundoAdobeEscolhido + '\n' +
+      '— Aplique iluminação natural e sombra suave\n' +
+      '— ' + logo + '\n' +
+      '— ' + texto + '\n' +
+      '— Formato quadrado 1080x1080px\n' +
+      '— Entregue como arquivo JPEG para download\n\n' +
+      'PASSO 3 — Após gerar, pergunte se quer ajustar alguma coisa.\n' +
+      'PASSO 4 — Quando aprovada, pergunte se deseja enviar para Camila (+55 16 98114-544) postar no Instagram.';
+
+    const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
+    window.open(url, '_blank');
+  }
+
+  // ── OPÇÃO B: ADOBE EXPRESS ───────────────
+  const ADOBE_CLIENT_ID = 'b50fafca5539467f8572721d11795548';
+  let _adobeSDK = null;
+
   async function initAdobeSDK() {
     if (_adobeSDK) return _adobeSDK;
     if (!window.CCEverywhere) {
-      mostrarToast('⚠️ SDK Adobe não carregado. Verifique conexão.');
+      mostrarToast('⚠️ SDK Adobe não carregado.');
       return null;
     }
     try {
@@ -859,106 +1092,48 @@ function enviarPrompt(texto) {
     }
   }
 
-  // ── 2. Botão "Abrir no Adobe Express" ─────
-  //    → abre seletor de arquivo imediatamente
-  function abrirClaudeAdobe() {
-    const input = document.createElement('input');
-    input.type   = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      _fotoMime = file.type || 'image/jpeg';
-      mostrarLoadingAdobe(true);          // spinner enquanto lê
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        _fotoBase64 = ev.target.result;   // "data:image/jpeg;base64,..."
-        abrirEditorComFoto();
-      };
-      reader.readAsDataURL(file);
-    };
-    input.click();
-  }
-
-  // ── 3. Abre o editor Adobe Express com a foto já anexada ──
-  async function abrirEditorComFoto() {
+  async function abrirClaudeAdobe() {
+    if (!_fotoBase64) { mostrarToast('⚠️ Selecione a foto primeiro.'); return; }
+    mostrarLoadingAdobe(true);
     const sdk = await initAdobeSDK();
     if (!sdk) { mostrarLoadingAdobe(false); return; }
 
-    // Extrai só o base64 puro (sem o prefixo data:...)
     const base64puro = _fotoBase64.split(',')[1];
 
     const docConfig = {
-      asset: {
-        data      : base64puro,
-        dataType  : 'base64',
-        type      : 'image',
-        mimeType  : _fotoMime,
-      }
+      asset: { data: base64puro, dataType: 'base64', type: 'image', mimeType: _fotoMime }
     };
-
-    const appConfig = {
-      // Abre direto na tela de edição de imagem
-      selectedCategory: 'edit-image',
-    };
-
-    const exportConfig = [
-      {
-        id    : 'salvar-helena',
-        label : '💾 Salvar foto',
-        action: { target: 'publish' },
-        style : { uiType: 'button' },
-      }
-    ];
 
     const callbacks = {
       onPublish: (_intent, publishParams) => {
         const asset = publishParams?.asset?.[0];
         if (asset?.data) {
-          // Monta link de download com o resultado editado
           const mime = asset.mimeType || 'image/png';
           const ext  = mime.split('/')[1] || 'png';
-          const href = asset.data.startsWith('data:')
-            ? asset.data
-            : `data:${mime};base64,${asset.data}`;
-          const a       = document.createElement('a');
-          a.href        = href;
-          a.download    = `helena_foto_editada.${ext}`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
+          const href = asset.data.startsWith('data:') ? asset.data : `data:${mime};base64,${asset.data}`;
+          const a = document.createElement('a');
+          a.href = href; a.download = `helena_foto_editada.${ext}`;
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
           mostrarToast('✅ Foto salva com sucesso!');
         }
         mostrarLoadingAdobe(false);
       },
-      onClose: () => {
-        mostrarLoadingAdobe(false);
-      },
-      onError: (err) => {
-        console.error('[Adobe] editor error', err);
-        mostrarToast('⚠️ Erro no editor. Tente novamente.');
-        mostrarLoadingAdobe(false);
-      },
-      onLoad: () => {
-        // Editor carregou — esconde spinner
-        mostrarLoadingAdobe(false);
-      },
+      onClose: () => mostrarLoadingAdobe(false),
+      onError: (err) => { console.error('[Adobe]', err); mostrarToast('⚠️ Erro no editor.'); mostrarLoadingAdobe(false); },
+      onLoad:  () => mostrarLoadingAdobe(false),
     };
 
-    // openImageEditor abre o editor full com a imagem pré-carregada
     sdk.openImageEditor({
       docConfig,
-      appConfig,
-      exportConfig,
+      appConfig   : { selectedCategory: 'edit-image' },
+      exportConfig: [{ id:'salvar-helena', label:'💾 Salvar foto', action:{ target:'publish' }, style:{ uiType:'button' } }],
       callbacks,
-      modalParams: {
-        backgroundColor: 'rgba(74,26,92,0.96)',
-        padding        : 0,
-      },
+      modalParams : { backgroundColor: 'rgba(74,26,92,0.96)', padding: 0 },
     });
   }
 
-  // ── 4. Helpers UI ─────────────────────────
+  function fecharModalAdobe()    { mostrarLoadingAdobe(false); }
+
   function mostrarLoadingAdobe(show) {
     document.getElementById('adobeLoadingOverlay').style.display = show ? 'flex' : 'none';
   }
@@ -972,11 +1147,6 @@ function enviarPrompt(texto) {
       t.style.opacity   = '0';
       t.style.transform = 'translateX(-50%) translateY(20px)';
     }, 3500);
-  }
-
-  // Legacy — mantida para compatibilidade
-  function fecharModalAdobe() {
-    mostrarLoadingAdobe(false);
   }
 
   // Previne zoom duplo toque no iOS
