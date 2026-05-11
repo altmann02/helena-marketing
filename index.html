@@ -1073,36 +1073,43 @@ function enviarPrompt(texto) {
   const ADOBE_CLIENT_ID = 'b50fafca5539467f8572721d11795548';
   let _adobeSDK = null;
 
-  async function initAdobeSDK() {
-    if (_adobeSDK) return _adobeSDK;
+  // Inicializa SDK assim que a página carrega
+  window.addEventListener('load', async () => {
+    console.log('[Adobe] Verificando CCEverywhere...', typeof window.CCEverywhere);
     if (!window.CCEverywhere) {
-      mostrarToast('⚠️ SDK Adobe não carregado.');
-      return null;
+      console.error('[Adobe] CCEverywhere não encontrado!');
+      return;
     }
     try {
-      // SDK v4: initialize retorna o objeto CCEverywhere
+      console.log('[Adobe] Inicializando SDK...');
       _adobeSDK = await window.CCEverywhere.initialize({
         clientId: ADOBE_CLIENT_ID,
         appName : 'Helena Acessórios',
       });
-      return _adobeSDK;
+      console.log('[Adobe] SDK inicializado:', _adobeSDK);
+      console.log('[Adobe] Métodos disponíveis:', Object.keys(_adobeSDK));
     } catch (err) {
-      console.error('[Adobe] init error', err);
-      mostrarToast('⚠️ Erro ao inicializar Adobe Express.');
-      return null;
+      console.error('[Adobe] Erro na inicialização:', err);
     }
-  }
+  });
 
   async function abrirClaudeAdobe() {
     if (!_fotoBase64) { mostrarToast('⚠️ Selecione a foto primeiro.'); return; }
+
+    console.log('[Adobe] SDK disponível:', _adobeSDK);
+
+    if (!_adobeSDK) {
+      mostrarToast('⚠️ SDK não carregado. Abrindo Adobe Express...');
+      setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 800);
+      return;
+    }
+
     mostrarLoadingAdobe(true);
 
-    const sdk = await initAdobeSDK();
-    if (!sdk) { mostrarLoadingAdobe(false); return; }
-
     try {
-      // SDK v4 — acessa o módulo editor
-      const editor = sdk.editor || sdk;
+      console.log('[Adobe] Métodos do SDK:', Object.keys(_adobeSDK));
+
+      const base64puro = _fotoBase64.split(',')[1];
 
       const exportConfig = [{
         id    : 'salvar-helena',
@@ -1113,6 +1120,7 @@ function enviarPrompt(texto) {
 
       const callbacks = {
         onPublish: (_intent, publishParams) => {
+          console.log('[Adobe] onPublish', publishParams);
           const asset = publishParams?.asset?.[0];
           if (asset?.data) {
             const mime = asset.mimeType || 'image/png';
@@ -1127,44 +1135,45 @@ function enviarPrompt(texto) {
           }
           mostrarLoadingAdobe(false);
         },
-        onClose: () => mostrarLoadingAdobe(false),
-        onError: (err) => {
-          console.error('[Adobe]', err);
-          mostrarToast('⚠️ Erro no editor.');
-          mostrarLoadingAdobe(false);
-          // Fallback: abre Adobe Express no browser
-          window.open('https://express.adobe.com', '_blank');
-        },
-        onLoad: () => mostrarLoadingAdobe(false),
-        onLoadStart: () => mostrarLoadingAdobe(false),
+        onClose    : () => { console.log('[Adobe] onClose'); mostrarLoadingAdobe(false); },
+        onError    : (err) => { console.error('[Adobe] onError', err); mostrarLoadingAdobe(false); },
+        onLoad     : () => { console.log('[Adobe] onLoad'); mostrarLoadingAdobe(false); },
+        onLoadStart: () => { console.log('[Adobe] onLoadStart'); },
       };
 
-      // Tenta criar projeto com a imagem como asset inicial
-      const base64puro = _fotoBase64.split(',')[1];
-
-      // SDK v4: tenta editor.create() primeiro, fallback para createWithAsset
-      if (typeof editor.create === 'function') {
-        editor.create(
+      // Detecta qual método existe e usa o correto
+      if (_adobeSDK.editor && typeof _adobeSDK.editor.create === 'function') {
+        console.log('[Adobe] Usando editor.create()');
+        _adobeSDK.editor.create(
           { asset: { data: base64puro, dataType: 'base64', type: 'image', mimeType: _fotoMime } },
           { callbacks, exportConfig }
         );
-      } else if (typeof sdk.createDesign === 'function') {
-        sdk.createDesign({
-          callbacks,
-          exportConfig,
-          inputParams: {
-            asset: { data: base64puro, dataType: 'base64', type: 'image', mimeType: _fotoMime }
-          }
+
+      } else if (typeof _adobeSDK.createDesign === 'function') {
+        console.log('[Adobe] Usando createDesign()');
+        _adobeSDK.createDesign({ callbacks, exportConfig,
+          inputParams: { asset: { data: base64puro, dataType: 'base64', type: 'image', mimeType: _fotoMime } }
         });
+
+      } else if (typeof _adobeSDK.openQuickAction === 'function') {
+        console.log('[Adobe] Usando openQuickAction()');
+        _adobeSDK.openQuickAction({
+          id: 'image-resize',
+          inputParams: { exportOptions: exportConfig },
+          docConfig: { asset: { data: base64puro, dataType: 'base64', type: 'image' } },
+          callbacks,
+        });
+
       } else {
-        // Último fallback: abre Adobe Express com link direto
+        // Mostra todos os métodos no console para diagnóstico
+        console.warn('[Adobe] Nenhum método conhecido. Métodos disponíveis:', JSON.stringify(Object.keys(_adobeSDK)));
         mostrarLoadingAdobe(false);
         mostrarToast('Abrindo Adobe Express no navegador...');
         setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 800);
       }
 
     } catch (err) {
-      console.error('[Adobe] open error', err);
+      console.error('[Adobe] Erro ao abrir editor:', err);
       mostrarLoadingAdobe(false);
       mostrarToast('Abrindo Adobe Express no navegador...');
       setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 800);
