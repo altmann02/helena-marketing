@@ -1102,7 +1102,40 @@ function enviarPrompt(texto) {
 
   function abrirAdobeAgora() {
     document.getElementById('instrucaoAdobe').style.display = 'none';
-    window.open('https://express.adobe.com/pt-BR/features/image-editor', '_blank');
+
+    // Detecta se é celular
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // Tenta abrir o app Adobe Express instalado
+      const deepLink = 'adobe-express://';
+      const fallback = 'https://express.adobe.com/pt-BR/';
+
+      // Cria iframe oculto para tentar o deep link sem redirecionar a página
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = deepLink;
+      document.body.appendChild(iframe);
+
+      // Se o app não abrir em 2s, manda para a loja
+      const timer = setTimeout(() => {
+        document.body.removeChild(iframe);
+        // Android → Play Store / iOS → App Store
+        if (/Android/i.test(navigator.userAgent)) {
+          window.open('https://play.google.com/store/apps/details?id=com.adobe.spark.post', '_blank');
+        } else {
+          window.open('https://apps.apple.com/br/app/adobe-express/id1440129768', '_blank');
+        }
+      }, 2000);
+
+      // Se o app abriu, a página fica em background — cancela o timer
+      window.addEventListener('blur', () => clearTimeout(timer), { once: true });
+      document.body.removeChild(iframe);
+
+    } else {
+      // Desktop: abre no navegador
+      window.open('https://express.adobe.com/pt-BR/', '_blank');
+    }
   }
 
   function fecharInstrucaoAdobe() {
