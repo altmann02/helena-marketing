@@ -1073,42 +1073,49 @@ function enviarPrompt(texto) {
   const ADOBE_CLIENT_ID = 'b50fafca5539467f8572721d11795548';
   let _adobeSDK = null;
 
-  // Inicializa SDK assim que a página carrega
-  window.addEventListener('load', async () => {
-    console.log('[Adobe] Verificando CCEverywhere...', typeof window.CCEverywhere);
-    if (!window.CCEverywhere) {
-      console.error('[Adobe] CCEverywhere não encontrado!');
-      return;
-    }
-    try {
-      console.log('[Adobe] Inicializando SDK...');
-      _adobeSDK = await window.CCEverywhere.initialize({
+  // Aguarda o SDK carregar com retry
+  function aguardarSDK(tentativas = 0) {
+    console.log('[Adobe] tentativa', tentativas, '| CCEverywhere:', typeof window.CCEverywhere);
+    if (window.CCEverywhere) {
+      window.CCEverywhere.initialize({
         clientId: ADOBE_CLIENT_ID,
         appName : 'Helena Acessórios',
+      }).then(sdk => {
+        _adobeSDK = sdk;
+        console.log('[Adobe] ✅ SDK pronto! Métodos:', Object.keys(sdk));
+      }).catch(err => {
+        console.error('[Adobe] ❌ Erro initialize:', err);
       });
-      console.log('[Adobe] SDK inicializado:', _adobeSDK);
-      console.log('[Adobe] Métodos disponíveis:', Object.keys(_adobeSDK));
-    } catch (err) {
-      console.error('[Adobe] Erro na inicialização:', err);
+    } else if (tentativas < 10) {
+      setTimeout(() => aguardarSDK(tentativas + 1), 500);
+    } else {
+      console.error('[Adobe] ❌ CCEverywhere não carregou após 5s');
     }
-  });
+  }
+
+  // Inicia quando DOM estiver pronto
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => aguardarSDK());
+  } else {
+    aguardarSDK();
+  }
 
   async function abrirClaudeAdobe() {
     if (!_fotoBase64) { mostrarToast('⚠️ Selecione a foto primeiro.'); return; }
 
-    console.log('[Adobe] SDK disponível:', _adobeSDK);
+    console.log('[Adobe] Clique no botão | SDK:', _adobeSDK ? '✅' : '❌');
 
     if (!_adobeSDK) {
-      mostrarToast('⚠️ SDK não carregado. Abrindo Adobe Express...');
-      setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 800);
+      console.warn('[Adobe] SDK não disponível, abrindo fallback');
+      mostrarToast('Abrindo Adobe Express no navegador...');
+      setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 600);
       return;
     }
 
     mostrarLoadingAdobe(true);
+    console.log('[Adobe] Métodos disponíveis:', Object.keys(_adobeSDK));
 
     try {
-      console.log('[Adobe] Métodos do SDK:', Object.keys(_adobeSDK));
-
       const base64puro = _fotoBase64.split(',')[1];
 
       const exportConfig = [{
@@ -1126,8 +1133,7 @@ function enviarPrompt(texto) {
             const mime = asset.mimeType || 'image/png';
             const ext  = mime.split('/')[1] || 'png';
             const href = asset.data.startsWith('data:')
-              ? asset.data
-              : `data:${mime};base64,${asset.data}`;
+              ? asset.data : `data:${mime};base64,${asset.data}`;
             const a = document.createElement('a');
             a.href = href; a.download = `helena_foto_editada.${ext}`;
             document.body.appendChild(a); a.click(); document.body.removeChild(a);
@@ -1141,46 +1147,43 @@ function enviarPrompt(texto) {
         onLoadStart: () => { console.log('[Adobe] onLoadStart'); },
       };
 
-      // Detecta qual método existe e usa o correto
+      // Testa cada método disponível
       if (_adobeSDK.editor && typeof _adobeSDK.editor.create === 'function') {
-        console.log('[Adobe] Usando editor.create()');
+        console.log('[Adobe] → editor.create()');
         _adobeSDK.editor.create(
           { asset: { data: base64puro, dataType: 'base64', type: 'image', mimeType: _fotoMime } },
           { callbacks, exportConfig }
         );
-
       } else if (typeof _adobeSDK.createDesign === 'function') {
-        console.log('[Adobe] Usando createDesign()');
-        _adobeSDK.createDesign({ callbacks, exportConfig,
+        console.log('[Adobe] → createDesign()');
+        _adobeSDK.createDesign({
+          callbacks, exportConfig,
           inputParams: { asset: { data: base64puro, dataType: 'base64', type: 'image', mimeType: _fotoMime } }
         });
-
       } else if (typeof _adobeSDK.openQuickAction === 'function') {
-        console.log('[Adobe] Usando openQuickAction()');
+        console.log('[Adobe] → openQuickAction()');
         _adobeSDK.openQuickAction({
           id: 'image-resize',
           inputParams: { exportOptions: exportConfig },
           docConfig: { asset: { data: base64puro, dataType: 'base64', type: 'image' } },
           callbacks,
         });
-
       } else {
-        // Mostra todos os métodos no console para diagnóstico
-        console.warn('[Adobe] Nenhum método conhecido. Métodos disponíveis:', JSON.stringify(Object.keys(_adobeSDK)));
+        console.warn('[Adobe] ⚠️ Nenhum método reconhecido. Keys:', JSON.stringify(Object.keys(_adobeSDK)));
         mostrarLoadingAdobe(false);
         mostrarToast('Abrindo Adobe Express no navegador...');
-        setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 800);
+        setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 600);
       }
 
     } catch (err) {
-      console.error('[Adobe] Erro ao abrir editor:', err);
+      console.error('[Adobe] Erro ao abrir:', err);
       mostrarLoadingAdobe(false);
       mostrarToast('Abrindo Adobe Express no navegador...');
-      setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 800);
+      setTimeout(() => window.open('https://express.adobe.com/pt-BR', '_blank'), 600);
     }
   }
 
-  function fecharModalAdobe()    { mostrarLoadingAdobe(false); }
+  function fecharModalAdobe() { mostrarLoadingAdobe(false); }
 
   function mostrarLoadingAdobe(show) {
     document.getElementById('adobeLoadingOverlay').style.display = show ? 'flex' : 'none';
