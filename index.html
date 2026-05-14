@@ -1067,62 +1067,99 @@ function enviarPrompt(texto) {
     window.open(url, '_blank');
   }
 
-  // ── OPÇÃO B: ADOBE EXPRESS ───────────────
-  // O SDK embutido requer servidor próprio com HTTPS configurado.
-  // Solução: salva a foto no dispositivo e abre Adobe Express no navegador.
+  // ── OPÇÃO B: ADOBE EXPRESS SDK v4 ────────
+  const ADOBE_CLIENT_ID = 'b50fafca5539467f8572721d11795548';
+  let _adobeSDK = null;
+
+  async function initAdobeSDK() {
+    if (_adobeSDK) return _adobeSDK;
+    try {
+      console.log('[Adobe] Carregando SDK...');
+      await import('https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js');
+      console.log('[Adobe] CCEverywhere:', typeof window.CCEverywhere);
+      _adobeSDK = await window.CCEverywhere.initialize(
+        { clientId: ADOBE_CLIENT_ID, appName: 'Helena Acessórios' },
+        { locale: 'pt_BR' }
+      );
+      console.log('[Adobe] SDK pronto! Keys:', Object.keys(_adobeSDK));
+      return _adobeSDK;
+    } catch (err) {
+      console.error('[Adobe] Erro init:', err);
+      return null;
+    }
+  }
 
   async function abrirClaudeAdobe() {
     if (!_fotoBase64) { mostrarToast('⚠️ Selecione a foto primeiro.'); return; }
-
     mostrarLoadingAdobe(true);
 
-    try {
-      // Passo 1: faz download da foto para o dispositivo
-      const ext  = _fotoMime.split('/')[1] || 'jpg';
-      const a    = document.createElement('a');
-      a.href     = _fotoBase64;
-      a.download = `helena_peca.${ext}`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      // Passo 2: aguarda um momento e abre Adobe Express
-      setTimeout(() => {
-        mostrarLoadingAdobe(false);
-        // Mostra instrução antes de abrir
-        document.getElementById('instrucaoAdobe').style.display = 'flex';
-      }, 800);
-
-    } catch (err) {
-      console.error('[Adobe]', err);
+    const sdk = await initAdobeSDK();
+    if (!sdk) {
       mostrarLoadingAdobe(false);
-      window.open('https://express.adobe.com/pt-BR', '_blank');
+      _baixarFotoFallback();
+      return;
     }
+
+    const base64puro = _fotoBase64.split(',')[1];
+
+    const appConfig = {
+      callbacks: {
+        onPublish: (_intent, publishParams) => {
+          const asset = publishParams?.asset?.[0];
+          if (asset?.data) {
+            const mime = asset.mimeType || 'image/png';
+            const ext  = mime.split('/')[1] || 'png';
+            const href = asset.data.startsWith('data:')
+              ? asset.data : `data:${mime};base64,${asset.data}`;
+            const a = document.createElement('a');
+            a.href = href; a.download = `helena_foto_editada.${ext}`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            mostrarToast('✅ Foto salva com sucesso!');
+          }
+          mostrarLoadingAdobe(false);
+        },
+        onClose: () => mostrarLoadingAdobe(false),
+        onError: (err) => { console.error('[Adobe] onError', err); mostrarLoadingAdobe(false); },
+        onLoad:  () => mostrarLoadingAdobe(false),
+      }
+    };
+
+    const exportConfig = [{
+      id: 'salvar', label: '💾 Salvar foto',
+      action: { target: 'publish' }, style: { uiType: 'button' }
+    }];
+
+    const asset = { data: base64puro, dataType: 'base64', type: 'image', mimeType: _fotoMime };
+
+    try {
+      // SDK v4: module.editImage é o método correto para editar imagem existente
+      console.log('[Adobe] Chamando module.editImage...');
+      sdk.module.editImage({ asset }, appConfig, exportConfig);
+    } catch (e1) {
+      console.warn('[Adobe] module.editImage falhou, tentando editor.createWithAsset...', e1);
+      try {
+        sdk.editor.createWithAsset({ asset }, appConfig, exportConfig);
+      } catch (e2) {
+        console.error('[Adobe] Todos os métodos falharam:', e2);
+        mostrarLoadingAdobe(false);
+        _baixarFotoFallback();
+      }
+    }
+  }
+
+  function _baixarFotoFallback() {
+    const ext = _fotoMime.split('/')[1] || 'jpg';
+    const a = document.createElement('a');
+    a.href = _fotoBase64; a.download = `helena_peca.${ext}`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => {
+      document.getElementById('instrucaoAdobe').style.display = 'flex';
+    }, 600);
   }
 
   function abrirAdobeAgora() {
     document.getElementById('instrucaoAdobe').style.display = 'none';
-
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    if (isAndroid) {
-      // Tenta abrir via market:// — se app instalado, abre direto; senão, abre Play Store
-      window.location.href = 'market://details?id=com.adobe.spark.post';
-      // Fallback para Play Store web após 1.5s caso market:// falhe
-      setTimeout(() => {
-        window.open('https://play.google.com/store/apps/details?id=com.adobe.spark.post', '_blank');
-      }, 1500);
-
-    } else if (isIOS) {
-      window.location.href = 'adobe-express://';
-      setTimeout(() => {
-        window.open('https://apps.apple.com/br/app/adobe-express/id1440129768', '_blank');
-      }, 2000);
-
-    } else {
-      window.open('https://express.adobe.com/pt-BR/', '_blank');
-    }
+    window.open('https://express.adobe.com/pt-BR/', '_blank');
   }
 
   function fecharInstrucaoAdobe() {
