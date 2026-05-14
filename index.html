@@ -1048,75 +1048,38 @@ function enviarPrompt(texto) {
       ? `Inclua o seguinte texto na arte: "${textoArteValor}"`
       : 'Não incluir texto adicional.';
 
-    const instrucao =
-      'Você é um assistente de marketing da Helena Acessórios.\n\n' +
-      'A foto da peça está anexada nesta mensagem.\n\n' +
+    const prompt =
+      'Sou da Helena Acessórios. Já anexei a foto da peça nesta mensagem.\n\n' +
       'Gere IMEDIATAMENTE a composição sem fazer perguntas:\n' +
-      '— Mantenha a peça exatamente como está na foto original\n' +
+      '— Mantenha a peça EXATAMENTE como está na foto original, sem alterar nenhum detalhe\n' +
       '— Recorte a peça com precisão removendo o fundo original\n' +
       '— Recoloque a peça sobre este fundo: ' + fundoAdobeEscolhido + '\n' +
       '— Aplique iluminação natural e sombra suave para a peça parecer dentro do ambiente\n' +
       '— ' + logo + '\n' +
       '— ' + texto + '\n' +
       '— Formato quadrado 1080x1080px, alta definição\n' +
-      '— Entregue a imagem gerada diretamente\n\n' +
+      '— Entregue a imagem gerada diretamente para download\n\n' +
       'Após gerar, pergunte se quer ajustar algo.';
 
-    // Abre modal do chat embutido
-    document.getElementById('modalClaude').style.display = 'flex';
-    document.getElementById('claudeChatMsgs').innerHTML = '';
-    document.getElementById('claudeStatus').textContent = '✨ Enviando foto para o Claude...';
+    // 1. Baixa a foto no dispositivo
+    const ext = _fotoMime.split('/')[1] || 'jpg';
+    const a   = document.createElement('a');
+    a.href = _fotoBase64; a.download = `helena_peca.${ext}`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
 
-    // Chama a API com a foto já anexada
-    chamarClaudeComFoto(instrucao);
+    // 2. Mostra modal de instrução antes de abrir o Claude
+    document.getElementById('modalInstrucaoClaude').style.display = 'flex';
+    document.getElementById('modalInstrucaoClaude').dataset.prompt = prompt;
   }
 
-  async function chamarClaudeComFoto(instrucao) {
-    const statusEl = document.getElementById('claudeStatus');
-    const msgsEl   = document.getElementById('claudeChatMsgs');
-
-    try {
-      // Monta mensagem com imagem em base64
-      const base64puro = _fotoBase64.split(',')[1];
-
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body   : JSON.stringify({
-          model     : 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages  : [{
-            role   : 'user',
-            content: [
-              {
-                type      : 'image',
-                source    : { type: 'base64', media_type: _fotoMime, data: base64puro }
-              },
-              {
-                type: 'text',
-                text: instrucao
-              }
-            ]
-          }]
-        })
-      });
-
-      const data = await response.json();
-      const resposta = data.content?.find(b => b.type === 'text')?.text || 'Sem resposta.';
-
-      statusEl.textContent = '';
-      msgsEl.innerHTML = `
-        <div style="background:#F7F0FA;border-radius:14px;padding:1rem;font-size:14px;
-                    line-height:1.7;color:#2d1040;white-space:pre-wrap;">${resposta}</div>`;
-
-    } catch (err) {
-      console.error('[Claude]', err);
-      statusEl.textContent = '⚠️ Erro ao conectar. Tente novamente.';
-    }
+  function abrirClaudeAgora() {
+    const prompt = document.getElementById('modalInstrucaoClaude').dataset.prompt;
+    document.getElementById('modalInstrucaoClaude').style.display = 'none';
+    window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
   }
 
   function fecharModalClaude() {
-    document.getElementById('modalClaude').style.display = 'none';
+    document.getElementById('modalInstrucaoClaude').style.display = 'none';
   }
 
   // ── OPÇÃO B: ADOBE EXPRESS SDK v4 ────────
@@ -1346,31 +1309,40 @@ document.addEventListener('touchend', function(e) {
   </div>
 </div>
 
-<!-- ════ MODAL: Claude Chat Embutido ════ -->
-<div id="modalClaude" style="display:none;position:fixed;inset:0;z-index:9800;
-     background:rgba(74,26,92,0.96);align-items:flex-end;justify-content:center;">
-  <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;
-              max-height:85vh;display:flex;flex-direction:column;overflow:hidden;">
+<!-- ════ MODAL: Instrução Claude ════ -->
+<div id="modalInstrucaoClaude" style="display:none;position:fixed;inset:0;z-index:9800;
+     background:rgba(74,26,92,0.95);align-items:center;justify-content:center;padding:1.5rem;">
+  <div style="background:#fff;border-radius:24px;padding:2rem 1.5rem;
+              max-width:360px;width:100%;text-align:center;">
 
-    <!-- Header -->
-    <div style="padding:1rem 1.25rem 0.75rem;border-bottom:1px solid #F0E6F6;
-                display:flex;align-items:center;justify-content:space-between;">
-      <div>
-        <p style="font-size:15px;font-weight:500;color:#4A1A5C;margin:0;">🤖 Claude · Helena Acessórios</p>
-        <p style="font-size:11px;color:#9B5AB5;margin:0;">Gerando arte com a foto enviada…</p>
-      </div>
-      <button onclick="fecharModalClaude()"
-        style="background:#F7F0FA;border:none;border-radius:50%;width:32px;height:32px;
-               font-size:16px;cursor:pointer;color:#4A1A5C;">✕</button>
+    <div style="font-size:42px;margin-bottom:0.5rem;">📎</div>
+    <p style="font-size:17px;font-weight:500;color:#4A1A5C;margin-bottom:0.75rem;">
+      Foto salva! Agora anexe no Claude
+    </p>
+
+    <div style="background:#F7F0FA;border-radius:14px;padding:1rem;
+                margin-bottom:1.25rem;text-align:left;">
+      <p style="font-size:13.5px;color:#4A1A5C;line-height:1.8;margin:0;">
+        <strong>1.</strong> A foto foi salva na sua galeria 📥<br>
+        <strong>2.</strong> Toque em <strong>"Abrir Claude"</strong> abaixo<br>
+        <strong>3.</strong> No Claude, toque no ícone de <strong>clipe 📎</strong><br>
+        <strong>4.</strong> Selecione a foto <strong>helena_peca</strong> que acabou de salvar<br>
+        <strong>5.</strong> Toque em <strong>enviar ↑</strong> — a arte será gerada! ✨
+      </p>
     </div>
 
-    <!-- Mensagens -->
-    <div style="flex:1;overflow-y:auto;padding:1.25rem;">
-      <p id="claudeStatus" style="font-size:13px;color:#9B5AB5;text-align:center;
-                                   padding:2rem 0;">✨ Enviando foto para o Claude...</p>
-      <div id="claudeChatMsgs"></div>
-    </div>
+    <button onclick="abrirClaudeAgora()"
+      style="width:100%;padding:1rem;background:#4A1A5C;color:#fff;border:none;
+             border-radius:14px;font-size:15px;font-weight:500;cursor:pointer;
+             font-family:'DM Sans',sans-serif;margin-bottom:10px;">
+      🤖 Abrir Claude
+    </button>
 
+    <button onclick="fecharModalClaude()"
+      style="width:100%;padding:0.75rem;background:transparent;color:#aaa;border:none;
+             font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">
+      Cancelar
+    </button>
   </div>
 </div>
 
