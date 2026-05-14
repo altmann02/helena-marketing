@@ -1103,37 +1103,27 @@ function enviarPrompt(texto) {
   function abrirAdobeAgora() {
     document.getElementById('instrucaoAdobe').style.display = 'none';
 
-    // Detecta se é celular
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     if (isMobile) {
-      // Tenta abrir o app Adobe Express instalado
-      const deepLink = 'adobe-express://';
-      const fallback = 'https://express.adobe.com/pt-BR/';
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      const storeUrl  = isAndroid
+        ? 'https://play.google.com/store/apps/details?id=com.adobe.spark.post'
+        : 'https://apps.apple.com/br/app/adobe-express/id1440129768';
 
-      // Cria iframe oculto para tentar o deep link sem redirecionar a página
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = deepLink;
-      document.body.appendChild(iframe);
+      // Tenta abrir o app; se não abrir em 2.5s vai para a loja
+      const fallbackTimer = setTimeout(() => {
+        window.open(storeUrl, '_blank');
+      }, 2500);
 
-      // Se o app não abrir em 2s, manda para a loja
-      const timer = setTimeout(() => {
-        document.body.removeChild(iframe);
-        // Android → Play Store / iOS → App Store
-        if (/Android/i.test(navigator.userAgent)) {
-          window.open('https://play.google.com/store/apps/details?id=com.adobe.spark.post', '_blank');
-        } else {
-          window.open('https://apps.apple.com/br/app/adobe-express/id1440129768', '_blank');
-        }
-      }, 2000);
+      // Quando o app abrir, a página perde foco — cancela o fallback
+      window.addEventListener('blur', () => clearTimeout(fallbackTimer), { once: true });
+      window.addEventListener('pagehide', () => clearTimeout(fallbackTimer), { once: true });
 
-      // Se o app abriu, a página fica em background — cancela o timer
-      window.addEventListener('blur', () => clearTimeout(timer), { once: true });
-      document.body.removeChild(iframe);
+      // Deep link do Adobe Express
+      window.location.href = 'adobe-express://';
 
     } else {
-      // Desktop: abre no navegador
       window.open('https://express.adobe.com/pt-BR/', '_blank');
     }
   }
