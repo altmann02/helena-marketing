@@ -617,20 +617,108 @@ html, body {
 
       <div class="claude-bubble">
         <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">
-          Vamos deixar a foto da peça linda! 💜 Siga os passos abaixo para personalizar tudo antes de gerar a arte.
+        <p class="claude-txt">Como prefere criar a arte da peça hoje? 💜</p>
+      </div>
+
+      <!-- ── OPÇÃO 1: VIA CLAUDE ── -->
+      <div onclick="ir('otimizarClaude')"
+        style="background:#4A1A5C;border-radius:18px;padding:1.25rem 1.2rem;
+               margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px;">
+        <span style="font-size:32px;">🤖</span>
+        <div>
+          <p style="color:#fff;font-size:15px;font-weight:500;margin:0;">Via Claude</p>
+          <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:4px 0 0;line-height:1.5;">
+            Claude te orienta passo a passo — você envia a foto e ele monta a arte com o fundo escolhido
+          </p>
+        </div>
+        <span style="color:rgba(255,255,255,0.5);font-size:22px;margin-left:auto;">›</span>
+      </div>
+
+      <!-- ── OPÇÃO 2: VIA ADOBE ── -->
+      <div onclick="ir('otimizarAdobe')"
+        style="background:#E8657F;border-radius:18px;padding:1.25rem 1.2rem;
+               margin-bottom:1.5rem;cursor:pointer;display:flex;align-items:center;gap:14px;">
+        <span style="font-size:32px;">🎨</span>
+        <div>
+          <p style="color:#fff;font-size:15px;font-weight:500;margin:0;">Via Adobe Express</p>
+          <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:4px 0 0;line-height:1.5;">
+            Edição manual com filtros, recorte, remoção de fundo e efeitos profissionais
+          </p>
+        </div>
+        <span style="color:rgba(255,255,255,0.5);font-size:22px;margin-left:auto;">›</span>
+      </div>
+
+      <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ OTIMIZAR VIA CLAUDE ════════════ -->
+<div class="screen" id="otimizarClaude">
+  <div class="sub-screen">
+    <div class="sub-header">
+      <button class="back-btn" onclick="ir('novidade')">‹</button>
+      <div class="sub-header-info">
+        <p class="sub-header-title">🤖 Gerar arte com Claude</p>
+        <p class="sub-header-sub">helena acessórios · IA gera a composição</p>
+      </div>
+    </div>
+    <div class="sub-body">
+
+      <div class="claude-bubble">
+        <p class="claude-nome">Claude · para Camila e Rita</p>
+        <p class="claude-txt">Vou abrir o Claude e ele vai te guiar! Ele vai pedir a foto, o fundo, logo e texto — tudo no chat. 💜</p>
+      </div>
+
+      <p class="passo-label">Como vai funcionar</p>
+
+      <div style="background:#F7F0FA;border-radius:14px;padding:1.1rem;margin-bottom:1.5rem;">
+        <p style="font-size:13.5px;color:#4A1A5C;line-height:1.9;margin:0;">
+          <strong>1.</strong> Toque em <strong>"Abrir Claude"</strong> abaixo<br>
+          <strong>2.</strong> Claude vai pedir para você <strong>enviar a foto</strong> da peça 📷<br>
+          <strong>3.</strong> Depois pergunta o <strong>fundo</strong> desejado 🖼️<br>
+          <strong>4.</strong> Pergunta se quer <strong>marca d'água</strong> com logo 💜<br>
+          <strong>5.</strong> Pergunta se quer <strong>texto</strong> na arte ✍️<br>
+          <strong>6.</strong> Gera a arte e entrega pronta para baixar! ✨
         </p>
       </div>
 
-      <!-- ── PASSO 1: FOTO ── -->
-      <p class="passo-label">Passo 1 — a foto da peça</p>
-      <p class="q-titulo">De onde vem a foto?</p>
-      <p class="q-hint">Escolha como quer fornecer a imagem da peça.</p>
+      <button onclick="abrirClaudeDireto()"
+        style="width:100%;padding:1.1rem;background:#4A1A5C;color:#fff;border:none;
+               border-radius:16px;font-size:16px;font-weight:500;cursor:pointer;
+               font-family:'DM Sans',sans-serif;margin-bottom:10px;
+               display:flex;align-items:center;justify-content:center;gap:10px;">
+        🤖 Abrir Claude
+      </button>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
+      <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ OTIMIZAR VIA ADOBE ════════════ -->
+<div class="screen" id="otimizarAdobe">
+  <div class="sub-screen">
+    <div class="sub-header">
+      <button class="back-btn" onclick="ir('novidade')">‹</button>
+      <div class="sub-header-info">
+        <p class="sub-header-title">🎨 Editar no Adobe Express</p>
+        <p class="sub-header-sub">helena acessórios · edição manual</p>
+      </div>
+    </div>
+    <div class="sub-body">
+
+      <div class="claude-bubble">
+        <p class="claude-nome">Claude · para Camila e Rita</p>
+        <p class="claude-txt">Selecione a foto da peça para abrir no Adobe Express com ela já carregada! 💜</p>
+      </div>
+
+      <!-- FOTO -->
+      <p class="passo-label">Passo 1 — selecione a foto</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
         <div class="fundo-card" id="opcFotoGaleria" onclick="escolheFoto('galeria')"
              style="text-align:center;padding:1rem 0.5rem;">
-          🖼️<br><span style="font-size:12px;margin-top:4px;display:block;">Escolher da galeria</span>
+          🖼️<br><span style="font-size:12px;margin-top:4px;display:block;">Da galeria</span>
         </div>
         <div class="fundo-card" id="opcFotoCamera" onclick="escolheFoto('camera')"
              style="text-align:center;padding:1rem 0.5rem;">
@@ -638,108 +726,29 @@ html, body {
         </div>
       </div>
 
-      <!-- preview da foto selecionada -->
       <div id="fotoPreviewWrap" style="display:none;margin-bottom:1.25rem;text-align:center;">
         <img id="fotoPreview" src="" alt="Foto selecionada"
-          style="max-width:100%;max-height:180px;border-radius:12px;
+          style="max-width:100%;max-height:160px;border-radius:12px;
                  border:2px solid #EDE0F2;object-fit:cover;">
         <p style="font-size:11px;color:#9B5AB5;margin-top:6px;">✅ Foto selecionada!</p>
       </div>
 
-      <!-- input oculto galeria -->
       <input type="file" id="inputGaleria" accept="image/*" style="display:none"
              onchange="processarFoto(this,'galeria')">
-      <!-- input oculto câmera -->
       <input type="file" id="inputCamera" accept="image/*" capture="environment" style="display:none"
              onchange="processarFoto(this,'camera')">
 
-      <!-- ── PASSO 2: FUNDO ── -->
-      <p class="passo-label">Passo 2 — fundo da arte</p>
-      <p class="q-titulo">Qual fundo para a peça?</p>
-      <p class="q-hint">Toque para selecionar.</p>
+      <!-- BOTÃO ADOBE -->
+      <button id="btnGerarAdobe" onclick="abrirClaudeAdobe()" disabled
+        style="width:100%;padding:1.1rem;background:#ccc;color:#fff;border:none;
+               border-radius:16px;font-size:15px;font-weight:500;cursor:not-allowed;
+               font-family:'DM Sans',sans-serif;margin-bottom:10px;
+               display:flex;align-items:center;justify-content:center;gap:10px;
+               transition:background 0.2s;">
+        🎨 Abrir no Adobe Express
+      </button>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.75rem;">
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'mármore branco com veios suaves')">🤍 Mármore branco</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'mármore preto sofisticado')">🖤 Mármore preto</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'pétalas de flores delicadas rosé')">🌸 Flores</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'madeira clara natural com textura')">🪵 Madeira clara</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'tecido de veludo elegante')">🪡 Veludo</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'página de revista Vogue, layout editorial sofisticado')">📰 Revista Vogue</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'fundo branco infinito de estúdio fotográfico profissional')">⬜ Estúdio branco</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'fundo com as cores da identidade visual da Helena Acessórios: violeta escuro e rosa')">💜 Marca Helena</div>
-      </div>
-      <div style="margin-bottom:1.25rem;">
-        <div class="fundo-card" id="cardOutroAdobe" onclick="escolheFundoAdobe(this,'outro')"
-             style="text-align:left;display:flex;align-items:center;gap:8px;">
-          ✏️ Outro fundo (descreva)
-        </div>
-        <div id="outroWrapAdobe" style="display:none;margin-top:8px;">
-          <input id="outroTextoAdobe" type="text" placeholder="Ex: areia da praia, espelho, granito..."
-            style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;
-                   border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;"
-            oninput="atualizaOutroAdobe(this)">
-        </div>
-      </div>
-
-      <!-- ── PASSO 3: MARCA D'ÁGUA ── -->
-      <p class="passo-label">Passo 3 — marca d'água</p>
-      <p class="q-titulo">Incluir logo da Helena?</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
-        <div class="fundo-card" id="simLogoAdobe" onclick="escolheLogoAdobe(true)" style="text-align:center;">✅ Sim, discreto</div>
-        <div class="fundo-card" id="naoLogoAdobe" onclick="escolheLogoAdobe(false)" style="text-align:center;">❌ Não</div>
-      </div>
-
-      <!-- ── PASSO 4: TEXTO ── -->
-      <p class="passo-label">Passo 4 — texto na arte</p>
-      <p class="q-titulo">Quer incluir algum texto?</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.75rem;">
-        <div class="fundo-card" id="simTextoBtn" onclick="escolheTexto(true)" style="text-align:center;">✅ Sim</div>
-        <div class="fundo-card" id="naoTextoBtn" onclick="escolheTexto(false)" style="text-align:center;">❌ Não</div>
-      </div>
-      <div id="textoWrap" style="display:none;margin-bottom:1.25rem;">
-        <input id="textoArte" type="text" placeholder="Ex: Semi joia · R$ 89,90 · @helena_acessorios"
-          style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;
-                 border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;"
-          oninput="atualizaTextoArte(this)">
-      </div>
-
-      <!-- ── PASSO 5: COMO GERAR ── -->
-      <p class="passo-label">Passo 5 — como gerar a arte</p>
-      <p class="q-titulo">Onde prefere criar?</p>
-      <p class="q-hint">Escolha o método de geração da arte.</p>
-
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem;">
-
-        <!-- Opção Claude -->
-        <button id="btnGerarClaude" onclick="gerarComClaude()" disabled
-          style="width:100%;padding:1.1rem 1.2rem;background:#ccc;color:white;border:none;
-                 border-radius:16px;font-size:15px;font-weight:500;cursor:not-allowed;
-                 font-family:'DM Sans',sans-serif;transition:background 0.2s;
-                 display:flex;align-items:center;gap:12px;text-align:left;">
-          <span style="font-size:24px;">🤖</span>
-          <span>
-            <span style="display:block;font-size:15px;font-weight:500;">Gerar arte comigo (Claude)</span>
-            <span style="display:block;font-size:11px;opacity:0.85;font-weight:300;margin-top:2px;">IA remove fundo e monta a composição</span>
-          </span>
-        </button>
-
-        <!-- Opção Adobe Express -->
-        <button id="btnGerarAdobe" onclick="abrirClaudeAdobe()" disabled
-          style="width:100%;padding:1.1rem 1.2rem;background:#ccc;color:white;border:none;
-                 border-radius:16px;font-size:15px;font-weight:500;cursor:not-allowed;
-                 font-family:'DM Sans',sans-serif;transition:background 0.2s;
-                 display:flex;align-items:center;gap:12px;text-align:left;">
-          <span style="font-size:24px;">🎨</span>
-          <span>
-            <span style="display:block;font-size:15px;font-weight:500;">Editar livremente no Adobe Express</span>
-            <span style="display:block;font-size:11px;opacity:0.85;font-weight:300;margin-top:2px;">Filtros, recorte, texto e efeitos manuais</span>
-          </span>
-        </button>
-
-      </div>
-
-      <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
-
+      <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
     </div>
   </div>
 </div>
@@ -939,143 +948,60 @@ function enviarPrompt(texto) {
   }
 }
 
-  // ── ESTADO DA TELA OTIMIZAR ──
-  let fundoAdobeEscolhido = null;
-  let logoAdobeEscolhido  = null;
-  let textoArteValor      = null;
-  let textoAtivado        = null;
-  let _fotoBase64         = null;
-  let _fotoMime           = 'image/jpeg';
+  // ── ESTADO OTIMIZAR ──
+  let _fotoBase64 = null;
+  let _fotoMime   = 'image/jpeg';
 
-  // ── PASSO 1: FOTO ────────────────────────
+  // ── FOTO ──────────────────────────────────
   function escolheFoto(tipo) {
-    // Marca seleção visual
     document.getElementById('opcFotoGaleria').classList.toggle('selecionado', tipo === 'galeria');
     document.getElementById('opcFotoCamera').classList.toggle('selecionado', tipo === 'camera');
     if (tipo === 'galeria') document.getElementById('inputGaleria').click();
     else                    document.getElementById('inputCamera').click();
   }
 
-  function processarFoto(input, tipo) {
+  function processarFoto(input) {
     const file = input.files[0];
     if (!file) return;
     _fotoMime = file.type || 'image/jpeg';
     const reader = new FileReader();
     reader.onload = (ev) => {
       _fotoBase64 = ev.target.result;
-      // Mostra preview
       document.getElementById('fotoPreview').src = _fotoBase64;
       document.getElementById('fotoPreviewWrap').style.display = 'block';
-      atualizaBotoes();
+      // Ativa botão Adobe
+      const btn = document.getElementById('btnGerarAdobe');
+      if (btn) { btn.disabled = false; btn.style.background = '#E8657F'; btn.style.cursor = 'pointer'; }
     };
     reader.readAsDataURL(file);
   }
 
-  // ── PASSO 2: FUNDO ───────────────────────
-  function escolheFundoAdobe(el, valor) {
-    document.querySelectorAll('.fundo-card').forEach(c => {
-      if (!['simLogoAdobe','naoLogoAdobe','simTextoBtn','naoTextoBtn',
-            'opcFotoGaleria','opcFotoCamera'].includes(c.id))
-        c.classList.remove('selecionado');
-    });
-    el.classList.add('selecionado');
-    if (valor === 'outro') {
-      document.getElementById('outroWrapAdobe').style.display = 'block';
-      fundoAdobeEscolhido = document.getElementById('outroTextoAdobe').value.trim() || null;
-    } else {
-      document.getElementById('outroWrapAdobe').style.display = 'none';
-      fundoAdobeEscolhido = valor;
-    }
-    atualizaBotoes();
-  }
-
-  function atualizaOutroAdobe(input) {
-    fundoAdobeEscolhido = input.value.trim() || null;
-    atualizaBotoes();
-  }
-
-  // ── PASSO 3: LOGO ────────────────────────
-  function escolheLogoAdobe(sim) {
-    logoAdobeEscolhido = sim;
-    document.getElementById('simLogoAdobe').className = 'fundo-card' + (sim  ? ' selecionado' : '');
-    document.getElementById('naoLogoAdobe').className = 'fundo-card' + (!sim ? ' selecionado' : '');
-    atualizaBotoes();
-  }
-
-  // ── PASSO 4: TEXTO ───────────────────────
-  function escolheTexto(sim) {
-    textoAtivado = sim;
-    document.getElementById('simTextoBtn').className = 'fundo-card' + (sim  ? ' selecionado' : '');
-    document.getElementById('naoTextoBtn').className = 'fundo-card' + (!sim ? ' selecionado' : '');
-    document.getElementById('textoWrap').style.display = sim ? 'block' : 'none';
-    if (!sim) textoArteValor = null;
-    atualizaBotoes();
-  }
-
-  function atualizaTextoArte(input) {
-    textoArteValor = input.value.trim() || null;
-    atualizaBotoes();
-  }
-
-  // ── ATIVA/DESATIVA BOTÕES ────────────────
-  function atualizaBotoes() {
-    // Mínimo: foto + fundo + logo + texto definido
-    const textoOk = textoAtivado === false || (textoAtivado === true);
-    const ok = _fotoBase64 && fundoAdobeEscolhido && logoAdobeEscolhido !== null && textoOk;
-
-    const btnC = document.getElementById('btnGerarClaude');
-    const btnA = document.getElementById('btnGerarAdobe');
-
-    [btnC, btnA].forEach(btn => {
-      btn.disabled       = !ok;
-      btn.style.cursor   = ok ? 'pointer' : 'not-allowed';
-    });
-    if (ok) {
-      btnC.style.background = '#4A1A5C';
-      btnA.style.background = '#E8657F';
-    } else {
-      btnC.style.background = '#ccc';
-      btnA.style.background = '#ccc';
-    }
-  }
-
-  // ── OPÇÃO A: GERAR COM CLAUDE ────────────
-  function gerarComClaude() {
-    const logo  = logoAdobeEscolhido
-      ? 'Adicione o logo da Helena Acessórios como marca d\'água bem discreta no canto inferior direito.'
-      : 'Não incluir logo.';
-    const texto = textoArteValor
-      ? `Inclua o seguinte texto na arte: "${textoArteValor}"`
-      : 'Não incluir texto adicional.';
-
+  // ── VIA CLAUDE ────────────────────────────
+  function abrirClaudeDireto() {
     const prompt =
-      'Sou da Helena Acessórios. Já anexei a foto da peça nesta mensagem.\n\n' +
-      'Gere IMEDIATAMENTE a composição sem fazer perguntas:\n' +
-      '— Mantenha a peça EXATAMENTE como está na foto original, sem alterar nenhum detalhe\n' +
-      '— Recorte a peça com precisão removendo o fundo original\n' +
-      '— Recoloque a peça sobre este fundo: ' + fundoAdobeEscolhido + '\n' +
-      '— Aplique iluminação natural e sombra suave para a peça parecer dentro do ambiente\n' +
-      '— ' + logo + '\n' +
-      '— ' + texto + '\n' +
-      '— Formato quadrado 1080x1080px, alta definição\n' +
-      '— Entregue a imagem gerada diretamente para download\n\n' +
-      'Após gerar, pergunte se quer ajustar algo.';
-
-    // Salva o prompt e mostra modal com preview da foto
-    document.getElementById('modalInstrucaoClaude').style.display = 'flex';
-    document.getElementById('modalInstrucaoClaude').dataset.prompt = prompt;
-    // Mostra preview da foto no modal para salvar manualmente
-    document.getElementById('previewFotoModal').src = _fotoBase64;
-  }
-
-  function abrirClaudeAgora() {
-    const prompt = document.getElementById('modalInstrucaoClaude').dataset.prompt;
-    document.getElementById('modalInstrucaoClaude').style.display = 'none';
+      'Olá! Sou da Helena Acessórios e preciso otimizar a foto de uma peça para o Instagram.\n\n' +
+      'Por favor me oriente passo a passo, uma pergunta de cada vez:\n' +
+      '1. Peça para eu enviar a foto da peça\n' +
+      '2. Pergunte qual fundo desejo (opções: mármore branco, mármore preto, flores rosé, madeira clara, veludo, revista Vogue, estúdio branco, identidade Helena ou outro)\n' +
+      '3. Pergunte se quero marca d\'água discreta com o logo da Helena Acessórios\n' +
+      '4. Pergunte se quero incluir algum texto na arte\n' +
+      '5. Com tudo respondido, gere a arte em 1080x1080px mantendo a peça EXATAMENTE igual à foto original, sem alterar nenhum detalhe da peça\n\n' +
+      'Comece pedindo a foto!';
     window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
   }
 
+  // ── VIA ADOBE — funções legadas mantidas ──
+  function escolheFundoAdobe() {}
+  function atualizaOutroAdobe() {}
+  function escolheLogoAdobe() {}
+  function escolheTexto() {}
+  function atualizaTextoArte() {}
+  function atualizaBotoes() {}
+  function gerarComClaude() { abrirClaudeDireto(); }
+  function abrirClaudeAgora() {}
   function fecharModalClaude() {
-    document.getElementById('modalInstrucaoClaude').style.display = 'none';
+    const m = document.getElementById('modalInstrucaoClaude');
+    if (m) m.style.display = 'none';
   }
 
   // ── OPÇÃO B: ADOBE EXPRESS SDK v4 ────────
