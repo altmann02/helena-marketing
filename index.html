@@ -731,8 +731,8 @@ html, body {
                  display:flex;align-items:center;gap:12px;text-align:left;">
           <span style="font-size:24px;">🎨</span>
           <span>
-            <span style="display:block;font-size:15px;font-weight:500;">Editar no Adobe Express</span>
-            <span style="display:block;font-size:11px;opacity:0.85;font-weight:300;margin-top:2px;">Abre o editor com a foto já carregada</span>
+            <span style="display:block;font-size:15px;font-weight:500;">Editar livremente no Adobe Express</span>
+            <span style="display:block;font-size:11px;opacity:0.85;font-weight:300;margin-top:2px;">Filtros, recorte, texto e efeitos manuais</span>
           </span>
         </button>
 
@@ -1048,23 +1048,75 @@ function enviarPrompt(texto) {
       ? `Inclua o seguinte texto na arte: "${textoArteValor}"`
       : 'Não incluir texto adicional.';
 
-    const prompt =
-      'Olá! Sou da Helena Acessórios.\n\n' +
-      'PASSO 1 — Já tenho a foto da peça, vou enviar agora.\n\n' +
-      'PASSO 2 — Ao receber a foto, gere IMEDIATAMENTE a composição sem fazer perguntas:\n' +
+    const instrucao =
+      'Você é um assistente de marketing da Helena Acessórios.\n\n' +
+      'A foto da peça está anexada nesta mensagem.\n\n' +
+      'Gere IMEDIATAMENTE a composição sem fazer perguntas:\n' +
       '— Mantenha a peça exatamente como está na foto original\n' +
       '— Recorte a peça com precisão removendo o fundo original\n' +
       '— Recoloque a peça sobre este fundo: ' + fundoAdobeEscolhido + '\n' +
-      '— Aplique iluminação natural e sombra suave\n' +
+      '— Aplique iluminação natural e sombra suave para a peça parecer dentro do ambiente\n' +
       '— ' + logo + '\n' +
       '— ' + texto + '\n' +
-      '— Formato quadrado 1080x1080px\n' +
-      '— Entregue como arquivo JPEG para download\n\n' +
-      'PASSO 3 — Após gerar, pergunte se quer ajustar alguma coisa.\n' +
-      'PASSO 4 — Quando aprovada, pergunte se deseja enviar para Camila (+55 16 98114-544) postar no Instagram.';
+      '— Formato quadrado 1080x1080px, alta definição\n' +
+      '— Entregue a imagem gerada diretamente\n\n' +
+      'Após gerar, pergunte se quer ajustar algo.';
 
-    const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
-    window.open(url, '_blank');
+    // Abre modal do chat embutido
+    document.getElementById('modalClaude').style.display = 'flex';
+    document.getElementById('claudeChatMsgs').innerHTML = '';
+    document.getElementById('claudeStatus').textContent = '✨ Enviando foto para o Claude...';
+
+    // Chama a API com a foto já anexada
+    chamarClaudeComFoto(instrucao);
+  }
+
+  async function chamarClaudeComFoto(instrucao) {
+    const statusEl = document.getElementById('claudeStatus');
+    const msgsEl   = document.getElementById('claudeChatMsgs');
+
+    try {
+      // Monta mensagem com imagem em base64
+      const base64puro = _fotoBase64.split(',')[1];
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body   : JSON.stringify({
+          model     : 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages  : [{
+            role   : 'user',
+            content: [
+              {
+                type      : 'image',
+                source    : { type: 'base64', media_type: _fotoMime, data: base64puro }
+              },
+              {
+                type: 'text',
+                text: instrucao
+              }
+            ]
+          }]
+        })
+      });
+
+      const data = await response.json();
+      const resposta = data.content?.find(b => b.type === 'text')?.text || 'Sem resposta.';
+
+      statusEl.textContent = '';
+      msgsEl.innerHTML = `
+        <div style="background:#F7F0FA;border-radius:14px;padding:1rem;font-size:14px;
+                    line-height:1.7;color:#2d1040;white-space:pre-wrap;">${resposta}</div>`;
+
+    } catch (err) {
+      console.error('[Claude]', err);
+      statusEl.textContent = '⚠️ Erro ao conectar. Tente novamente.';
+    }
+  }
+
+  function fecharModalClaude() {
+    document.getElementById('modalClaude').style.display = 'none';
   }
 
   // ── OPÇÃO B: ADOBE EXPRESS SDK v4 ────────
@@ -1291,6 +1343,34 @@ document.addEventListener('touchend', function(e) {
       </div>
       <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
     </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: Claude Chat Embutido ════ -->
+<div id="modalClaude" style="display:none;position:fixed;inset:0;z-index:9800;
+     background:rgba(74,26,92,0.96);align-items:flex-end;justify-content:center;">
+  <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;
+              max-height:85vh;display:flex;flex-direction:column;overflow:hidden;">
+
+    <!-- Header -->
+    <div style="padding:1rem 1.25rem 0.75rem;border-bottom:1px solid #F0E6F6;
+                display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <p style="font-size:15px;font-weight:500;color:#4A1A5C;margin:0;">🤖 Claude · Helena Acessórios</p>
+        <p style="font-size:11px;color:#9B5AB5;margin:0;">Gerando arte com a foto enviada…</p>
+      </div>
+      <button onclick="fecharModalClaude()"
+        style="background:#F7F0FA;border:none;border-radius:50%;width:32px;height:32px;
+               font-size:16px;cursor:pointer;color:#4A1A5C;">✕</button>
+    </div>
+
+    <!-- Mensagens -->
+    <div style="flex:1;overflow-y:auto;padding:1.25rem;">
+      <p id="claudeStatus" style="font-size:13px;color:#9B5AB5;text-align:center;
+                                   padding:2rem 0;">✨ Enviando foto para o Claude...</p>
+      <div id="claudeChatMsgs"></div>
+    </div>
+
   </div>
 </div>
 
