@@ -1107,23 +1107,20 @@ function enviarPrompt(texto) {
     const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     if (isAndroid) {
-      // Android: intent:// é a forma correta de abrir app instalado
-      const intentUrl = 'intent://express.adobe.com/#Intent;scheme=https;package=com.adobe.spark.post;end';
-      const fallbackTimer = setTimeout(() => {
+      // Tenta abrir via market:// — se app instalado, abre direto; senão, abre Play Store
+      window.location.href = 'market://details?id=com.adobe.spark.post';
+      // Fallback para Play Store web após 1.5s caso market:// falhe
+      setTimeout(() => {
         window.open('https://play.google.com/store/apps/details?id=com.adobe.spark.post', '_blank');
-      }, 2500);
-      window.addEventListener('blur', () => clearTimeout(fallbackTimer), { once: true });
-      window.location.href = intentUrl;
+      }, 1500);
 
     } else if (isIOS) {
-      const fallbackTimer = setTimeout(() => {
-        window.open('https://apps.apple.com/br/app/adobe-express/id1440129768', '_blank');
-      }, 2500);
-      window.addEventListener('blur', () => clearTimeout(fallbackTimer), { once: true });
       window.location.href = 'adobe-express://';
+      setTimeout(() => {
+        window.open('https://apps.apple.com/br/app/adobe-express/id1440129768', '_blank');
+      }, 2000);
 
     } else {
-      // Desktop
       window.open('https://express.adobe.com/pt-BR/', '_blank');
     }
   }
