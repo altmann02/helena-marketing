@@ -1103,27 +1103,27 @@ function enviarPrompt(texto) {
   function abrirAdobeAgora() {
     document.getElementById('instrucaoAdobe').style.display = 'none';
 
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    if (isMobile) {
-      const isAndroid = /Android/i.test(navigator.userAgent);
-      const storeUrl  = isAndroid
-        ? 'https://play.google.com/store/apps/details?id=com.adobe.spark.post'
-        : 'https://apps.apple.com/br/app/adobe-express/id1440129768';
-
-      // Tenta abrir o app; se não abrir em 2.5s vai para a loja
+    if (isAndroid) {
+      // Android: intent:// é a forma correta de abrir app instalado
+      const intentUrl = 'intent://express.adobe.com/#Intent;scheme=https;package=com.adobe.spark.post;end';
       const fallbackTimer = setTimeout(() => {
-        window.open(storeUrl, '_blank');
+        window.open('https://play.google.com/store/apps/details?id=com.adobe.spark.post', '_blank');
       }, 2500);
-
-      // Quando o app abrir, a página perde foco — cancela o fallback
       window.addEventListener('blur', () => clearTimeout(fallbackTimer), { once: true });
-      window.addEventListener('pagehide', () => clearTimeout(fallbackTimer), { once: true });
+      window.location.href = intentUrl;
 
-      // Deep link do Adobe Express
+    } else if (isIOS) {
+      const fallbackTimer = setTimeout(() => {
+        window.open('https://apps.apple.com/br/app/adobe-express/id1440129768', '_blank');
+      }, 2500);
+      window.addEventListener('blur', () => clearTimeout(fallbackTimer), { once: true });
       window.location.href = 'adobe-express://';
 
     } else {
+      // Desktop
       window.open('https://express.adobe.com/pt-BR/', '_blank');
     }
   }
