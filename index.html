@@ -1061,15 +1061,11 @@ function enviarPrompt(texto) {
       '— Entregue a imagem gerada diretamente para download\n\n' +
       'Após gerar, pergunte se quer ajustar algo.';
 
-    // 1. Baixa a foto no dispositivo
-    const ext = _fotoMime.split('/')[1] || 'jpg';
-    const a   = document.createElement('a');
-    a.href = _fotoBase64; a.download = `helena_peca.${ext}`;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-
-    // 2. Mostra modal de instrução antes de abrir o Claude
+    // Salva o prompt e mostra modal com preview da foto
     document.getElementById('modalInstrucaoClaude').style.display = 'flex';
     document.getElementById('modalInstrucaoClaude').dataset.prompt = prompt;
+    // Mostra preview da foto no modal para salvar manualmente
+    document.getElementById('previewFotoModal').src = _fotoBase64;
   }
 
   function abrirClaudeAgora() {
@@ -1311,23 +1307,40 @@ document.addEventListener('touchend', function(e) {
 
 <!-- ════ MODAL: Instrução Claude ════ -->
 <div id="modalInstrucaoClaude" style="display:none;position:fixed;inset:0;z-index:9800;
-     background:rgba(74,26,92,0.95);align-items:center;justify-content:center;padding:1.5rem;">
-  <div style="background:#fff;border-radius:24px;padding:2rem 1.5rem;
+     background:rgba(74,26,92,0.95);align-items:center;justify-content:center;
+     padding:1.25rem;overflow-y:auto;">
+  <div style="background:#fff;border-radius:24px;padding:1.5rem;
               max-width:360px;width:100%;text-align:center;">
 
-    <div style="font-size:42px;margin-bottom:0.5rem;">📎</div>
-    <p style="font-size:17px;font-weight:500;color:#4A1A5C;margin-bottom:0.75rem;">
-      Foto salva! Agora anexe no Claude
+    <p style="font-size:17px;font-weight:500;color:#4A1A5C;margin-bottom:0.25rem;">
+      🤖 Gerar arte com Claude
     </p>
+    <p style="font-size:12px;color:#9B5AB5;margin-bottom:1rem;">Siga os 2 passos abaixo</p>
 
-    <div style="background:#F7F0FA;border-radius:14px;padding:1rem;
-                margin-bottom:1.25rem;text-align:left;">
-      <p style="font-size:13.5px;color:#4A1A5C;line-height:1.8;margin:0;">
-        <strong>1.</strong> A foto foi salva na sua galeria 📥<br>
-        <strong>2.</strong> Toque em <strong>"Abrir Claude"</strong> abaixo<br>
-        <strong>3.</strong> No Claude, toque no ícone de <strong>clipe 📎</strong><br>
-        <strong>4.</strong> Selecione a foto <strong>helena_peca</strong> que acabou de salvar<br>
-        <strong>5.</strong> Toque em <strong>enviar ↑</strong> — a arte será gerada! ✨
+    <!-- PASSO 1: Salvar foto -->
+    <div style="background:#F7F0FA;border-radius:14px;padding:1rem;margin-bottom:1rem;text-align:left;">
+      <p style="font-size:13px;font-weight:600;color:#4A1A5C;margin:0 0 0.5rem;">
+        Passo 1 — Salve a foto no celular
+      </p>
+      <p style="font-size:12.5px;color:#666;margin:0 0 0.75rem;line-height:1.6;">
+        Toque e segure a foto abaixo → <strong>"Salvar imagem"</strong>
+      </p>
+      <!-- Preview da foto -->
+      <img id="previewFotoModal" src="" alt="Foto da peça"
+        style="width:100%;max-height:160px;object-fit:contain;border-radius:10px;
+               border:2px solid #EDE0F2;background:#f9f4fc;">
+    </div>
+
+    <!-- PASSO 2: Abrir Claude -->
+    <div style="background:#F7F0FA;border-radius:14px;padding:1rem;margin-bottom:1.25rem;text-align:left;">
+      <p style="font-size:13px;font-weight:600;color:#4A1A5C;margin:0 0 0.5rem;">
+        Passo 2 — Abra o Claude e anexe a foto
+      </p>
+      <p style="font-size:12.5px;color:#666;margin:0;line-height:1.7;">
+        1. Toque em <strong>"Abrir Claude"</strong> abaixo<br>
+        2. No Claude, toque no ícone <strong>📎 clipe</strong><br>
+        3. Selecione a foto que acabou de salvar<br>
+        4. Toque em <strong>enviar ↑</strong> — arte gerada! ✨
       </p>
     </div>
 
