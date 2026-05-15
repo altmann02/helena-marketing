@@ -660,83 +660,104 @@ html, body {
       <button class="back-btn" onclick="ir('novidade')">‹</button>
       <div class="sub-header-info">
         <p class="sub-header-title">🤖 Melhorar foto com Claude</p>
-        <p class="sub-header-sub">helena acessórios · melhoria com IA</p>
+        <p class="sub-header-sub">helena acessórios · 2 passos simples</p>
       </div>
     </div>
     <div class="sub-body">
 
       <div class="claude-bubble">
         <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">Configure abaixo e o painel já aplica o logo real na foto antes de abrir o Claude! 💜</p>
+        <p class="claude-txt">Dois passos e a foto fica profissional! 💜</p>
       </div>
 
-      <!-- PASSO 1: FOTO -->
-      <p class="passo-label">Passo 1 — selecione a foto da peça</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
-        <div class="fundo-card" id="ocFotoGal" onclick="escolheFotoC('galeria')" style="text-align:center;padding:1rem 0.5rem;">
-          🖼️<br><span style="font-size:12px;margin-top:4px;display:block;">Da galeria</span>
+      <!-- ══ PASSO 1 ══ -->
+      <div style="background:#4A1A5C;border-radius:18px;padding:1.25rem;margin-bottom:1rem;">
+        <p style="color:#E8657F;font-size:11px;font-weight:600;letter-spacing:1px;margin:0 0 0.4rem;">PASSO 1 — Prepare a foto</p>
+        <p style="color:#fff;font-size:14px;font-weight:400;margin:0 0 0.75rem;line-height:1.5;opacity:0.9;">Selecione a foto, escolha o logo e baixe a foto preparada.</p>
+
+        <!-- Foto -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0.75rem;">
+          <div onclick="escolheFotoC('galeria')" id="ocFotoGal"
+            style="background:rgba(255,255,255,0.12);border-radius:12px;padding:0.75rem;
+                   text-align:center;cursor:pointer;color:#fff;font-size:13px;">
+            🖼️<br>Da galeria
+          </div>
+          <div onclick="escolheFotoC('camera')" id="ocFotoCam"
+            style="background:rgba(255,255,255,0.12);border-radius:12px;padding:0.75rem;
+                   text-align:center;cursor:pointer;color:#fff;font-size:13px;">
+            📷<br>Tirar foto
+          </div>
         </div>
-        <div class="fundo-card" id="ocFotoCam" onclick="escolheFotoC('camera')" style="text-align:center;padding:1rem 0.5rem;">
-          📷<br><span style="font-size:12px;margin-top:4px;display:block;">Tirar foto agora</span>
+        <div id="cFotoPreviewWrap" style="display:none;margin-bottom:0.75rem;text-align:center;">
+          <img id="cFotoPreview" src=""
+            style="max-width:100%;max-height:120px;border-radius:10px;object-fit:cover;
+                   border:2px solid rgba(255,255,255,0.3);">
         </div>
+
+        <!-- Logo -->
+        <p style="color:rgba(255,255,255,0.8);font-size:13px;margin:0 0 0.5rem;">Logo no canto inferior direito?</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0.5rem;">
+          <div onclick="cEscolheLogo(true)" id="cSimLogo"
+            style="background:rgba(255,255,255,0.12);border-radius:12px;padding:0.6rem;
+                   text-align:center;cursor:pointer;color:#fff;font-size:13px;">✅ Sim</div>
+          <div onclick="cEscolheLogo(false)" id="cNaoLogo"
+            style="background:rgba(255,255,255,0.12);border-radius:12px;padding:0.6rem;
+                   text-align:center;cursor:pointer;color:#fff;font-size:13px;">❌ Não</div>
+        </div>
+        <div id="cLogoOpcoes" style="display:none;margin-bottom:0.75rem;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+            <div id="cLogo1" onclick="cSelecionaLogo('branco_preto')"
+              style="background:#111;color:#fff;border-radius:10px;padding:0.6rem;
+                     text-align:center;cursor:pointer;font-size:11px;">
+              ⬜ Branco<br><span style="opacity:0.6;font-size:9px;">fotos escuras</span>
+            </div>
+            <div id="cLogo2" onclick="cSelecionaLogo('preto_branco')"
+              style="background:#fff;color:#4A1A5C;border-radius:10px;padding:0.6rem;
+                     text-align:center;cursor:pointer;font-size:11px;">
+              🟣 Violeta<br><span style="opacity:0.6;font-size:9px;">fotos claras</span>
+            </div>
+            <div id="cLogo3" onclick="cSelecionaLogo('rosa')"
+              style="background:#E8657F;color:#fff;border-radius:10px;padding:0.6rem;
+                     text-align:center;cursor:pointer;font-size:11px;">
+              🌸 Rosa<br><span style="opacity:0.6;font-size:9px;">fotos violeta</span>
+            </div>
+          </div>
+        </div>
+        <div id="cLogoPreviewWrap" style="display:none;margin-bottom:0.75rem;text-align:center;">
+          <img id="cLogoPreview" src=""
+            style="max-width:100%;max-height:120px;border-radius:10px;object-fit:cover;
+                   border:2px solid #E8657F;">
+          <p style="color:rgba(255,255,255,0.7);font-size:11px;margin-top:4px;">✅ Logo aplicado!</p>
+        </div>
+
+        <button id="btnBaixarFoto" onclick="baixarFotoPreparada()" disabled
+          style="width:100%;padding:0.9rem;background:rgba(255,255,255,0.2);color:#ccc;border:none;
+                 border-radius:12px;font-size:14px;font-weight:500;cursor:not-allowed;
+                 font-family:'DM Sans',sans-serif;transition:all 0.2s;
+                 display:flex;align-items:center;justify-content:center;gap:8px;">
+          📥 Baixar foto preparada
+        </button>
       </div>
-      <div id="cFotoPreviewWrap" style="display:none;margin-bottom:1rem;text-align:center;">
-        <img id="cFotoPreview" src="" style="max-width:100%;max-height:150px;border-radius:12px;border:2px solid #EDE0F2;object-fit:cover;">
-        <p style="font-size:11px;color:#9B5AB5;margin-top:6px;">✅ Foto selecionada!</p>
+
+      <!-- ══ PASSO 2 ══ -->
+      <div style="background:#F7F0FA;border-radius:18px;padding:1.25rem;margin-bottom:1.5rem;">
+        <p style="color:#E8657F;font-size:11px;font-weight:600;letter-spacing:1px;margin:0 0 0.4rem;">PASSO 2 — Claude finaliza</p>
+        <p style="color:#4A1A5C;font-size:14px;font-weight:400;margin:0 0 0.5rem;line-height:1.5;">Abra o Claude, <strong>anexe a foto baixada</strong> e ele melhora brilho, cores e nitidez — entregando PNG pronto para publicar!</p>
+
+        <button onclick="abrirClaudeDireto()"
+          style="width:100%;padding:0.9rem;background:#4A1A5C;color:#fff;border:none;
+                 border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;
+                 font-family:'DM Sans',sans-serif;
+                 display:flex;align-items:center;justify-content:center;gap:8px;">
+          🤖 Abrir Claude
+        </button>
       </div>
+
       <input type="file" id="cInputGaleria" accept="image/*" style="display:none" onchange="processarFotoC(this)">
       <input type="file" id="cInputCamera" accept="image/*" capture="environment" style="display:none" onchange="processarFotoC(this)">
-
-      <!-- PASSO 2: MARCA D'ÁGUA -->
-      <p class="passo-label">Passo 2 — marca d'água</p>
-      <p class="q-titulo">Quer incluir o logo da Helena?</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.75rem;">
-        <div class="fundo-card" id="cSimLogo" onclick="cEscolheLogo(true)" style="text-align:center;">✅ Sim</div>
-        <div class="fundo-card" id="cNaoLogo" onclick="cEscolheLogo(false)" style="text-align:center;">❌ Não</div>
-      </div>
-
-      <!-- Escolha do logo -->
-      <div id="cLogoOpcoes" style="display:none;margin-bottom:1.25rem;">
-        <p class="q-hint">Escolha a versão do logo:</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <div class="fundo-card" id="cLogo1" onclick="cSelecionaLogo('branco_preto')" style="background:#222;color:#fff;text-align:center;font-size:12px;padding:0.75rem;">Logo branco<br><span style="opacity:0.6;font-size:10px;">para fotos escuras</span></div>
-          <div class="fundo-card" id="cLogo2" onclick="cSelecionaLogo('preto_branco')" style="background:#fff;color:#4A1A5C;border:1px solid #EDE0F2;text-align:center;font-size:12px;padding:0.75rem;">Logo violeta<br><span style="opacity:0.6;font-size:10px;">para fotos claras</span></div>
-          <div class="fundo-card" id="cLogo3" onclick="cSelecionaLogo('rosa')" style="background:#4A1A5C;color:#E8657F;text-align:center;font-size:12px;padding:0.75rem;">Logo rosa<br><span style="opacity:0.6;font-size:10px;">para fotos violeta</span></div>
-          <div class="fundo-card" id="cLogo4" onclick="cSelecionaLogo('branco_preto')" style="background:#555;color:#fff;text-align:center;font-size:12px;padding:0.75rem;">Logo branco<br><span style="opacity:0.6;font-size:10px;">versão alternativa</span></div>
-        </div>
-        <!-- Preview do logo aplicado -->
-        <div id="cLogoPreviewWrap" style="display:none;margin-top:10px;text-align:center;">
-          <img id="cLogoPreview" src="" style="max-width:100%;max-height:160px;border-radius:12px;border:2px solid #EDE0F2;">
-          <p style="font-size:11px;color:#9B5AB5;margin-top:6px;">✅ Logo aplicado!</p>
-        </div>
-      </div>
-
-      <!-- PASSO 3: TEXTO -->
-      <p class="passo-label">Passo 3 — texto na arte</p>
-      <p class="q-titulo">Quer incluir texto?</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.75rem;">
-        <div class="fundo-card" id="cSimTxt" onclick="cEscolheTexto(true)" style="text-align:center;">✅ Sim</div>
-        <div class="fundo-card" id="cNaoTxt" onclick="cEscolheTexto(false)" style="text-align:center;">❌ Não</div>
-      </div>
-      <div id="cTextoWrap" style="display:none;margin-bottom:1.25rem;">
-        <input id="cTextoVal" type="text" placeholder="Ex: Semi joia · R$ 89,90 · @helena_acessorios"
-          style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;border-radius:10px;
-                 font-size:14px;font-family:'DM Sans',sans-serif;outline:none;">
-      </div>
-
-      <!-- BOTÃO -->
-      <button id="btnAbrirClaudeC" onclick="abrirClaudeDireto()" disabled
-        style="width:100%;padding:1.1rem;background:#ccc;color:#fff;border:none;
-               border-radius:16px;font-size:16px;font-weight:500;cursor:not-allowed;
-               font-family:'DM Sans',sans-serif;margin-bottom:10px;
-               display:flex;align-items:center;justify-content:center;gap:10px;
-               transition:background 0.2s;">
-        🤖 Abrir Claude
-      </button>
-      <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
-
-      <!-- Canvas oculto para composição -->
       <canvas id="cCanvas" style="display:none;"></canvas>
+
+      <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
     </div>
   </div>
 </div>
@@ -1174,46 +1195,72 @@ function enviarPrompt(texto) {
   }
 
   function cAtualizaBtn() {
-    const logoOk  = _cComLogo === false || (_cComLogo === true && _cLogoSel);
-    const textoOk = _cComTexto !== null;
-    const ok      = _cFoto && logoOk && textoOk;
-    const btn     = document.getElementById('btnAbrirClaudeC');
+    const logoOk = _cComLogo === false || (_cComLogo === true && _cLogoSel);
+    const ok     = _cFoto && logoOk;
+    const btn    = document.getElementById('btnBaixarFoto');
     if (!btn) return;
-    btn.disabled       = !ok;
-    btn.style.background = ok ? '#4A1A5C' : '#ccc';
-    btn.style.cursor     = ok ? 'pointer'  : 'not-allowed';
+    btn.disabled         = !ok;
+    btn.style.background = ok ? '#E8657F' : 'rgba(255,255,255,0.2)';
+    btn.style.color      = ok ? '#fff'    : '#ccc';
+    btn.style.cursor     = ok ? 'pointer' : 'not-allowed';
   }
 
-  // ── VIA CLAUDE: abre com foto já com logo aplicado ──
+  function baixarFotoPreparada() {
+    const foto = _cFotoComp || _cFoto;
+    const a = document.createElement('a');
+    a.href = foto;
+    a.download = 'helena_foto_preparada.jpg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    mostrarToast('📥 Foto baixada! Agora abra o Claude no Passo 2.');
+  }
+
   function abrirClaudeDireto() {
-    const textoVal = document.getElementById('cTextoVal')?.value?.trim() || '';
-    const textoInstr = _cComTexto && textoVal
-      ? `Inclua o texto "${textoVal}" na arte com tipografia elegante nas cores da marca (violeta #4A1A5C ou rosa #E8657F ou branco).`
-      : _cComTexto
-        ? 'Inclua um texto elegante com o arroba @helena_acessorios_semijoias.'
-        : 'Não incluir texto adicional.';
-
-    const logoInstr = _cComLogo
-      ? 'O logo da Helena Acessórios já está aplicado na foto que estou enviando (canto inferior direito). Não precisa adicionar logo.'
-      : 'Não incluir logo.';
-
     const prompt =
-      'Olá! Sou da Helena Acessórios.\n\n' +
-      'IMPORTANTE: A arte final deve ser entregue como IMAGEM em PNG ou JPEG de alta resolução — nunca como HTML ou código.\n\n' +
-      'Já estou enviando a foto da peça com os ajustes feitos.\n\n' +
-      'Por favor melhore a foto:\n' +
-      '— Ajuste brilho, contraste e nitidez\n' +
-      '— Melhore as cores da peça para ficarem mais vibrantes e profissionais\n' +
-      '— ' + logoInstr + '\n' +
-      '— ' + textoInstr + '\n' +
-      '— Formato 1080x1080px quadrado\n' +
-      '— Entregue como imagem PNG ou JPEG para download\n\n' +
-      'Vou anexar a foto agora!';
+      'Sou da Helena Acessórios.
 
-    // Mostra modal com foto composta para salvar e abrir Claude
-    document.getElementById('previewFotoModal').src = _cFotoComp || _cFoto;
-    document.getElementById('modalInstrucaoClaude').style.display = 'flex';
-    document.getElementById('modalInstrucaoClaude').dataset.prompt = prompt;
+' +
+      'IMPORTANTE: Entregue a arte final como IMAGEM PNG ou JPEG de alta resolução — nunca HTML ou código.
+
+' +
+      'Vou enviar a foto da peça já preparada. Por favor:
+' +
+      '— Melhore brilho, contraste e nitidez
+' +
+      '— Deixe as cores da peça mais vibrantes e profissionais
+' +
+      '— Mantenha o logo que está na foto, não adicione outro
+' +
+      '— Formato 1080x1080px quadrado
+' +
+      '— Entregue a imagem pronta para download
+
+' +
+      'Pode pedir a foto!';
+    window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
+  }
+
+  function confirmarEnviarClaude() {
+    const modal  = document.getElementById('modalEnviarClaude');
+    const prompt = modal.dataset.prompt;
+    const foto   = modal.dataset.foto;
+    modal.style.display = 'none';
+
+    // Baixa a foto composta
+    const a = document.createElement('a');
+    a.href = foto;
+    a.download = 'helena_foto_para_claude.jpg';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+
+    // Abre Claude após 1s
+    setTimeout(() => {
+      window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
+    }, 1000);
+  }
+
+  function fecharEnviarClaude() {
+    document.getElementById('modalEnviarClaude').style.display = 'none';
   }
   // ── VIA ADOBE — funções legadas mantidas ──
   function escolheFundoAdobe() {}
@@ -1540,6 +1587,34 @@ document.addEventListener('touchend', function(e) {
       </div>
       <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
     </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: Enviar para Claude ════ -->
+<div id="modalEnviarClaude" style="display:none;position:fixed;inset:0;z-index:9850;
+     background:rgba(74,26,92,0.95);align-items:center;justify-content:center;padding:1.25rem;">
+  <div style="background:#fff;border-radius:24px;padding:1.5rem;max-width:360px;width:100%;text-align:center;">
+
+    <p style="font-size:16px;font-weight:500;color:#4A1A5C;margin-bottom:0.25rem;">📎 Quase lá!</p>
+    <p style="font-size:12.5px;color:#666;margin-bottom:1rem;line-height:1.6;">
+      A foto com o logo já está pronta. Toque em <strong>"Salvar e Abrir Claude"</strong> — a foto vai para sua galeria e o Claude abre automaticamente. Lá é só tocar no 📎 e selecionar a foto <strong>helena_foto_para_claude</strong>.
+    </p>
+
+    <img id="previewEnviarClaude" src="" alt="Foto com logo"
+      style="width:100%;max-height:180px;object-fit:contain;border-radius:12px;
+             border:2px solid #EDE0F2;margin-bottom:1rem;background:#f9f4fc;">
+
+    <button onclick="confirmarEnviarClaude()"
+      style="width:100%;padding:1rem;background:#4A1A5C;color:#fff;border:none;
+             border-radius:14px;font-size:15px;font-weight:500;cursor:pointer;
+             font-family:'DM Sans',sans-serif;margin-bottom:10px;">
+      📎 Salvar e Abrir Claude
+    </button>
+    <button onclick="fecharEnviarClaude()"
+      style="width:100%;padding:0.75rem;background:transparent;color:#aaa;border:none;
+             font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">
+      Cancelar
+    </button>
   </div>
 </div>
 
