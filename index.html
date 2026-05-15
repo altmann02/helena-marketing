@@ -754,54 +754,91 @@ html, body {
       </div>
     </div>
     <div class="sub-body">
+
       <div class="claude-bubble">
         <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">Ótimo! 💜 Vou criar um carrossel lindo para o Instagram. <strong>Qual tipo de slide show você quer?</strong></p>
+        <p class="claude-txt">Vamos montar o slide show! Responda os passos abaixo e o Claude cria tudo certinho. 💜</p>
       </div>
 
-      <p class="passo-label">Tipo de carrossel</p>
-      <p class="q-titulo">Qual o objetivo do slide show?</p>
-      <p class="q-hint">Cada tipo tem um estilo e estrutura diferentes.</p>
-
-      <div class="opcoes">
-
-        <div class="opc" onclick="enviarPrompt('Quero criar um CARROSSEL DE PRODUTOS para o Instagram da Helena Acessórios. Pergunte uma coisa de cada vez: 1) Quantas peças/produtos quer mostrar?; 2) Tem fotos das peças para enviar?; 3) Quer incluir preços nas imagens?; 4) Tem alguma promoção ou destaque especial?; 5) Fundo preferido (identidade da marca violeta/rosa ou outro tema?). Crie um carrossel elegante com capa chamativa, um slide por produto com foto e informações, e slide final com call-to-action e dados de contato. Estilo editorial do @helena_acessorios_semijoias com logo da Helena discreta em cada slide.')">
+      <!-- PASSO 1: TIPO -->
+      <p class="passo-label">Passo 1 — tipo de slide show</p>
+      <p class="q-titulo">Qual o objetivo?</p>
+      <div class="opcoes" style="margin-bottom:1rem;">
+        <div class="opc" id="ss_tipo_vitrine" onclick="ssTipo('Vitrine de produtos — mostrar peças com preço e destaque')">
           <div class="opc-icon oi-1">💍</div>
-          <div class="opc-body">
-            <p class="opc-titulo">Vitrine de produtos</p>
-            <p class="opc-desc">Carrossel mostrando peças com preço e destaque</p>
-          </div>
+          <div class="opc-body"><p class="opc-titulo">Vitrine de produtos</p><p class="opc-desc">Peças com preço e destaque</p></div>
           <span class="opc-arr">›</span>
         </div>
-
-        <div class="opc" onclick="enviarPrompt('Quero criar um CARROSSEL DE LANÇAMENTO de coleção nova para o Instagram da Helena Acessórios. Pergunte uma coisa de cada vez: 1) Qual o nome ou tema da coleção?; 2) Quantas peças fazem parte do lançamento?; 3) Tem fotos das peças para enviar?; 4) Tem alguma frase ou slogan para a coleção?; 5) Quer incluir preços?. Crie um carrossel sofisticado com slide de abertura impactante com nome da coleção, slides das peças em destaque, e slide final com convite para ver mais na loja. Estilo editorial luxuoso com cores da Helena Acessórios.')">
+        <div class="opc" id="ss_tipo_lancamento" onclick="ssTipo('Lançamento de coleção nova')">
           <div class="opc-icon oi-2">🌟</div>
-          <div class="opc-body">
-            <p class="opc-titulo">Lançamento de coleção</p>
-            <p class="opc-desc">Apresentação impactante de nova coleção</p>
-          </div>
+          <div class="opc-body"><p class="opc-titulo">Lançamento de coleção</p><p class="opc-desc">Nova coleção de forma impactante</p></div>
           <span class="opc-arr">›</span>
         </div>
-
-        <div class="opc" onclick="enviarPrompt('Quero criar um CARROSSEL EDUCATIVO sobre semi joias para o Instagram da Helena Acessórios — tipo \"dicas de como usar\" ou \"como cuidar das suas joias\". Pergunte uma coisa de cada vez: 1) Qual o tema: cuidados com semi joias, como combinar com looks, diferença entre semi joia e bijuteria, ou outro?; 2) Quantos slides quer (recomendo 5 a 7)?; 3) Quer fotos de peças da Helena como exemplo?. Crie slides informativos e elegantes com dicas práticas, visual educativo mas sofisticado, cores da identidade Helena Acessórios.')">
+        <div class="opc" id="ss_tipo_dicas" onclick="ssTipo('Conteúdo educativo — dicas de como usar ou cuidar das semi joias')">
           <div class="opc-icon oi-3">💡</div>
-          <div class="opc-body">
-            <p class="opc-titulo">Dicas e conteúdo educativo</p>
-            <p class="opc-desc">Como usar, cuidar ou combinar semi joias</p>
-          </div>
+          <div class="opc-body"><p class="opc-titulo">Dicas e conteúdo</p><p class="opc-desc">Como usar, cuidar ou combinar</p></div>
           <span class="opc-arr">›</span>
         </div>
-
-        <div class="opc" onclick="enviarPrompt('Quero criar um CARROSSEL PERSONALIZADO para o Instagram da Helena Acessórios. Pergunte uma coisa de cada vez: 1) Qual é o objetivo ou mensagem principal do carrossel?; 2) Quantos slides quer?; 3) Tem fotos para usar?; 4) Tem texto ou frase em mente?; 5) Estilo: elegante, divertido, informativo, promocional?. Depois crie o carrossel no estilo do @helena_acessorios_semijoias com logo da Helena discreta em cada slide, cores violeta #4A1A5C e rosa #E8657F.')">
+        <div class="opc" id="ss_tipo_livre" onclick="ssTipo('Tema livre — vou descrever o que quero')">
           <div class="opc-icon oi-4">✏️</div>
-          <div class="opc-body">
-            <p class="opc-titulo">Carrossel personalizado</p>
-            <p class="opc-desc">Descrevo livremente e o Claude cria</p>
-          </div>
+          <div class="opc-body"><p class="opc-titulo">Personalizado</p><p class="opc-desc">Descrevo o que quero</p></div>
           <span class="opc-arr">›</span>
         </div>
-
       </div>
+
+      <!-- PASSO 2: QUANTIDADE -->
+      <p class="passo-label">Passo 2 — quantidade de fotos/slides</p>
+      <p class="q-titulo">Quantos slides quer?</p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;">
+        <div class="fundo-card" id="ss_qtd_3" onclick="ssQtd(3)" style="text-align:center;padding:0.75rem 0.5rem;">3</div>
+        <div class="fundo-card" id="ss_qtd_5" onclick="ssQtd(5)" style="text-align:center;padding:0.75rem 0.5rem;">5</div>
+        <div class="fundo-card" id="ss_qtd_7" onclick="ssQtd(7)" style="text-align:center;padding:0.75rem 0.5rem;">7</div>
+        <div class="fundo-card" id="ss_qtd_10" onclick="ssQtd(10)" style="text-align:center;padding:0.75rem 0.5rem;">10</div>
+      </div>
+      <div style="margin-bottom:1.25rem;">
+        <div class="fundo-card" id="ss_qtd_outro" onclick="ssQtdOutro()" style="text-align:center;">✏️ Outro número</div>
+        <div id="ss_qtd_input_wrap" style="display:none;margin-top:8px;">
+          <input id="ss_qtd_input" type="number" min="1" max="30" placeholder="Ex: 8"
+            style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;
+                   border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;"
+            oninput="ssQtdCustom(this.value)">
+        </div>
+      </div>
+
+      <!-- PASSO 3: MÚSICA -->
+      <p class="passo-label">Passo 3 — música ou som de fundo</p>
+      <p class="q-titulo">Quer sugerir música para o reels?</p>
+      <p class="q-hint">O Claude vai sugerir músicas do Instagram que combinam com o estilo.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.75rem;">
+        <div class="fundo-card" id="ss_musica_sim" onclick="ssMusica(true)" style="text-align:center;">🎵 Sim</div>
+        <div class="fundo-card" id="ss_musica_nao" onclick="ssMusica(false)" style="text-align:center;">🔇 Não</div>
+      </div>
+      <div id="ss_musica_wrap" style="display:none;margin-bottom:1.25rem;">
+        <input id="ss_musica_estilo" type="text" placeholder="Ex: romântica, animada, luxo, trending..."
+          style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;
+                 border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;"
+          oninput="ssMusicaEstilo(this.value)">
+      </div>
+
+      <!-- PASSO 4: SLIDE FINAL -->
+      <p class="passo-label">Passo 4 — slide final com logo</p>
+      <p class="q-titulo">Quer um slide final com o logo da Helena?</p>
+      <p class="q-hint">Slide de encerramento com logo, @arroba e chamada para ação.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
+        <div class="fundo-card" id="ss_logo_sim" onclick="ssLogo(true)" style="text-align:center;">✅ Sim</div>
+        <div class="fundo-card" id="ss_logo_nao" onclick="ssLogo(false)" style="text-align:center;">❌ Não</div>
+      </div>
+
+      <!-- BOTÃO GERAR -->
+      <button id="btnGerarSlide" onclick="gerarSlideShow()" disabled
+        style="width:100%;padding:1.1rem;background:#ccc;color:#fff;border:none;
+               border-radius:16px;font-size:15px;font-weight:500;cursor:not-allowed;
+               font-family:'DM Sans',sans-serif;margin-bottom:10px;
+               display:flex;align-items:center;justify-content:center;gap:10px;
+               transition:background 0.2s;">
+        🤖 Criar slide show com Claude
+      </button>
+
       <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
     </div>
   </div>
@@ -973,12 +1010,28 @@ function enviarPrompt(texto) {
       'IMPORTANTE: A arte final deve ser entregue como IMAGEM em PNG ou JPEG de alta resolução — nunca como HTML ou código.\n\n' +
       'Por favor me oriente passo a passo, uma pergunta de cada vez:\n\n' +
       '1. Peça para eu enviar a foto da peça\n\n' +
-      '2. Pergunte se desejo incluir a marca d\'água da loja. Se sim, adicione o logo da Helena Acessórios discretamente no canto inferior direito da imagem, com opacidade entre 30% e 50%. O logo é composto pela palavra "helena" em letras minúsculas geométricas e modernas, com um ícone de diamante/joia integrado à letra "e", e abaixo a palavra "ACESSÓRIOS" em letras finas espaçadas. Use versão branca do logo para fotos escuras, e versão escura para fotos claras.\n\n' +
-      '3. Pergunte se desejo incluir algum texto na arte (ex: preço, nome da peça, @helena_acessorios_semijoias)\n\n' +
+      '2. Pergunte se desejo incluir marca d\'água da loja. Se sim, pergunte qual estilo prefere:\n\n' +
+      '   ESTILO A — Logo pequeno no canto:\n' +
+      '   Coloque o logo "helena acessórios" discretamente no canto inferior direito, tamanho pequeno, opacidade 35-50%.\n' +
+      '   Escolha a cor do logo conforme o tom da foto:\n' +
+      '   · Fundo escuro/preto → logo branco\n' +
+      '   · Fundo claro/branco → logo violeta escuro (#4A1A5C)\n' +
+      '   · Fundo rosa → logo violeta (#4A1A5C)\n' +
+      '   · Fundo violeta → logo branco ou rosa (#E8657F)\n' +
+      '   O logo tem: "helena" em letras minúsculas geométricas modernas com ícone de diamante/anel integrado à letra central, e "ACESSÓRIOS" em letras finas espaçadas abaixo.\n\n' +
+      '   ESTILO B — Padrão de marca d\'água no fundo (bem sutil):\n' +
+      '   Aplique o padrão da marca Helena como marca d\'água ATRÁS da foto, opacidade muito baixa (5-15%), quase imperceptível — como papel timbrado. O padrão fica no fundo, a foto da peça fica em destaque total na frente.\n' +
+      '   Padrões disponíveis:\n' +
+      '   · Cruzes pequenas sutis (rosa em violeta, ou violeta em rosa)\n' +
+      '   · Letras "helena" espalhadas aleatoriamente\n' +
+      '   · Padrão com "e" em círculos e diamantes\n' +
+      '   · Pixel art geométrico da marca\n' +
+      '   Escolha o padrão que mais harmoniza com as cores da foto, sempre priorizando que a PEÇA seja o destaque principal.\n\n' +
+      '3. Pergunte se desejo incluir algum texto na arte (ex: preço, nome da peça, @helena_acessorios_semijoias). Se sim, use tipografia elegante nas cores da marca (violeta #4A1A5C ou rosa #E8657F ou branco).\n\n' +
       '4. Com tudo respondido, melhore a foto mantendo o fundo original:\n' +
       '   — Ajuste brilho, contraste e nitidez\n' +
       '   — Melhore as cores da peça para ficarem mais vibrantes e profissionais\n' +
-      '   — Adicione logo e/ou texto conforme escolhido\n' +
+      '   — Adicione marca d\'água e/ou texto conforme escolhido\n' +
       '   — Formato 1080x1080px quadrado\n' +
       '   — Entregue como imagem PNG ou JPEG para download\n\n' +
       'Comece pedindo a foto!';
@@ -1115,7 +1168,90 @@ function enviarPrompt(texto) {
     }, 3500);
   }
 
+  // ── SLIDE SHOW ────────────────────────────
+  let ss = { tipo: null, qtd: null, musica: null, musicaEstilo: '', logo: null };
+
+  function ssTipo(valor) {
+    ss.tipo = valor;
+    document.querySelectorAll('[id^="ss_tipo_"]').forEach(el => el.classList.remove('selecionado'));
+    event.currentTarget.classList.add('selecionado');
+    ssAtualizaBtn();
+  }
+
+  function ssQtd(n) {
+    ss.qtd = n;
+    document.querySelectorAll('[id^="ss_qtd_"]').forEach(el => el.classList.remove('selecionado'));
+    document.getElementById('ss_qtd_' + n).classList.add('selecionado');
+    document.getElementById('ss_qtd_input_wrap').style.display = 'none';
+    ssAtualizaBtn();
+  }
+
+  function ssQtdOutro() {
+    document.querySelectorAll('[id^="ss_qtd_"]').forEach(el => el.classList.remove('selecionado'));
+    document.getElementById('ss_qtd_outro').classList.add('selecionado');
+    document.getElementById('ss_qtd_input_wrap').style.display = 'block';
+    ss.qtd = null;
+    ssAtualizaBtn();
+  }
+
+  function ssQtdCustom(val) {
+    ss.qtd = parseInt(val) || null;
+    ssAtualizaBtn();
+  }
+
+  function ssMusica(sim) {
+    ss.musica = sim;
+    document.getElementById('ss_musica_sim').className = 'fundo-card' + (sim  ? ' selecionado' : '');
+    document.getElementById('ss_musica_nao').className = 'fundo-card' + (!sim ? ' selecionado' : '');
+    document.getElementById('ss_musica_wrap').style.display = sim ? 'block' : 'none';
+    if (!sim) ss.musicaEstilo = '';
+    ssAtualizaBtn();
+  }
+
+  function ssMusicaEstilo(val) { ss.musicaEstilo = val; }
+
+  function ssLogo(sim) {
+    ss.logo = sim;
+    document.getElementById('ss_logo_sim').className = 'fundo-card' + (sim  ? ' selecionado' : '');
+    document.getElementById('ss_logo_nao').className = 'fundo-card' + (!sim ? ' selecionado' : '');
+    ssAtualizaBtn();
+  }
+
+  function ssAtualizaBtn() {
+    const ok = ss.tipo && ss.qtd && ss.musica !== null && ss.logo !== null;
+    const btn = document.getElementById('btnGerarSlide');
+    btn.disabled       = !ok;
+    btn.style.background = ok ? '#4A1A5C' : '#ccc';
+    btn.style.cursor     = ok ? 'pointer'  : 'not-allowed';
+  }
+
   // Previne zoom duplo toque no iOS
+
+  function gerarSlideShow() {
+    const musicaTxt = ss.musica
+      ? `Sim — sugira músicas ${ss.musicaEstilo ? 'com estilo ' + ss.musicaEstilo : 'que combinem com o tema'} disponíveis no Instagram Reels.`
+      : 'Não precisa sugerir música.';
+
+    const logoTxt = ss.logo
+      ? 'Sim — crie um slide final de encerramento com o logo da Helena Acessórios centralizado, @helena_acessorios_semijoias, e uma chamada para ação como "Visite nossa loja" ou "Mande uma mensagem". Fundo nas cores da marca (violeta #4A1A5C e rosa #E8657F).'
+      : 'Não precisa de slide final com logo.';
+
+    const prompt =
+      'Quero criar um SLIDE SHOW / CARROSSEL para o Instagram da Helena Acessórios.\n\n' +
+      'Configurações escolhidas:\n' +
+      '— Tipo: ' + ss.tipo + '\n' +
+      '— Quantidade de slides: ' + ss.qtd + ' slides\n' +
+      '— Música: ' + musicaTxt + '\n' +
+      '— Slide final com logo: ' + logoTxt + '\n\n' +
+      'Agora pergunte uma coisa de cada vez para coletar o conteúdo:\n' +
+      '1. Peça as fotos das peças (se aplicável ao tipo escolhido)\n' +
+      '2. Pergunte se tem textos, preços ou informações específicas para cada slide\n' +
+      '3. Pergunte o fundo preferido (identidade Helena violeta/rosa, outro tema, ou vai enviar imagem)\n\n' +
+      'Depois crie o carrossel completo com ' + ss.qtd + ' slides no estilo editorial do @helena_acessorios_semijoias, cores violeta #4A1A5C e rosa #E8657F, logo da Helena discreta em cada slide como marca d\'água.\n\n' +
+      'Comece pedindo as fotos ou o conteúdo!';
+
+    window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
+  }
 document.addEventListener('touchend', function(e) {
   const now = Date.now();
   if (now - (document._lastTouch || 0) < 300) {
