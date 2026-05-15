@@ -694,17 +694,29 @@ html, body {
                    border:2px solid rgba(255,255,255,0.3);">
         </div>
 
-        <!-- Logo -->
-        <p style="color:rgba(255,255,255,0.8);font-size:13px;margin:0 0 0.5rem;">Logo no canto inferior direito?</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0.5rem;">
-          <div onclick="cEscolheLogo(true)" id="cSimLogo"
-            style="background:rgba(255,255,255,0.12);border-radius:12px;padding:0.6rem;
-                   text-align:center;cursor:pointer;color:#fff;font-size:13px;">✅ Sim</div>
-          <div onclick="cEscolheLogo(false)" id="cNaoLogo"
-            style="background:rgba(255,255,255,0.12);border-radius:12px;padding:0.6rem;
-                   text-align:center;cursor:pointer;color:#fff;font-size:13px;">❌ Não</div>
+        <!-- Tipo de marca d'água -->
+        <p style="color:rgba(255,255,255,0.8);font-size:13px;margin:0 0 0.5rem;">Adicionar marca d'água?</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:0.75rem;">
+          <div onclick="cTipoMarca('logo')" id="cOpcLogo"
+            style="background:rgba(255,255,255,0.12);border-radius:10px;padding:0.6rem;
+                   text-align:center;cursor:pointer;color:#fff;font-size:11px;line-height:1.4;">
+            🔲<br>Logo<br><span style="opacity:0.6;font-size:9px;">canto direito</span>
+          </div>
+          <div onclick="cTipoMarca('padrao')" id="cOpcPadrao"
+            style="background:rgba(255,255,255,0.12);border-radius:10px;padding:0.6rem;
+                   text-align:center;cursor:pointer;color:#fff;font-size:11px;line-height:1.4;">
+            🌊<br>Padrão<br><span style="opacity:0.6;font-size:9px;">translúcido</span>
+          </div>
+          <div onclick="cTipoMarca('nenhum')" id="cOpcNenhum"
+            style="background:rgba(255,255,255,0.12);border-radius:10px;padding:0.6rem;
+                   text-align:center;cursor:pointer;color:#fff;font-size:11px;line-height:1.4;">
+            ❌<br>Sem<br><span style="opacity:0.6;font-size:9px;">marca</span>
+          </div>
         </div>
+
+        <!-- Sub: Logo no canto -->
         <div id="cLogoOpcoes" style="display:none;margin-bottom:0.75rem;">
+          <p style="color:rgba(255,255,255,0.7);font-size:11px;margin:0 0 6px;">Versão do logo:</p>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
             <div id="cLogo1" onclick="cSelecionaLogo('branco_preto')"
               style="background:#111;color:#fff;border-radius:10px;padding:0.6rem;
@@ -723,11 +735,35 @@ html, body {
             </div>
           </div>
         </div>
+
+        <!-- Sub: Padrão translúcido -->
+        <div id="cPadraoOpcoes" style="display:none;margin-bottom:0.75rem;">
+          <p style="color:rgba(255,255,255,0.7);font-size:11px;margin:0 0 6px;">Escolha o padrão:</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+            <img src="/mnt/user-data/uploads/marca_d_agua_1.png" onclick="cSelecionaPadrao('padrao1')" id="cp1"
+              style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;opacity:0.85;">
+            <img src="/mnt/user-data/uploads/marca_d_agua_2.png" onclick="cSelecionaPadrao('padrao2')" id="cp2"
+              style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;opacity:0.85;">
+            <img src="/mnt/user-data/uploads/marca_d_agua_3.png" onclick="cSelecionaPadrao('padrao3')" id="cp3"
+              style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;opacity:0.85;">
+            <img src="/mnt/user-data/uploads/marca_d_agua_4.png" onclick="cSelecionaPadrao('padrao4')" id="cp4"
+              style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;opacity:0.85;">
+            <img src="/mnt/user-data/uploads/marca_d_agua_5.png" onclick="cSelecionaPadrao('padrao5')" id="cp5"
+              style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;opacity:0.85;">
+            <img src="/mnt/user-data/uploads/marca_d_agua_6.png" onclick="cSelecionaPadrao('padrao6')" id="cp6"
+              style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;opacity:0.85;">
+          </div>
+          <p style="color:rgba(255,255,255,0.5);font-size:10px;margin-top:6px;text-align:center;">
+            Opacidade ~30% — visível mas sem competir com a peça
+          </p>
+        </div>
+
+        <!-- Preview resultado -->
         <div id="cLogoPreviewWrap" style="display:none;margin-bottom:0.75rem;text-align:center;">
           <img id="cLogoPreview" src=""
             style="max-width:100%;max-height:120px;border-radius:10px;object-fit:cover;
                    border:2px solid #E8657F;">
-          <p style="color:rgba(255,255,255,0.7);font-size:11px;margin-top:4px;">✅ Logo aplicado!</p>
+          <p style="color:rgba(255,255,255,0.7);font-size:11px;margin-top:4px;">✅ Marca d'água aplicada!</p>
         </div>
 
         <button id="btnBaixarFoto" onclick="baixarFotoPreparada()" disabled
@@ -735,21 +771,31 @@ html, body {
                  border-radius:12px;font-size:14px;font-weight:500;cursor:not-allowed;
                  font-family:'DM Sans',sans-serif;transition:all 0.2s;
                  display:flex;align-items:center;justify-content:center;gap:8px;">
-          📥 Baixar foto preparada
+          📥 Salvar foto com logo na galeria
         </button>
       </div>
 
-      <!-- ══ PASSO 2 ══ -->
-      <div style="background:#F7F0FA;border-radius:18px;padding:1.25rem;margin-bottom:1.5rem;">
-        <p style="color:#E8657F;font-size:11px;font-weight:600;letter-spacing:1px;margin:0 0 0.4rem;">PASSO 2 — Claude finaliza</p>
-        <p style="color:#4A1A5C;font-size:14px;font-weight:400;margin:0 0 0.5rem;line-height:1.5;">Abra o Claude, <strong>anexe a foto baixada</strong> e ele melhora brilho, cores e nitidez — entregando PNG pronto para publicar!</p>
+      <!-- ══ PASSO 2 ══ — aparece só após salvar -->
+      <div id="passo2Claude" style="display:none;background:#F7F0FA;border-radius:18px;
+           padding:1.25rem;margin-bottom:1.5rem;">
+        <p style="color:#E8657F;font-size:11px;font-weight:600;letter-spacing:1px;margin:0 0 0.4rem;">PASSO 2 — Melhorar com IA?</p>
+        <p style="color:#4A1A5C;font-size:15px;font-weight:500;margin:0 0 0.4rem;">Quer tornar a foto mais profissional?</p>
+        <p style="color:#666;font-size:12.5px;line-height:1.6;margin:0 0 1rem;">
+          O Claude melhora brilho, cores e nitidez — e entrega em <strong>JPEG de alta resolução</strong> pronta para publicar no Instagram!
+        </p>
 
         <button onclick="abrirClaudeDireto()"
-          style="width:100%;padding:0.9rem;background:#4A1A5C;color:#fff;border:none;
-                 border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;
-                 font-family:'DM Sans',sans-serif;
+          style="width:100%;padding:1rem;background:#4A1A5C;color:#fff;border:none;
+                 border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;
+                 font-family:'DM Sans',sans-serif;margin-bottom:8px;
                  display:flex;align-items:center;justify-content:center;gap:8px;">
-          🤖 Abrir Claude
+          🤖 Sim, melhorar com Claude
+        </button>
+
+        <button onclick="ir('home')"
+          style="width:100%;padding:0.8rem;background:transparent;color:#9B5AB5;border:none;
+                 font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">
+          Não, já está boa assim ✓
         </button>
       </div>
 
@@ -1077,24 +1123,19 @@ function enviarPrompt(texto) {
   }
 
   // ── VIA CLAUDE: estado ────────────────────
-  let _cFoto      = null;   // base64 foto original
-  let _cFotoComp  = null;   // base64 foto com logo aplicado
+  let _cFoto      = null;
+  let _cFotoComp  = null;
   let _cFotoMime  = 'image/jpeg';
-  let _cComLogo   = null;   // true/false
-  let _cLogoSel   = null;   // qual logo escolhido
-  let _cComTexto  = null;   // true/false
-
-  // Logos com fundo transparente hospedados no GitHub
-  const LOGOS = {
-    branco_preto : 'logo_branco.png',    // branco transparente — para fotos escuras
-    preto_branco : 'logo_violeta.png',   // violeta transparente — para fotos claras/brancas
-    rosa         : 'logo_rosa.png',      // rosa transparente — para fotos violeta/escuras
-    original     : 'logo_branco.png',    // igual branco — mais versátil
-  };
+  let _cComLogo   = null;
+  let _cLogoSel   = null;
+  let _cTipoMarca = null;  // 'logo' | 'padrao' | 'nenhum'
+  let _cPadraoSel = null;
 
   function escolheFotoC(tipo) {
-    document.getElementById('ocFotoGal').classList.toggle('selecionado', tipo === 'galeria');
-    document.getElementById('ocFotoCam').classList.toggle('selecionado', tipo === 'camera');
+    document.getElementById('ocFotoGal').style.background =
+      tipo === 'galeria' ? 'rgba(232,101,127,0.4)' : 'rgba(255,255,255,0.12)';
+    document.getElementById('ocFotoCam').style.background =
+      tipo === 'camera'  ? 'rgba(232,101,127,0.4)' : 'rgba(255,255,255,0.12)';
     if (tipo === 'galeria') document.getElementById('cInputGaleria').click();
     else                    document.getElementById('cInputCamera').click();
   }
@@ -1106,7 +1147,7 @@ function enviarPrompt(texto) {
     const reader = new FileReader();
     reader.onload = (ev) => {
       _cFoto = ev.target.result;
-      _cFotoComp = _cFoto; // sem logo por padrão
+      _cFotoComp = _cFoto;
       document.getElementById('cFotoPreview').src = _cFoto;
       document.getElementById('cFotoPreviewWrap').style.display = 'block';
       cAtualizaBtn();
@@ -1114,90 +1155,116 @@ function enviarPrompt(texto) {
     reader.readAsDataURL(file);
   }
 
-  function cEscolheLogo(sim) {
-    _cComLogo = sim;
-    document.getElementById('cSimLogo').className = 'fundo-card' + (sim  ? ' selecionado' : '');
-    document.getElementById('cNaoLogo').className = 'fundo-card' + (!sim ? ' selecionado' : '');
-    document.getElementById('cLogoOpcoes').style.display = sim ? 'block' : 'none';
-    if (!sim) { _cLogoSel = null; _cFotoComp = _cFoto; }
-    cAtualizaBtn();
+  function cTipoMarca(tipo) {
+    _cTipoMarca = tipo;
+    _cLogoSel   = null;
+    _cPadraoSel = null;
+    _cFotoComp  = _cFoto;
+
+    ['cOpcLogo','cOpcPadrao','cOpcNenhum'].forEach(id => {
+      document.getElementById(id).style.background = 'rgba(255,255,255,0.12)';
+    });
+    const mapa = {logo:'cOpcLogo', padrao:'cOpcPadrao', nenhum:'cOpcNenhum'};
+    document.getElementById(mapa[tipo]).style.background = 'rgba(232,101,127,0.4)';
+
+    document.getElementById('cLogoOpcoes').style.display   = tipo === 'logo'   ? 'block' : 'none';
+    document.getElementById('cPadraoOpcoes').style.display = tipo === 'padrao' ? 'block' : 'none';
+    document.getElementById('cLogoPreviewWrap').style.display = 'none';
+
+    if (tipo === 'nenhum') cAtualizaBtn();
   }
 
   function cSelecionaLogo(tipo) {
     _cLogoSel = tipo;
-    // Marca seleção visual
-    ['cLogo1','cLogo2','cLogo3','cLogo4'].forEach(id => {
+    ['cLogo1','cLogo2','cLogo3'].forEach(id => {
       document.getElementById(id).style.outline = 'none';
     });
-    const mapa = {branco_preto:'cLogo1', preto_branco:'cLogo2', rosa:'cLogo3', original:'cLogo4'};
-    document.getElementById(mapa[tipo]).style.outline = '3px solid #E8657F';
-
-    // Compõe foto + logo via canvas
+    const mapa = {branco_preto:'cLogo1', preto_branco:'cLogo2', rosa:'cLogo3'};
+    if (mapa[tipo]) document.getElementById(mapa[tipo]).style.outline = '2px solid #E8657F';
     aplicarLogoCanvas(tipo);
   }
 
-  function aplicarLogoCanvas(tipoLogo) {
-    const canvas  = document.getElementById('cCanvas');
-    const ctx     = canvas.getContext('2d');
+  function cSelecionaPadrao(pid) {
+    _cPadraoSel = pid;
+    // Marca seleção visual
+    ['cp1','cp2','cp3','cp4','cp5','cp6'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.border = '2px solid transparent';
+    });
+    const idx = pid.replace('padrao','');
+    const el = document.getElementById('cp' + idx);
+    if (el) el.style.border = '2px solid #E8657F';
+    aplicarPadraoCanvas(pid);
+  }
 
+  function aplicarLogoCanvas(tipoLogo) {
+    const canvas = document.getElementById('cCanvas');
+    const ctx    = canvas.getContext('2d');
     const fotoImg = new Image();
     fotoImg.onload = () => {
-      // Define tamanho do canvas igual à foto
       canvas.width  = fotoImg.width;
       canvas.height = fotoImg.height;
-
-      // Desenha foto
       ctx.drawImage(fotoImg, 0, 0);
-
-      // Carrega logo
       const logoImg = new Image();
       logoImg.crossOrigin = 'anonymous';
-      // Usa logo em base64 dos arquivos do projeto via fetch
-      const logoUrl = LOGOS[tipoLogo];
-
       logoImg.onload = () => {
-        // Logo no canto inferior direito — 22% da largura da foto
         const logoW  = Math.round(canvas.width * 0.22);
         const logoH  = Math.round(logoImg.height * (logoW / logoImg.width));
         const margin = Math.round(canvas.width * 0.03);
-        const x      = canvas.width  - logoW - margin;
-        const y      = canvas.height - logoH - margin;
-
-        // Aplica com opacidade 50%
-        ctx.globalAlpha = 0.50;
-        ctx.drawImage(logoImg, x, y, logoW, logoH);
+        ctx.globalAlpha = 0.55;
+        ctx.drawImage(logoImg, canvas.width - logoW - margin, canvas.height - logoH - margin, logoW, logoH);
         ctx.globalAlpha = 1.0;
-
-        // Salva resultado
         _cFotoComp = canvas.toDataURL('image/jpeg', 0.92);
-
-        // Mostra preview
         document.getElementById('cLogoPreview').src = _cFotoComp;
         document.getElementById('cLogoPreviewWrap').style.display = 'block';
         cAtualizaBtn();
       };
-      logoImg.onerror = () => {
-        // Se não conseguir carregar, usa foto sem logo
-        _cFotoComp = _cFoto;
-        cAtualizaBtn();
-      };
-      logoImg.src = logoUrl;
+      logoImg.onerror = () => { _cFotoComp = _cFoto; cAtualizaBtn(); };
+      logoImg.src = LOGOS[tipoLogo];
     };
     fotoImg.src = _cFoto;
   }
 
-  function cEscolheTexto(sim) {
-    _cComTexto = sim;
-    document.getElementById('cSimTxt').className = 'fundo-card' + (sim  ? ' selecionado' : '');
-    document.getElementById('cNaoTxt').className = 'fundo-card' + (!sim ? ' selecionado' : '');
-    document.getElementById('cTextoWrap').style.display = sim ? 'block' : 'none';
-    cAtualizaBtn();
+  function aplicarPadraoCanvas(pid) {
+    const canvas = document.getElementById('cCanvas');
+    const ctx    = canvas.getContext('2d');
+    const fotoImg = new Image();
+    fotoImg.onload = () => {
+      canvas.width  = fotoImg.width;
+      canvas.height = fotoImg.height;
+      ctx.drawImage(fotoImg, 0, 0);
+
+      const padraoImg = new Image();
+      padraoImg.onload = () => {
+        // Repete o padrão por toda a foto como marca d'água translúcida
+        ctx.globalAlpha = 0.28;
+        const pw = padraoImg.width;
+        const ph = padraoImg.height;
+        for (let x = 0; x < canvas.width; x += pw) {
+          for (let y = 0; y < canvas.height; y += ph) {
+            ctx.drawImage(padraoImg, x, y, pw, ph);
+          }
+        }
+        ctx.globalAlpha = 1.0;
+        _cFotoComp = canvas.toDataURL('image/jpeg', 0.92);
+        document.getElementById('cLogoPreview').src = _cFotoComp;
+        document.getElementById('cLogoPreviewWrap').style.display = 'block';
+        cAtualizaBtn();
+      };
+      padraoImg.src = PADROES_MARCA_DAGUA[pid];
+    };
+    fotoImg.src = _cFoto;
   }
 
+  // Legacy
+  function cEscolheLogo(sim) {}
+
   function cAtualizaBtn() {
-    const logoOk = _cComLogo === false || (_cComLogo === true && _cLogoSel);
-    const ok     = _cFoto && logoOk;
-    const btn    = document.getElementById('btnBaixarFoto');
+    const marcaOk = _cTipoMarca === 'nenhum' ||
+                    (_cTipoMarca === 'logo'   && _cLogoSel)   ||
+                    (_cTipoMarca === 'padrao' && _cPadraoSel);
+    const ok  = _cFoto && marcaOk;
+    const btn = document.getElementById('btnBaixarFoto');
     if (!btn) return;
     btn.disabled         = !ok;
     btn.style.background = ok ? '#E8657F' : 'rgba(255,255,255,0.2)';
@@ -1205,38 +1272,39 @@ function enviarPrompt(texto) {
     btn.style.cursor     = ok ? 'pointer' : 'not-allowed';
   }
 
-  function baixarFotoPreparada() {
+    function baixarFotoPreparada() {
     const foto = _cFotoComp || _cFoto;
     const a = document.createElement('a');
     a.href = foto;
-    a.download = 'helena_foto_preparada.jpg';
+    a.download = 'helena_foto_com_logo.jpg';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    mostrarToast('📥 Foto baixada! Agora abra o Claude no Passo 2.');
+    setTimeout(() => {
+      const p2 = document.getElementById('passo2Claude');
+      if (p2) {
+        p2.style.display = 'block';
+        p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      mostrarToast('✅ Foto salva na galeria!');
+    }, 600);
   }
 
   function abrirClaudeDireto() {
+    const logoInstr = _cComLogo
+      ? 'O logo da Helena Acessórios já está aplicado na foto (canto inferior direito). NÃO adicione outro logo.'
+      : 'Não incluir logo.';
+
     const prompt =
-      'Sou da Helena Acessórios.
-
-' +
-      'IMPORTANTE: Entregue a arte final como IMAGEM PNG ou JPEG de alta resolução — nunca HTML ou código.
-
-' +
-      'Vou enviar a foto da peça já preparada. Por favor:
-' +
-      '— Melhore brilho, contraste e nitidez
-' +
-      '— Deixe as cores da peça mais vibrantes e profissionais
-' +
-      '— Mantenha o logo que está na foto, não adicione outro
-' +
-      '— Formato 1080x1080px quadrado
-' +
-      '— Entregue a imagem pronta para download
-
-' +
+      'Sou da Helena Acessórios.\n\n' +
+      'IMPORTANTE: Entregue a arte final como IMAGEM JPEG de alta resolução — nunca HTML ou código.\n\n' +
+      'Toque no + e anexe a foto "helena_foto_com_logo" da sua galeria.\n\n' +
+      'Ao receber a foto, melhore:\n' +
+      '— Brilho, contraste e nitidez\n' +
+      '— Cores da peça mais vibrantes e profissionais\n' +
+      '— ' + logoInstr + '\n' +
+      '— Formato 1080x1080px quadrado\n' +
+      '— Entregue em JPEG de alta resolução para download\n\n' +
       'Pode pedir a foto!';
     window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
   }
