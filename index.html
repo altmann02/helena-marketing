@@ -980,12 +980,18 @@ function enviarPrompt(texto) {
   function abrirClaudeDireto() {
     const prompt =
       'Olá! Sou da Helena Acessórios e preciso otimizar a foto de uma peça para o Instagram.\n\n' +
+      'IMPORTANTE: A arte final deve ser entregue como IMAGEM gerada (PNG ou JPEG), nunca como HTML ou código.\n\n' +
       'Por favor me oriente passo a passo, uma pergunta de cada vez:\n' +
       '1. Peça para eu enviar a foto da peça\n' +
-      '2. Pergunte qual fundo desejo (opções: mármore branco, mármore preto, flores rosé, madeira clara, veludo, revista Vogue, estúdio branco, identidade Helena ou outro)\n' +
-      '3. Pergunte se quero marca d\'água discreta com o logo da Helena Acessórios\n' +
+      '2. Pergunte qual fundo desejo (opções: mármore branco, mármore preto, flores rosé, madeira clara, veludo, revista Vogue, estúdio branco, identidade Helena violeta/rosa ou outro)\n' +
+      '3. Pergunte se quero marca d\'água discreta com o logo da Helena Acessórios no canto inferior direito\n' +
       '4. Pergunte se quero incluir algum texto na arte\n' +
-      '5. Com tudo respondido, gere a arte em 1080x1080px mantendo a peça EXATAMENTE igual à foto original, sem alterar nenhum detalhe da peça\n\n' +
+      '5. Com tudo respondido, USE A FERRAMENTA DE GERAÇÃO DE IMAGEM para criar a arte:\n' +
+      '   — Composição 1080x1080px quadrada\n' +
+      '   — Peça da foto recortada com precisão sobre o fundo escolhido\n' +
+      '   — Iluminação natural e sombra suave\n' +
+      '   — Estilo editorial de luxo, foto de produto profissional\n' +
+      '   — Entregue como imagem PNG ou JPEG para download direto\n\n' +
       'Comece pedindo a foto!';
     window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
   }
