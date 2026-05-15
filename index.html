@@ -801,10 +801,17 @@ html, body {
       <div id="passo2Claude" style="display:none;background:#F7F0FA;border-radius:18px;
            padding:1.25rem;margin-bottom:1.5rem;">
         <p style="color:#E8657F;font-size:11px;font-weight:600;letter-spacing:1px;margin:0 0 0.4rem;">PASSO 2 — Melhorar com IA?</p>
-        <p style="color:#4A1A5C;font-size:15px;font-weight:500;margin:0 0 0.4rem;">Quer tornar a foto mais profissional?</p>
-        <p style="color:#666;font-size:12.5px;line-height:1.6;margin:0 0 1rem;">
-          O Claude melhora brilho, cores e nitidez — e entrega em <strong>JPEG de alta resolução</strong> pronta para publicar no Instagram!
-        </p>
+        <p style="color:#4A1A5C;font-size:15px;font-weight:500;margin:0 0 0.5rem;">Quer tornar a foto mais profissional?</p>
+
+        <div style="background:#EDE0F6;border-radius:12px;padding:0.9rem;margin-bottom:1rem;">
+          <p style="color:#4A1A5C;font-size:12.5px;line-height:1.7;margin:0;">
+            O Claude vai:<br>
+            ✨ Melhorar brilho, cores e nitidez<br>
+            🖼️ Gerar versão final em <strong>JPEG alta resolução</strong><br>
+            🔲 Logo pequeno no canto inferior direito<br>
+            📐 Formato 1080x1080px para o Instagram
+          </p>
+        </div>
 
         <button onclick="abrirClaudeDireto()"
           style="width:100%;padding:1rem;background:#4A1A5C;color:#fff;border:none;
@@ -1304,42 +1311,64 @@ function enviarPrompt(texto) {
     }
   }
 
-  function abrirFotoNovaAba() {
-    const foto = _cFotoComp || _cFoto;
-    const w = window.open();
-    w.document.write('<img src="' + foto + '" style="max-width:100%;"><p style="font-family:sans-serif;text-align:center;">Toque e segure na foto → Salvar imagem</p>');
-    // Mostra passo 2
+  function mostrarPasso2() {
     setTimeout(() => {
-      const p2 = document.getElementById('passo2Claude');
-      if (p2) { p2.style.display = 'block'; p2.scrollIntoView({ behavior: 'smooth' }); }
-    }, 500);
-  }
-
-  function baixarFotoPreparada() {
-    const foto = _cFotoComp || _cFoto;
-
-    // Método 1: tenta download direto
-    try {
-      const a = document.createElement('a');
-      a.href = foto;
-      a.download = 'helena_foto_com_logo.jpg';
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => document.body.removeChild(a), 500);
-    } catch(e) {
-      console.log('download direto falhou, tentando blob...');
-    }
-
-    // Método 2 (fallback mobile): abre a imagem em nova aba para salvar manualmente
-    setTimeout(() => {
+      mostrarToast('✅ Foto pronta! Role para ver o Passo 2.');
       const p2 = document.getElementById('passo2Claude');
       if (p2) {
         p2.style.display = 'block';
-        p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => p2.scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
       }
-      mostrarToast('✅ Foto pronta! Role para baixo para continuar.');
-    }, 800);
+    }, 700);
+  }
+
+  // Salvar via Web Share API (melhor no mobile) ou fallback blob
+  async function baixarFotoPreparada() {
+    const foto = _cFotoComp || _cFoto;
+
+    try {
+      const res  = await fetch(foto);
+      const blob = await res.blob();
+      const file = new File([blob], 'helena_foto_com_logo.jpg', { type: 'image/jpeg' });
+
+      // Web Share API — abre menu nativo do celular (Salvar, WhatsApp, etc)
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Helena Acessórios',
+          text: 'Foto preparada'
+        });
+        mostrarPasso2();
+        return;
+      }
+
+      // Fallback: download via blob URL
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.href = url; a.download = 'helena_foto_com_logo.jpg';
+      document.body.appendChild(a); a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 1000);
+      mostrarPasso2();
+
+    } catch(e) {
+      console.error('Erro ao salvar:', e);
+      // Último recurso: abre em nova aba
+      abrirFotoNovaAba();
+    }
+  }
+
+  function abrirFotoNovaAba() {
+    const foto = _cFotoComp || _cFoto;
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write(`<!DOCTYPE html><html><body style="margin:0;background:#111;text-align:center;">
+        <p style="color:#fff;font-family:sans-serif;padding:12px;font-size:14px;">
+          📥 Toque e segure na foto → <strong>Salvar imagem</strong>
+        </p>
+        <img src="${foto}" style="max-width:100%;object-fit:contain;">
+      </body></html>`);
+    }
+    mostrarPasso2();
   }
 
   function abrirClaudeDireto() {
