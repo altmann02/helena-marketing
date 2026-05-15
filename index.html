@@ -1188,45 +1188,63 @@ function enviarPrompt(texto) {
     _cTipoMarca = tipo;
     _cLogoSel   = null;
     _cPadraoSel = null;
-    _cFotoComp  = _cFoto;
+    _cFotoComp  = _cFoto; // reset para foto sem marca
 
+    // Destaca opção selecionada
     ['cOpcLogo','cOpcPadrao','cOpcNenhum'].forEach(id => {
-      document.getElementById(id).style.background = 'rgba(255,255,255,0.12)';
+      const el = document.getElementById(id);
+      if (el) el.style.background = 'rgba(255,255,255,0.12)';
     });
     const mapa = {logo:'cOpcLogo', padrao:'cOpcPadrao', nenhum:'cOpcNenhum'};
-    document.getElementById(mapa[tipo]).style.background = 'rgba(232,101,127,0.4)';
+    const el = document.getElementById(mapa[tipo]);
+    if (el) el.style.background = 'rgba(232,101,127,0.5)';
 
-    document.getElementById('cLogoOpcoes').style.display   = tipo === 'logo'   ? 'block' : 'none';
-    document.getElementById('cPadraoOpcoes').style.display = tipo === 'padrao' ? 'block' : 'none';
-    document.getElementById('cLogoPreviewWrap').style.display = 'none';
+    // Mostra/esconde sub-opções
+    const loEl = document.getElementById('cLogoOpcoes');
+    const paEl = document.getElementById('cPadraoOpcoes');
+    const prEl = document.getElementById('cLogoPreviewWrap');
+    if (loEl) loEl.style.display = tipo === 'logo'   ? 'block' : 'none';
+    if (paEl) paEl.style.display = tipo === 'padrao' ? 'block' : 'none';
+    if (prEl) prEl.style.display = 'none'; // esconde preview até escolher
 
-    if (tipo === 'nenhum') cAtualizaBtn();
+    // Se "sem marca": libera botão imediatamente
+    if (tipo === 'nenhum') {
+      _cFotoComp = _cFoto;
+      cAtualizaBtn();
+    }
+    // Se logo ou padrão: botão só libera após escolher e preview aparecer
   }
 
   function cSelecionaLogo(tipo) {
     _cLogoSel = tipo;
+    // Destaca logo selecionado
     ['cLogo1','cLogo2','cLogo3'].forEach(id => {
-      document.getElementById(id).style.outline = 'none';
+      const el = document.getElementById(id);
+      if (el) el.style.border = '3px solid transparent';
     });
     const mapa = {branco_preto:'cLogo1', preto_branco:'cLogo2', rosa:'cLogo3'};
-    if (mapa[tipo]) document.getElementById(mapa[tipo]).style.outline = '2px solid #E8657F';
+    const el = document.getElementById(mapa[tipo]);
+    if (el) el.style.border = '3px solid #E8657F';
+    // Aplica e mostra preview
     aplicarLogoCanvas(tipo);
   }
 
   function cSelecionaPadrao(pid) {
     _cPadraoSel = pid;
-    // Marca seleção visual
-    ['cp1','cp2','cp3','cp4','cp5','cp6'].forEach(id => {
-      const el = document.getElementById(id);
+    // Destaca padrão selecionado
+    for (let i = 1; i <= 6; i++) {
+      const el = document.getElementById('cp' + i);
       if (el) el.style.border = '2px solid transparent';
-    });
+    }
     const idx = pid.replace('padrao','');
     const el = document.getElementById('cp' + idx);
     if (el) el.style.border = '2px solid #E8657F';
+    // Aplica e mostra preview
     aplicarPadraoCanvas(pid);
   }
 
   function aplicarLogoCanvas(tipoLogo) {
+    if (!_cFoto) return;
     const canvas = document.getElementById('cCanvas');
     const ctx    = canvas.getContext('2d');
     const fotoImg = new Image();
@@ -1235,7 +1253,6 @@ function enviarPrompt(texto) {
       canvas.height = fotoImg.height;
       ctx.drawImage(fotoImg, 0, 0);
       const logoImg = new Image();
-      // base64 — no crossOrigin needed
       logoImg.onload = () => {
         const logoW  = Math.round(canvas.width * 0.22);
         const logoH  = Math.round(logoImg.height * (logoW / logoImg.width));
@@ -1244,17 +1261,25 @@ function enviarPrompt(texto) {
         ctx.drawImage(logoImg, canvas.width - logoW - margin, canvas.height - logoH - margin, logoW, logoH);
         ctx.globalAlpha = 1.0;
         _cFotoComp = canvas.toDataURL('image/jpeg', 0.92);
-        document.getElementById('cLogoPreview').src = _cFotoComp;
-        document.getElementById('cLogoPreviewWrap').style.display = 'block';
+        // Mostra preview e libera botão
+        const prev = document.getElementById('cLogoPreview');
+        const wrap = document.getElementById('cLogoPreviewWrap');
+        if (prev) prev.src = _cFotoComp;
+        if (wrap) wrap.style.display = 'block';
+        cAtualizaBtn(); // libera botão aqui
+      };
+      logoImg.onerror = () => {
+        // Mesmo com erro, usa foto sem logo e libera botão
+        _cFotoComp = _cFoto;
         cAtualizaBtn();
       };
-      logoImg.onerror = () => { _cFotoComp = _cFoto; cAtualizaBtn(); };
       logoImg.src = LOGOS[tipoLogo];
     };
     fotoImg.src = _cFoto;
   }
 
   function aplicarPadraoCanvas(pid) {
+    if (!_cFoto) return;
     const canvas = document.getElementById('cCanvas');
     const ctx    = canvas.getContext('2d');
     const fotoImg = new Image();
@@ -1262,13 +1287,11 @@ function enviarPrompt(texto) {
       canvas.width  = fotoImg.width;
       canvas.height = fotoImg.height;
       ctx.drawImage(fotoImg, 0, 0);
-
       const padraoImg = new Image();
       padraoImg.onload = () => {
-        // Repete o padrão por toda a foto como marca d'água translúcida
         ctx.globalAlpha = 0.28;
-        const pw = padraoImg.width;
-        const ph = padraoImg.height;
+        const pw = Math.min(padraoImg.width, Math.round(canvas.width / 2));
+        const ph = Math.round(padraoImg.height * (pw / padraoImg.width));
         for (let x = 0; x < canvas.width; x += pw) {
           for (let y = 0; y < canvas.height; y += ph) {
             ctx.drawImage(padraoImg, x, y, pw, ph);
@@ -1276,8 +1299,14 @@ function enviarPrompt(texto) {
         }
         ctx.globalAlpha = 1.0;
         _cFotoComp = canvas.toDataURL('image/jpeg', 0.92);
-        document.getElementById('cLogoPreview').src = _cFotoComp;
-        document.getElementById('cLogoPreviewWrap').style.display = 'block';
+        const prev = document.getElementById('cLogoPreview');
+        const wrap = document.getElementById('cLogoPreviewWrap');
+        if (prev) prev.src = _cFotoComp;
+        if (wrap) wrap.style.display = 'block';
+        cAtualizaBtn(); // libera botão aqui
+      };
+      padraoImg.onerror = () => {
+        _cFotoComp = _cFoto;
         cAtualizaBtn();
       };
       padraoImg.src = PADROES_MARCA_DAGUA[pid];
@@ -1289,29 +1318,29 @@ function enviarPrompt(texto) {
   function cEscolheLogo(sim) {}
 
   function cAtualizaBtn() {
-    const marcaOk = _cTipoMarca === 'nenhum' ||
-                    (_cTipoMarca === 'logo'   && _cLogoSel)   ||
-                    (_cTipoMarca === 'padrao' && _cPadraoSel);
-    const ok  = _cFoto && marcaOk;
+    // Libera quando: tem foto E (sem marca escolhido OU preview já gerado)
+    const semMarca  = _cTipoMarca === 'nenhum';
+    const comPreview = (_cTipoMarca === 'logo' || _cTipoMarca === 'padrao') && _cFotoComp && _cFotoComp !== _cFoto;
+    const ok = !!_cFoto && (semMarca || comPreview);
 
     const btn  = document.getElementById('btnBaixarFoto');
     const btn2 = document.getElementById('btnAbrirFoto');
-
-    [btn, btn2].forEach(b => { if (!b) return; b.disabled = !ok; });
-
+    [btn, btn2].forEach(b => {
+      if (!b) return;
+      b.disabled = !ok;
+      b.style.cursor = ok ? 'pointer' : 'not-allowed';
+    });
     if (btn) {
       btn.style.background = ok ? '#E8657F' : 'rgba(255,255,255,0.2)';
       btn.style.color      = ok ? '#fff'    : '#ccc';
-      btn.style.cursor     = ok ? 'pointer' : 'not-allowed';
     }
     if (btn2) {
-      btn2.style.color  = ok ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.3)';
-      btn2.style.borderColor = ok ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
-      btn2.style.cursor = ok ? 'pointer' : 'not-allowed';
+      btn2.style.color       = ok ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)';
+      btn2.style.borderColor = ok ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.15)';
     }
   }
 
-  function mostrarPasso2() {
+    function mostrarPasso2() {
     setTimeout(() => {
       mostrarToast('✅ Foto pronta! Role para ver o Passo 2.');
       const p2 = document.getElementById('passo2Claude');
