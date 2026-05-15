@@ -784,9 +784,16 @@ html, body {
         <button id="btnBaixarFoto" onclick="baixarFotoPreparada()" disabled
           style="width:100%;padding:1rem;background:rgba(255,255,255,0.2);color:#ccc;border:none;
                  border-radius:14px;font-size:15px;font-weight:600;cursor:not-allowed;
-                 font-family:'DM Sans',sans-serif;transition:all 0.2s;
+                 font-family:'DM Sans',sans-serif;transition:all 0.2s;margin-bottom:8px;
                  display:flex;align-items:center;justify-content:center;gap:8px;">
           📥 Salvar foto na galeria
+        </button>
+
+        <button id="btnAbrirFoto" onclick="abrirFotoNovaAba()" disabled
+          style="width:100%;padding:0.7rem;background:transparent;color:rgba(255,255,255,0.5);
+                 border:1px solid rgba(255,255,255,0.2);border-radius:12px;font-size:12px;
+                 font-family:'DM Sans',sans-serif;cursor:not-allowed;transition:all 0.2s;">
+          📂 Abrir foto (toque e segure para salvar)
         </button>
       </div>
 
@@ -1279,36 +1286,67 @@ function enviarPrompt(texto) {
                     (_cTipoMarca === 'logo'   && _cLogoSel)   ||
                     (_cTipoMarca === 'padrao' && _cPadraoSel);
     const ok  = _cFoto && marcaOk;
-    const btn = document.getElementById('btnBaixarFoto');
-    if (!btn) return;
-    btn.disabled         = !ok;
-    btn.style.background = ok ? '#E8657F' : 'rgba(255,255,255,0.2)';
-    btn.style.color      = ok ? '#fff'    : '#ccc';
-    btn.style.cursor     = ok ? 'pointer' : 'not-allowed';
+
+    const btn  = document.getElementById('btnBaixarFoto');
+    const btn2 = document.getElementById('btnAbrirFoto');
+
+    [btn, btn2].forEach(b => { if (!b) return; b.disabled = !ok; });
+
+    if (btn) {
+      btn.style.background = ok ? '#E8657F' : 'rgba(255,255,255,0.2)';
+      btn.style.color      = ok ? '#fff'    : '#ccc';
+      btn.style.cursor     = ok ? 'pointer' : 'not-allowed';
+    }
+    if (btn2) {
+      btn2.style.color  = ok ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.3)';
+      btn2.style.borderColor = ok ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
+      btn2.style.cursor = ok ? 'pointer' : 'not-allowed';
+    }
   }
 
-    function baixarFotoPreparada() {
+  function abrirFotoNovaAba() {
     const foto = _cFotoComp || _cFoto;
-    const a = document.createElement('a');
-    a.href = foto;
-    a.download = 'helena_foto_com_logo.jpg';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const w = window.open();
+    w.document.write('<img src="' + foto + '" style="max-width:100%;"><p style="font-family:sans-serif;text-align:center;">Toque e segure na foto → Salvar imagem</p>');
+    // Mostra passo 2
+    setTimeout(() => {
+      const p2 = document.getElementById('passo2Claude');
+      if (p2) { p2.style.display = 'block'; p2.scrollIntoView({ behavior: 'smooth' }); }
+    }, 500);
+  }
+
+  function baixarFotoPreparada() {
+    const foto = _cFotoComp || _cFoto;
+
+    // Método 1: tenta download direto
+    try {
+      const a = document.createElement('a');
+      a.href = foto;
+      a.download = 'helena_foto_com_logo.jpg';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => document.body.removeChild(a), 500);
+    } catch(e) {
+      console.log('download direto falhou, tentando blob...');
+    }
+
+    // Método 2 (fallback mobile): abre a imagem em nova aba para salvar manualmente
     setTimeout(() => {
       const p2 = document.getElementById('passo2Claude');
       if (p2) {
         p2.style.display = 'block';
         p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-      mostrarToast('✅ Foto salva na galeria!');
-    }, 600);
+      mostrarToast('✅ Foto pronta! Role para baixo para continuar.');
+    }, 800);
   }
 
   function abrirClaudeDireto() {
-    const logoInstr = _cComLogo
-      ? 'O logo da Helena Acessórios já está aplicado na foto (canto inferior direito). NÃO adicione outro logo.'
-      : 'Não incluir logo.';
+    const temLogo = _cTipoMarca === 'logo' || _cTipoMarca === 'padrao';
+    const logoInstr = temLogo
+      ? 'A marca d\'água da Helena Acessórios JÁ ESTÁ APLICADA na foto. NÃO adicione outra.'
+      : 'Não incluir marca d\'água.';
 
     const prompt =
       'Sou da Helena Acessórios.\n\n' +
