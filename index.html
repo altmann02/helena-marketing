@@ -702,7 +702,7 @@ html, body {
           <div class="fundo-card" id="cLogo1" onclick="cSelecionaLogo('branco_preto')" style="background:#222;color:#fff;text-align:center;font-size:12px;padding:0.75rem;">Logo branco<br><span style="opacity:0.6;font-size:10px;">para fotos escuras</span></div>
           <div class="fundo-card" id="cLogo2" onclick="cSelecionaLogo('preto_branco')" style="background:#fff;color:#4A1A5C;border:1px solid #EDE0F2;text-align:center;font-size:12px;padding:0.75rem;">Logo violeta<br><span style="opacity:0.6;font-size:10px;">para fotos claras</span></div>
           <div class="fundo-card" id="cLogo3" onclick="cSelecionaLogo('rosa')" style="background:#4A1A5C;color:#E8657F;text-align:center;font-size:12px;padding:0.75rem;">Logo rosa<br><span style="opacity:0.6;font-size:10px;">para fotos violeta</span></div>
-          <div class="fundo-card" id="cLogo4" onclick="cSelecionaLogo('original')" style="background:#E8657F;color:#fff;text-align:center;font-size:12px;padding:0.75rem;">Logo original<br><span style="opacity:0.6;font-size:10px;">colorido</span></div>
+          <div class="fundo-card" id="cLogo4" onclick="cSelecionaLogo('branco_preto')" style="background:#555;color:#fff;text-align:center;font-size:12px;padding:0.75rem;">Logo branco<br><span style="opacity:0.6;font-size:10px;">versão alternativa</span></div>
         </div>
         <!-- Preview do logo aplicado -->
         <div id="cLogoPreviewWrap" style="display:none;margin-top:10px;text-align:center;">
@@ -1065,10 +1065,10 @@ function enviarPrompt(texto) {
 
   // Logos com fundo transparente hospedados no GitHub
   const LOGOS = {
-    branco_preto : 'logo_branco.png',      // branco transparente — para fotos escuras
-    preto_branco : 'logo_violeta.png',     // violeta transparente — para fotos claras
-    rosa         : 'logo_rosa.png',        // rosa transparente — para fotos violeta/escuras
-    original     : 'logo_branco_rosa.png', // branco+rosa transparente — versão colorida
+    branco_preto : 'logo_branco.png',    // branco transparente — para fotos escuras
+    preto_branco : 'logo_violeta.png',   // violeta transparente — para fotos claras/brancas
+    rosa         : 'logo_rosa.png',      // rosa transparente — para fotos violeta/escuras
+    original     : 'logo_branco.png',    // igual branco — mais versátil
   };
 
   function escolheFotoC(tipo) {
