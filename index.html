@@ -519,8 +519,8 @@ html, body {
           <div class="card-body">
             <p class="card-num">01</p>
             <span class="card-badge badge-1">IA + foto real</span>
-            <p class="card-title">Otimizar foto da peça</p>
-            <p class="card-desc">Fundo profissional, brilho, logo e texto — com Claude ou Adobe Express</p>
+            <p class="card-title">Ajustar arte da foto</p>
+            <p class="card-desc">Melhore a foto ou troque o fundo com Adobe Express — pronta para o Instagram</p>
           </div>
           <span class="card-arrow">›</span>
         </div>
@@ -602,47 +602,43 @@ html, body {
   </div>
 </div>
 
-<!-- ════════════ OTIMIZAR FOTO ════════════ -->
+<!-- ════════════ AJUSTAR ARTE DA FOTO ════════════ -->
 <div class="screen" id="novidade">
   <div class="sub-screen">
     <div class="sub-header">
       <button class="back-btn" onclick="ir('home')">‹</button>
       <div class="sub-header-info">
-        <p class="sub-header-title">Otimizar foto da peça ✨</p>
+        <p class="sub-header-title">Ajustar arte da foto ✨</p>
         <p class="sub-header-sub">helena acessórios · foto profissional</p>
       </div>
     </div>
-
     <div class="sub-body">
-
       <div class="claude-bubble">
         <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">Como prefere criar a arte da peça hoje? 💜</p>
+        <p class="claude-txt">O que você deseja fazer com a foto da peça? 💜</p>
       </div>
 
-      <!-- ── OPÇÃO 1: VIA CLAUDE ── -->
       <div onclick="ir('otimizarClaude')"
         style="background:#4A1A5C;border-radius:18px;padding:1.25rem 1.2rem;
                margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px;">
         <span style="font-size:32px;">🤖</span>
         <div>
-          <p style="color:#fff;font-size:15px;font-weight:500;margin:0;">Via Claude</p>
+          <p style="color:#fff;font-size:15px;font-weight:500;margin:0;">Melhorar a foto como está</p>
           <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:4px 0 0;line-height:1.5;">
-            Claude te orienta passo a passo — você envia a foto e ele monta a arte com o fundo escolhido
+            Claude melhora brilho e qualidade — adiciona logo ou texto sem mudar o fundo
           </p>
         </div>
         <span style="color:rgba(255,255,255,0.5);font-size:22px;margin-left:auto;">›</span>
       </div>
 
-      <!-- ── OPÇÃO 2: VIA ADOBE ── -->
       <div onclick="ir('otimizarAdobe')"
         style="background:#E8657F;border-radius:18px;padding:1.25rem 1.2rem;
                margin-bottom:1.5rem;cursor:pointer;display:flex;align-items:center;gap:14px;">
         <span style="font-size:32px;">🎨</span>
         <div>
-          <p style="color:#fff;font-size:15px;font-weight:500;margin:0;">Via Adobe Express</p>
+          <p style="color:#fff;font-size:15px;font-weight:500;margin:0;">Mudar fundo e criar nova arte</p>
           <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:4px 0 0;line-height:1.5;">
-            Edição manual com filtros, recorte, remoção de fundo e efeitos profissionais
+            Adobe Express — remove o fundo e coloca fundo profissional novo
           </p>
         </div>
         <span style="color:rgba(255,255,255,0.5);font-size:22px;margin-left:auto;">›</span>
@@ -653,36 +649,30 @@ html, body {
   </div>
 </div>
 
-<!-- ════════════ OTIMIZAR VIA CLAUDE ════════════ -->
+<!-- ════════════ MELHORAR FOTO VIA CLAUDE ════════════ -->
 <div class="screen" id="otimizarClaude">
   <div class="sub-screen">
     <div class="sub-header">
       <button class="back-btn" onclick="ir('novidade')">‹</button>
       <div class="sub-header-info">
-        <p class="sub-header-title">🤖 Gerar arte com Claude</p>
-        <p class="sub-header-sub">helena acessórios · IA gera a composição</p>
+        <p class="sub-header-title">🤖 Melhorar foto com Claude</p>
+        <p class="sub-header-sub">helena acessórios · melhoria com IA</p>
       </div>
     </div>
     <div class="sub-body">
-
       <div class="claude-bubble">
         <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">Vou abrir o Claude e ele vai te guiar! Ele vai pedir a foto, o fundo, logo e texto — tudo no chat. 💜</p>
+        <p class="claude-txt">Vou abrir o Claude! Ele vai pedir a foto, perguntar sobre logo e texto — e entregar a arte em PNG pronta para publicar. 💜</p>
       </div>
-
-      <p class="passo-label">Como vai funcionar</p>
-
       <div style="background:#F7F0FA;border-radius:14px;padding:1.1rem;margin-bottom:1.5rem;">
-        <p style="font-size:13.5px;color:#4A1A5C;line-height:1.9;margin:0;">
-          <strong>1.</strong> Toque em <strong>"Abrir Claude"</strong> abaixo<br>
-          <strong>2.</strong> Claude vai pedir para você <strong>enviar a foto</strong> da peça 📷<br>
-          <strong>3.</strong> Depois pergunta o <strong>fundo</strong> desejado 🖼️<br>
-          <strong>4.</strong> Pergunta se quer <strong>marca d'água</strong> com logo 💜<br>
-          <strong>5.</strong> Pergunta se quer <strong>texto</strong> na arte ✍️<br>
-          <strong>6.</strong> Gera a arte e entrega pronta para baixar! ✨
+        <p style="font-size:13px;font-weight:600;color:#4A1A5C;margin:0 0 0.5rem;">Como vai funcionar:</p>
+        <p style="font-size:13px;color:#4A1A5C;line-height:1.9;margin:0;">
+          <strong>1.</strong> Claude pede para você <strong>enviar a foto</strong> 📷<br>
+          <strong>2.</strong> Pergunta se quer <strong>marca d'água</strong> com logo da loja 💜<br>
+          <strong>3.</strong> Pergunta se quer <strong>texto</strong> na arte ✍️<br>
+          <strong>4.</strong> Entrega a arte em <strong>PNG de alta resolução</strong> pronta para publicar! ✨
         </p>
       </div>
-
       <button onclick="abrirClaudeDireto()"
         style="width:100%;padding:1.1rem;background:#4A1A5C;color:#fff;border:none;
                border-radius:16px;font-size:16px;font-weight:500;cursor:pointer;
@@ -690,31 +680,27 @@ html, body {
                display:flex;align-items:center;justify-content:center;gap:10px;">
         🤖 Abrir Claude
       </button>
-
       <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
     </div>
   </div>
 </div>
 
-<!-- ════════════ OTIMIZAR VIA ADOBE ════════════ -->
+<!-- ════════════ MUDAR FUNDO VIA ADOBE ════════════ -->
 <div class="screen" id="otimizarAdobe">
   <div class="sub-screen">
     <div class="sub-header">
       <button class="back-btn" onclick="ir('novidade')">‹</button>
       <div class="sub-header-info">
-        <p class="sub-header-title">🎨 Editar no Adobe Express</p>
-        <p class="sub-header-sub">helena acessórios · edição manual</p>
+        <p class="sub-header-title">🎨 Mudar fundo no Adobe Express</p>
+        <p class="sub-header-sub">helena acessórios · novo fundo profissional</p>
       </div>
     </div>
     <div class="sub-body">
-
       <div class="claude-bubble">
         <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">Selecione a foto da peça para abrir no Adobe Express com ela já carregada! 💜</p>
+        <p class="claude-txt">Selecione a foto da peça — o Adobe Express abre com ela já carregada para remover o fundo e criar nova arte! 💜</p>
       </div>
-
-      <!-- FOTO -->
-      <p class="passo-label">Passo 1 — selecione a foto</p>
+      <p class="passo-label">Selecione a foto da peça</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
         <div class="fundo-card" id="opcFotoGaleria" onclick="escolheFoto('galeria')"
              style="text-align:center;padding:1rem 0.5rem;">
@@ -725,20 +711,21 @@ html, body {
           📷<br><span style="font-size:12px;margin-top:4px;display:block;">Tirar foto agora</span>
         </div>
       </div>
-
-      <div id="fotoPreviewWrap" style="display:none;margin-bottom:1.25rem;text-align:center;">
+      <div id="fotoPreviewWrap" style="display:none;margin-bottom:1rem;text-align:center;">
         <img id="fotoPreview" src="" alt="Foto selecionada"
           style="max-width:100%;max-height:160px;border-radius:12px;
                  border:2px solid #EDE0F2;object-fit:cover;">
         <p style="font-size:11px;color:#9B5AB5;margin-top:6px;">✅ Foto selecionada!</p>
       </div>
-
       <input type="file" id="inputGaleria" accept="image/*" style="display:none"
-             onchange="processarFoto(this,'galeria')">
+             onchange="processarFoto(this)">
       <input type="file" id="inputCamera" accept="image/*" capture="environment" style="display:none"
-             onchange="processarFoto(this,'camera')">
-
-      <!-- BOTÃO ADOBE -->
+             onchange="processarFoto(this)">
+      <div style="background:#FFF3F0;border-radius:12px;padding:0.9rem;margin-bottom:1rem;">
+        <p style="font-size:12px;color:#C2185B;line-height:1.6;margin:0;">
+          💡 <strong>No Adobe Express:</strong> toque na foto → <strong>"Remover fundo"</strong> → escolha o novo fundo → salve em PNG
+        </p>
+      </div>
       <button id="btnGerarAdobe" onclick="abrirClaudeAdobe()" disabled
         style="width:100%;padding:1.1rem;background:#ccc;color:#fff;border:none;
                border-radius:16px;font-size:15px;font-weight:500;cursor:not-allowed;
@@ -747,7 +734,6 @@ html, body {
                transition:background 0.2s;">
         🎨 Abrir no Adobe Express
       </button>
-
       <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
     </div>
   </div>
@@ -979,19 +965,18 @@ function enviarPrompt(texto) {
   // ── VIA CLAUDE ────────────────────────────
   function abrirClaudeDireto() {
     const prompt =
-      'Olá! Sou da Helena Acessórios e preciso otimizar a foto de uma peça para o Instagram.\n\n' +
-      'IMPORTANTE: A arte final deve ser entregue como IMAGEM gerada (PNG ou JPEG), nunca como HTML ou código.\n\n' +
+      'Olá! Sou da Helena Acessórios e preciso melhorar a foto de uma peça para publicar no Instagram.\n\n' +
+      'IMPORTANTE: A arte final deve ser entregue como IMAGEM em PNG ou JPEG de alta resolução — nunca como HTML ou código.\n\n' +
       'Por favor me oriente passo a passo, uma pergunta de cada vez:\n' +
       '1. Peça para eu enviar a foto da peça\n' +
-      '2. Pergunte qual fundo desejo (opções: mármore branco, mármore preto, flores rosé, madeira clara, veludo, revista Vogue, estúdio branco, identidade Helena violeta/rosa ou outro)\n' +
-      '3. Pergunte se quero marca d\'água discreta com o logo da Helena Acessórios no canto inferior direito\n' +
-      '4. Pergunte se quero incluir algum texto na arte\n' +
-      '5. Com tudo respondido, USE A FERRAMENTA DE GERAÇÃO DE IMAGEM para criar a arte:\n' +
-      '   — Composição 1080x1080px quadrada\n' +
-      '   — Peça da foto recortada com precisão sobre o fundo escolhido\n' +
-      '   — Iluminação natural e sombra suave\n' +
-      '   — Estilo editorial de luxo, foto de produto profissional\n' +
-      '   — Entregue como imagem PNG ou JPEG para download direto\n\n' +
+      '2. Pergunte se desejo incluir marca d\'água discreta com o logo da Helena Acessórios no canto inferior direito\n' +
+      '3. Pergunte se desejo incluir algum texto na arte (ex: preço, nome da peça, arroba)\n' +
+      '4. Com tudo respondido, melhore a foto mantendo o fundo original:\n' +
+      '   — Ajuste brilho, contraste e nitidez\n' +
+      '   — Melhore as cores da peça\n' +
+      '   — Adicione logo e/ou texto conforme escolhido\n' +
+      '   — Formato 1080x1080px quadrado\n' +
+      '   — Entregue como imagem PNG ou JPEG para download\n\n' +
       'Comece pedindo a foto!';
     window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
   }
