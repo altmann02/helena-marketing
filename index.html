@@ -1351,17 +1351,20 @@ function enviarPrompt(texto) {
   function abrirClaudeDireto() {
     const temLogo = _cTipoMarca === 'logo' || _cTipoMarca === 'padrao';
     const logoInstr = temLogo
-      ? 'A marca d\'água da Helena Acessórios JÁ ESTÁ APLICADA na foto. NÃO adicione outra.'
-      : 'Não incluir marca d\'água.';
+      ? '⚠️ ATENÇÃO: O logo da Helena Acessórios JÁ ESTÁ NA FOTO (canto inferior direito). PROIBIDO adicionar qualquer texto, logo, marca d\'água ou assinatura — a foto já está finalizada com a marca.'
+      : '⚠️ ATENÇÃO: NÃO adicionar nenhum texto, logo, marca d\'água ou assinatura na foto.';
 
     const prompt =
       'Sou da Helena Acessórios.\n\n' +
-      'IMPORTANTE: Entregue a arte final como IMAGEM JPEG de alta resolução — nunca HTML ou código.\n\n' +
-      'Toque no + e anexe a foto "helena_foto_com_logo" da sua galeria.\n\n' +
-      'Ao receber a foto, melhore:\n' +
+      'REGRAS ABSOLUTAS — NÃO pode quebrar nenhuma:\n' +
+      '1. Entregar APENAS como IMAGEM JPEG de alta resolução — NUNCA HTML ou código\n' +
+      '2. ' + logoInstr + '\n' +
+      '3. NÃO escrever "helena", "acessórios", "@helena" ou qualquer texto na imagem\n' +
+      '4. NÃO adicionar marcas, logos ou overlays de nenhum tipo\n\n' +
+      'Toque no + e anexe a foto da galeria.\n\n' +
+      'Ao receber a foto, APENAS melhore:\n' +
       '— Brilho, contraste e nitidez\n' +
       '— Cores da peça mais vibrantes e profissionais\n' +
-      '— ' + logoInstr + '\n' +
       '— Formato 1080x1080px quadrado\n' +
       '— Entregue em JPEG de alta resolução para download\n\n' +
       'Pode pedir a foto!';
