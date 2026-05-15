@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Helena">
 <meta name="theme-color" content="#4A1A5C">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>Helena Acessórios · Painel</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -967,14 +971,30 @@ function enviarPrompt(texto) {
     const prompt =
       'Olá! Sou da Helena Acessórios e preciso melhorar a foto de uma peça para publicar no Instagram.\n\n' +
       'IMPORTANTE: A arte final deve ser entregue como IMAGEM em PNG ou JPEG de alta resolução — nunca como HTML ou código.\n\n' +
-      'Por favor me oriente passo a passo, uma pergunta de cada vez:\n' +
-      '1. Peça para eu enviar a foto da peça\n' +
-      '2. Pergunte se desejo incluir marca d\'água discreta com o logo da Helena Acessórios no canto inferior direito\n' +
-      '3. Pergunte se desejo incluir algum texto na arte (ex: preço, nome da peça, arroba)\n' +
+      'Por favor me oriente passo a passo, uma pergunta de cada vez:\n\n' +
+      '1. Peça para eu enviar a foto da peça\n\n' +
+      '2. Pergunte se desejo incluir marca d\'água da loja. Se sim, pergunte qual estilo prefere:\n\n' +
+      '   ESTILO A — Logo pequeno no canto:\n' +
+      '   Coloque o logo "helena acessórios" discretamente no canto inferior direito, tamanho pequeno, opacidade 35-50%.\n' +
+      '   Escolha a cor do logo conforme o tom da foto:\n' +
+      '   · Fundo escuro/preto → logo branco\n' +
+      '   · Fundo claro/branco → logo violeta escuro (#4A1A5C)\n' +
+      '   · Fundo rosa → logo violeta (#4A1A5C)\n' +
+      '   · Fundo violeta → logo branco ou rosa (#E8657F)\n' +
+      '   O logo tem: "helena" em letras minúsculas geométricas modernas com ícone de diamante/anel integrado à letra central, e "ACESSÓRIOS" em letras finas espaçadas abaixo.\n\n' +
+      '   ESTILO B — Padrão de marca d\'água no fundo (bem sutil):\n' +
+      '   Aplique o padrão da marca Helena como marca d\'água ATRÁS da foto, opacidade muito baixa (5-15%), quase imperceptível — como papel timbrado. O padrão fica no fundo, a foto da peça fica em destaque total na frente.\n' +
+      '   Padrões disponíveis:\n' +
+      '   · Cruzes pequenas sutis (rosa em violeta, ou violeta em rosa)\n' +
+      '   · Letras "helena" espalhadas aleatoriamente\n' +
+      '   · Padrão com "e" em círculos e diamantes\n' +
+      '   · Pixel art geométrico da marca\n' +
+      '   Escolha o padrão que mais harmoniza com as cores da foto, sempre priorizando que a PEÇA seja o destaque principal.\n\n' +
+      '3. Pergunte se desejo incluir algum texto na arte (ex: preço, nome da peça, @helena_acessorios_semijoias). Se sim, use tipografia elegante nas cores da marca (violeta #4A1A5C ou rosa #E8657F ou branco).\n\n' +
       '4. Com tudo respondido, melhore a foto mantendo o fundo original:\n' +
       '   — Ajuste brilho, contraste e nitidez\n' +
-      '   — Melhore as cores da peça\n' +
-      '   — Adicione logo e/ou texto conforme escolhido\n' +
+      '   — Melhore as cores da peça para ficarem mais vibrantes e profissionais\n' +
+      '   — Adicione marca d\'água e/ou texto conforme escolhido\n' +
       '   — Formato 1080x1080px quadrado\n' +
       '   — Entregue como imagem PNG ou JPEG para download\n\n' +
       'Comece pedindo a foto!';
@@ -1340,6 +1360,50 @@ document.addEventListener('touchend', function(e) {
   transition:opacity 0.3s,transform 0.3s;
   pointer-events:none;white-space:nowrap;
   box-shadow:0 4px 20px rgba(74,26,92,0.4);">
+</div>
+
+<!-- ════ PWA: Service Worker ════ -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('[PWA] Service Worker registrado'))
+        .catch(err => console.log('[PWA] Erro SW:', err));
+    });
+  }
+
+  // Prompt de instalação Android
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('btnInstalarApp').style.display = 'flex';
+  });
+
+  function instalarApp() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        document.getElementById('btnInstalarApp').style.display = 'none';
+      });
+    }
+  }
+
+  window.addEventListener('appinstalled', () => {
+    document.getElementById('btnInstalarApp').style.display = 'none';
+  });
+</script>
+
+<!-- Botão flutuante instalar app -->
+<div id="btnInstalarApp" onclick="instalarApp()" style="
+  display:none;position:fixed;bottom:24px;right:16px;z-index:9990;
+  background:#4A1A5C;color:#fff;border:none;border-radius:30px;
+  padding:0.75rem 1.2rem;font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:500;cursor:pointer;
+  box-shadow:0 4px 20px rgba(74,26,92,0.45);
+  align-items:center;gap:8px;">
+  📲 Instalar app
 </div>
 
 </body>

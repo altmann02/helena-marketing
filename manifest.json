@@ -1,0 +1,26 @@
+{
+  "name": "Helena Acessórios · Painel",
+  "short_name": "Helena",
+  "description": "Painel de marketing da Helena Acessórios",
+  "start_url": "/helena-marketing/",
+  "scope": "/helena-marketing/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#4A1A5C",
+  "theme_color": "#4A1A5C",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
