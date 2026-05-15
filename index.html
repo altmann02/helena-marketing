@@ -664,27 +664,79 @@ html, body {
       </div>
     </div>
     <div class="sub-body">
+
       <div class="claude-bubble">
         <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">Vou abrir o Claude! Ele vai pedir a foto, perguntar sobre logo e texto — e entregar a arte em PNG pronta para publicar. 💜</p>
+        <p class="claude-txt">Configure abaixo e o painel já aplica o logo real na foto antes de abrir o Claude! 💜</p>
       </div>
-      <div style="background:#F7F0FA;border-radius:14px;padding:1.1rem;margin-bottom:1.5rem;">
-        <p style="font-size:13px;font-weight:600;color:#4A1A5C;margin:0 0 0.5rem;">Como vai funcionar:</p>
-        <p style="font-size:13px;color:#4A1A5C;line-height:1.9;margin:0;">
-          <strong>1.</strong> Claude pede para você <strong>enviar a foto</strong> 📷<br>
-          <strong>2.</strong> Pergunta se quer <strong>marca d'água</strong> com logo da loja 💜<br>
-          <strong>3.</strong> Pergunta se quer <strong>texto</strong> na arte ✍️<br>
-          <strong>4.</strong> Entrega a arte em <strong>PNG de alta resolução</strong> pronta para publicar! ✨
-        </p>
+
+      <!-- PASSO 1: FOTO -->
+      <p class="passo-label">Passo 1 — selecione a foto da peça</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+        <div class="fundo-card" id="ocFotoGal" onclick="escolheFotoC('galeria')" style="text-align:center;padding:1rem 0.5rem;">
+          🖼️<br><span style="font-size:12px;margin-top:4px;display:block;">Da galeria</span>
+        </div>
+        <div class="fundo-card" id="ocFotoCam" onclick="escolheFotoC('camera')" style="text-align:center;padding:1rem 0.5rem;">
+          📷<br><span style="font-size:12px;margin-top:4px;display:block;">Tirar foto agora</span>
+        </div>
       </div>
-      <button onclick="abrirClaudeDireto()"
-        style="width:100%;padding:1.1rem;background:#4A1A5C;color:#fff;border:none;
-               border-radius:16px;font-size:16px;font-weight:500;cursor:pointer;
+      <div id="cFotoPreviewWrap" style="display:none;margin-bottom:1rem;text-align:center;">
+        <img id="cFotoPreview" src="" style="max-width:100%;max-height:150px;border-radius:12px;border:2px solid #EDE0F2;object-fit:cover;">
+        <p style="font-size:11px;color:#9B5AB5;margin-top:6px;">✅ Foto selecionada!</p>
+      </div>
+      <input type="file" id="cInputGaleria" accept="image/*" style="display:none" onchange="processarFotoC(this)">
+      <input type="file" id="cInputCamera" accept="image/*" capture="environment" style="display:none" onchange="processarFotoC(this)">
+
+      <!-- PASSO 2: MARCA D'ÁGUA -->
+      <p class="passo-label">Passo 2 — marca d'água</p>
+      <p class="q-titulo">Quer incluir o logo da Helena?</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.75rem;">
+        <div class="fundo-card" id="cSimLogo" onclick="cEscolheLogo(true)" style="text-align:center;">✅ Sim</div>
+        <div class="fundo-card" id="cNaoLogo" onclick="cEscolheLogo(false)" style="text-align:center;">❌ Não</div>
+      </div>
+
+      <!-- Escolha do logo -->
+      <div id="cLogoOpcoes" style="display:none;margin-bottom:1.25rem;">
+        <p class="q-hint">Escolha a versão do logo:</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="fundo-card" id="cLogo1" onclick="cSelecionaLogo('branco_preto')" style="background:#222;color:#fff;text-align:center;font-size:12px;padding:0.75rem;">Logo branco<br><span style="opacity:0.6;font-size:10px;">para fotos escuras</span></div>
+          <div class="fundo-card" id="cLogo2" onclick="cSelecionaLogo('preto_branco')" style="background:#fff;color:#4A1A5C;border:1px solid #EDE0F2;text-align:center;font-size:12px;padding:0.75rem;">Logo violeta<br><span style="opacity:0.6;font-size:10px;">para fotos claras</span></div>
+          <div class="fundo-card" id="cLogo3" onclick="cSelecionaLogo('rosa')" style="background:#4A1A5C;color:#E8657F;text-align:center;font-size:12px;padding:0.75rem;">Logo rosa<br><span style="opacity:0.6;font-size:10px;">para fotos violeta</span></div>
+          <div class="fundo-card" id="cLogo4" onclick="cSelecionaLogo('original')" style="background:#E8657F;color:#fff;text-align:center;font-size:12px;padding:0.75rem;">Logo original<br><span style="opacity:0.6;font-size:10px;">colorido</span></div>
+        </div>
+        <!-- Preview do logo aplicado -->
+        <div id="cLogoPreviewWrap" style="display:none;margin-top:10px;text-align:center;">
+          <img id="cLogoPreview" src="" style="max-width:100%;max-height:160px;border-radius:12px;border:2px solid #EDE0F2;">
+          <p style="font-size:11px;color:#9B5AB5;margin-top:6px;">✅ Logo aplicado!</p>
+        </div>
+      </div>
+
+      <!-- PASSO 3: TEXTO -->
+      <p class="passo-label">Passo 3 — texto na arte</p>
+      <p class="q-titulo">Quer incluir texto?</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.75rem;">
+        <div class="fundo-card" id="cSimTxt" onclick="cEscolheTexto(true)" style="text-align:center;">✅ Sim</div>
+        <div class="fundo-card" id="cNaoTxt" onclick="cEscolheTexto(false)" style="text-align:center;">❌ Não</div>
+      </div>
+      <div id="cTextoWrap" style="display:none;margin-bottom:1.25rem;">
+        <input id="cTextoVal" type="text" placeholder="Ex: Semi joia · R$ 89,90 · @helena_acessorios"
+          style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;border-radius:10px;
+                 font-size:14px;font-family:'DM Sans',sans-serif;outline:none;">
+      </div>
+
+      <!-- BOTÃO -->
+      <button id="btnAbrirClaudeC" onclick="abrirClaudeDireto()" disabled
+        style="width:100%;padding:1.1rem;background:#ccc;color:#fff;border:none;
+               border-radius:16px;font-size:16px;font-weight:500;cursor:not-allowed;
                font-family:'DM Sans',sans-serif;margin-bottom:10px;
-               display:flex;align-items:center;justify-content:center;gap:10px;">
+               display:flex;align-items:center;justify-content:center;gap:10px;
+               transition:background 0.2s;">
         🤖 Abrir Claude
       </button>
       <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
+
+      <!-- Canvas oculto para composição -->
+      <canvas id="cCanvas" style="display:none;"></canvas>
     </div>
   </div>
 </div>
@@ -1003,41 +1055,166 @@ function enviarPrompt(texto) {
     reader.readAsDataURL(file);
   }
 
-  // ── VIA CLAUDE ────────────────────────────
-  function abrirClaudeDireto() {
-    const prompt =
-      'Olá! Sou da Helena Acessórios e preciso melhorar a foto de uma peça para publicar no Instagram.\n\n' +
-      'IMPORTANTE: A arte final deve ser entregue como IMAGEM em PNG ou JPEG de alta resolução — nunca como HTML ou código.\n\n' +
-      'Por favor me oriente passo a passo, uma pergunta de cada vez:\n\n' +
-      '1. Peça para eu enviar a foto da peça\n\n' +
-      '2. Pergunte se desejo incluir marca d\'água da loja. Se sim, pergunte qual estilo prefere:\n\n' +
-      '   ESTILO A — Logo pequeno no canto:\n' +
-      '   Coloque o logo "helena acessórios" discretamente no canto inferior direito, tamanho pequeno, opacidade 35-50%.\n' +
-      '   Escolha a cor do logo conforme o tom da foto:\n' +
-      '   · Fundo escuro/preto → logo branco\n' +
-      '   · Fundo claro/branco → logo violeta escuro (#4A1A5C)\n' +
-      '   · Fundo rosa → logo violeta (#4A1A5C)\n' +
-      '   · Fundo violeta → logo branco ou rosa (#E8657F)\n' +
-      '   O logo tem: "helena" em letras minúsculas geométricas modernas com ícone de diamante/anel integrado à letra central, e "ACESSÓRIOS" em letras finas espaçadas abaixo.\n\n' +
-      '   ESTILO B — Padrão de marca d\'água no fundo (bem sutil):\n' +
-      '   Aplique o padrão da marca Helena como marca d\'água ATRÁS da foto, opacidade muito baixa (5-15%), quase imperceptível — como papel timbrado. O padrão fica no fundo, a foto da peça fica em destaque total na frente.\n' +
-      '   Padrões disponíveis:\n' +
-      '   · Cruzes pequenas sutis (rosa em violeta, ou violeta em rosa)\n' +
-      '   · Letras "helena" espalhadas aleatoriamente\n' +
-      '   · Padrão com "e" em círculos e diamantes\n' +
-      '   · Pixel art geométrico da marca\n' +
-      '   Escolha o padrão que mais harmoniza com as cores da foto, sempre priorizando que a PEÇA seja o destaque principal.\n\n' +
-      '3. Pergunte se desejo incluir algum texto na arte (ex: preço, nome da peça, @helena_acessorios_semijoias). Se sim, use tipografia elegante nas cores da marca (violeta #4A1A5C ou rosa #E8657F ou branco).\n\n' +
-      '4. Com tudo respondido, melhore a foto mantendo o fundo original:\n' +
-      '   — Ajuste brilho, contraste e nitidez\n' +
-      '   — Melhore as cores da peça para ficarem mais vibrantes e profissionais\n' +
-      '   — Adicione marca d\'água e/ou texto conforme escolhido\n' +
-      '   — Formato 1080x1080px quadrado\n' +
-      '   — Entregue como imagem PNG ou JPEG para download\n\n' +
-      'Comece pedindo a foto!';
-    window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
+  // ── VIA CLAUDE: estado ────────────────────
+  let _cFoto      = null;   // base64 foto original
+  let _cFotoComp  = null;   // base64 foto com logo aplicado
+  let _cFotoMime  = 'image/jpeg';
+  let _cComLogo   = null;   // true/false
+  let _cLogoSel   = null;   // qual logo escolhido
+  let _cComTexto  = null;   // true/false
+
+  // Logos com fundo transparente hospedados no GitHub
+  const LOGOS = {
+    branco_preto : 'logo_branco.png',      // branco transparente — para fotos escuras
+    preto_branco : 'logo_violeta.png',     // violeta transparente — para fotos claras
+    rosa         : 'logo_rosa.png',        // rosa transparente — para fotos violeta/escuras
+    original     : 'logo_branco_rosa.png', // branco+rosa transparente — versão colorida
+  };
+
+  function escolheFotoC(tipo) {
+    document.getElementById('ocFotoGal').classList.toggle('selecionado', tipo === 'galeria');
+    document.getElementById('ocFotoCam').classList.toggle('selecionado', tipo === 'camera');
+    if (tipo === 'galeria') document.getElementById('cInputGaleria').click();
+    else                    document.getElementById('cInputCamera').click();
   }
 
+  function processarFotoC(input) {
+    const file = input.files[0];
+    if (!file) return;
+    _cFotoMime = file.type || 'image/jpeg';
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      _cFoto = ev.target.result;
+      _cFotoComp = _cFoto; // sem logo por padrão
+      document.getElementById('cFotoPreview').src = _cFoto;
+      document.getElementById('cFotoPreviewWrap').style.display = 'block';
+      cAtualizaBtn();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function cEscolheLogo(sim) {
+    _cComLogo = sim;
+    document.getElementById('cSimLogo').className = 'fundo-card' + (sim  ? ' selecionado' : '');
+    document.getElementById('cNaoLogo').className = 'fundo-card' + (!sim ? ' selecionado' : '');
+    document.getElementById('cLogoOpcoes').style.display = sim ? 'block' : 'none';
+    if (!sim) { _cLogoSel = null; _cFotoComp = _cFoto; }
+    cAtualizaBtn();
+  }
+
+  function cSelecionaLogo(tipo) {
+    _cLogoSel = tipo;
+    // Marca seleção visual
+    ['cLogo1','cLogo2','cLogo3','cLogo4'].forEach(id => {
+      document.getElementById(id).style.outline = 'none';
+    });
+    const mapa = {branco_preto:'cLogo1', preto_branco:'cLogo2', rosa:'cLogo3', original:'cLogo4'};
+    document.getElementById(mapa[tipo]).style.outline = '3px solid #E8657F';
+
+    // Compõe foto + logo via canvas
+    aplicarLogoCanvas(tipo);
+  }
+
+  function aplicarLogoCanvas(tipoLogo) {
+    const canvas  = document.getElementById('cCanvas');
+    const ctx     = canvas.getContext('2d');
+
+    const fotoImg = new Image();
+    fotoImg.onload = () => {
+      // Define tamanho do canvas igual à foto
+      canvas.width  = fotoImg.width;
+      canvas.height = fotoImg.height;
+
+      // Desenha foto
+      ctx.drawImage(fotoImg, 0, 0);
+
+      // Carrega logo
+      const logoImg = new Image();
+      logoImg.crossOrigin = 'anonymous';
+      // Usa logo em base64 dos arquivos do projeto via fetch
+      const logoUrl = LOGOS[tipoLogo];
+
+      logoImg.onload = () => {
+        // Logo no canto inferior direito — 22% da largura da foto
+        const logoW  = Math.round(canvas.width * 0.22);
+        const logoH  = Math.round(logoImg.height * (logoW / logoImg.width));
+        const margin = Math.round(canvas.width * 0.03);
+        const x      = canvas.width  - logoW - margin;
+        const y      = canvas.height - logoH - margin;
+
+        // Aplica com opacidade 50%
+        ctx.globalAlpha = 0.50;
+        ctx.drawImage(logoImg, x, y, logoW, logoH);
+        ctx.globalAlpha = 1.0;
+
+        // Salva resultado
+        _cFotoComp = canvas.toDataURL('image/jpeg', 0.92);
+
+        // Mostra preview
+        document.getElementById('cLogoPreview').src = _cFotoComp;
+        document.getElementById('cLogoPreviewWrap').style.display = 'block';
+        cAtualizaBtn();
+      };
+      logoImg.onerror = () => {
+        // Se não conseguir carregar, usa foto sem logo
+        _cFotoComp = _cFoto;
+        cAtualizaBtn();
+      };
+      logoImg.src = logoUrl;
+    };
+    fotoImg.src = _cFoto;
+  }
+
+  function cEscolheTexto(sim) {
+    _cComTexto = sim;
+    document.getElementById('cSimTxt').className = 'fundo-card' + (sim  ? ' selecionado' : '');
+    document.getElementById('cNaoTxt').className = 'fundo-card' + (!sim ? ' selecionado' : '');
+    document.getElementById('cTextoWrap').style.display = sim ? 'block' : 'none';
+    cAtualizaBtn();
+  }
+
+  function cAtualizaBtn() {
+    const logoOk  = _cComLogo === false || (_cComLogo === true && _cLogoSel);
+    const textoOk = _cComTexto !== null;
+    const ok      = _cFoto && logoOk && textoOk;
+    const btn     = document.getElementById('btnAbrirClaudeC');
+    if (!btn) return;
+    btn.disabled       = !ok;
+    btn.style.background = ok ? '#4A1A5C' : '#ccc';
+    btn.style.cursor     = ok ? 'pointer'  : 'not-allowed';
+  }
+
+  // ── VIA CLAUDE: abre com foto já com logo aplicado ──
+  function abrirClaudeDireto() {
+    const textoVal = document.getElementById('cTextoVal')?.value?.trim() || '';
+    const textoInstr = _cComTexto && textoVal
+      ? `Inclua o texto "${textoVal}" na arte com tipografia elegante nas cores da marca (violeta #4A1A5C ou rosa #E8657F ou branco).`
+      : _cComTexto
+        ? 'Inclua um texto elegante com o arroba @helena_acessorios_semijoias.'
+        : 'Não incluir texto adicional.';
+
+    const logoInstr = _cComLogo
+      ? 'O logo da Helena Acessórios já está aplicado na foto que estou enviando (canto inferior direito). Não precisa adicionar logo.'
+      : 'Não incluir logo.';
+
+    const prompt =
+      'Olá! Sou da Helena Acessórios.\n\n' +
+      'IMPORTANTE: A arte final deve ser entregue como IMAGEM em PNG ou JPEG de alta resolução — nunca como HTML ou código.\n\n' +
+      'Já estou enviando a foto da peça com os ajustes feitos.\n\n' +
+      'Por favor melhore a foto:\n' +
+      '— Ajuste brilho, contraste e nitidez\n' +
+      '— Melhore as cores da peça para ficarem mais vibrantes e profissionais\n' +
+      '— ' + logoInstr + '\n' +
+      '— ' + textoInstr + '\n' +
+      '— Formato 1080x1080px quadrado\n' +
+      '— Entregue como imagem PNG ou JPEG para download\n\n' +
+      'Vou anexar a foto agora!';
+
+    // Mostra modal com foto composta para salvar e abrir Claude
+    document.getElementById('previewFotoModal').src = _cFotoComp || _cFoto;
+    document.getElementById('modalInstrucaoClaude').style.display = 'flex';
+    document.getElementById('modalInstrucaoClaude').dataset.prompt = prompt;
+  }
   // ── VIA ADOBE — funções legadas mantidas ──
   function escolheFundoAdobe() {}
   function atualizaOutroAdobe() {}
@@ -1046,7 +1223,11 @@ function enviarPrompt(texto) {
   function atualizaTextoArte() {}
   function atualizaBotoes() {}
   function gerarComClaude() { abrirClaudeDireto(); }
-  function abrirClaudeAgora() {}
+  function abrirClaudeAgora() {
+    const prompt = document.getElementById('modalInstrucaoClaude').dataset.prompt;
+    document.getElementById('modalInstrucaoClaude').style.display = 'none';
+    window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
+  }
   function fecharModalClaude() {
     const m = document.getElementById('modalInstrucaoClaude');
     if (m) m.style.display = 'none';
