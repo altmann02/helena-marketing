@@ -768,33 +768,35 @@ html, body {
           </p>
         </div>
 
-        <!-- Preview resultado -->
+        <!-- Preview resultado + instrução salvar -->
         <div id="cLogoPreviewWrap" style="display:none;margin-bottom:1rem;">
-          <p style="color:rgba(255,255,255,0.8);font-size:12px;margin:0 0 6px;">📸 Prévia com marca d'água:</p>
-          <div style="position:relative;border-radius:14px;overflow:hidden;border:2px solid #E8657F;">
-            <img id="cLogoPreview" src=""
-              style="width:100%;max-height:280px;object-fit:contain;display:block;background:#000;">
-            <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.5));
-                        padding:0.5rem;text-align:center;">
-              <p style="color:#fff;font-size:11px;margin:0;opacity:0.9;">✅ Logo aplicado — aprovado?</p>
-            </div>
+          <p style="color:rgba(255,255,255,0.9);font-size:13px;font-weight:500;margin:0 0 8px;">
+            📸 Prévia pronta — como salvar:
+          </p>
+          <!-- Instrução destacada -->
+          <div style="background:rgba(232,101,127,0.25);border:1px solid #E8657F;border-radius:12px;
+                      padding:0.75rem;margin-bottom:10px;text-align:center;">
+            <p style="color:#fff;font-size:14px;font-weight:600;margin:0 0 4px;">
+              📲 Toque e segure na foto abaixo
+            </p>
+            <p style="color:rgba(255,255,255,0.8);font-size:12px;margin:0;">
+              → Selecione <strong>"Salvar imagem"</strong> ou <strong>"Baixar"</strong>
+            </p>
           </div>
+          <!-- Foto com logo — tocar e segurar para salvar -->
+          <div style="border-radius:14px;overflow:hidden;border:2px solid #E8657F;">
+            <img id="cLogoPreview" src=""
+              style="width:100%;display:block;object-fit:contain;background:#000;"
+              oncontextmenu="return true;">
+          </div>
+          <!-- Botão continuar aparece após 3s de ver a prévia -->
+          <button id="btnContinuar" onclick="mostrarPasso2()"
+            style="width:100%;margin-top:10px;padding:1rem;background:#E8657F;color:#fff;
+                   border:none;border-radius:14px;font-size:15px;font-weight:600;
+                   font-family:'DM Sans',sans-serif;cursor:pointer;">
+            ✅ Salvei a foto — continuar
+          </button>
         </div>
-
-        <button id="btnBaixarFoto" onclick="baixarFotoPreparada()" disabled
-          style="width:100%;padding:1rem;background:rgba(255,255,255,0.2);color:#ccc;border:none;
-                 border-radius:14px;font-size:15px;font-weight:600;cursor:not-allowed;
-                 font-family:'DM Sans',sans-serif;transition:all 0.2s;margin-bottom:8px;
-                 display:flex;align-items:center;justify-content:center;gap:8px;">
-          📥 Salvar foto na galeria
-        </button>
-
-        <button id="btnAbrirFoto" onclick="abrirFotoNovaAba()" disabled
-          style="width:100%;padding:0.7rem;background:transparent;color:rgba(255,255,255,0.5);
-                 border:1px solid rgba(255,255,255,0.2);border-radius:12px;font-size:12px;
-                 font-family:'DM Sans',sans-serif;cursor:not-allowed;transition:all 0.2s;">
-          📂 Abrir foto em nova aba (toque e segure para salvar)
-        </button>
       </div>
 
       <!-- ══ PASSO 2 ══ — aparece só após salvar -->
@@ -1324,81 +1326,26 @@ function enviarPrompt(texto) {
   function cEscolheLogo(sim) {}
 
   function cAtualizaBtn() {
-    // Libera quando: tem foto E (sem marca escolhido OU preview já gerado)
-    const semMarca  = _cTipoMarca === 'nenhum';
-    const comPreview = (_cTipoMarca === 'logo' || _cTipoMarca === 'padrao') && _cFotoComp && _cFotoComp !== _cFoto;
+    // Libera quando: tem foto E (sem marca OU preview gerado com marca)
+    const semMarca   = _cTipoMarca === 'nenhum';
+    const comPreview = (_cTipoMarca === 'logo' || _cTipoMarca === 'padrao')
+                       && _cFotoComp && _cFotoComp !== _cFoto;
     const ok = !!_cFoto && (semMarca || comPreview);
 
-    const btn  = document.getElementById('btnBaixarFoto');
-    const btn2 = document.getElementById('btnAbrirFoto');
-    [btn, btn2].forEach(b => {
-      if (!b) return;
-      b.disabled = !ok;
-      b.style.cursor = ok ? 'pointer' : 'not-allowed';
-    });
-    if (btn) {
-      btn.style.background = ok ? '#E8657F' : 'rgba(255,255,255,0.2)';
-      btn.style.color      = ok ? '#fff'    : '#ccc';
+    // Para "sem marca" — mostra passo 2 direto sem preview
+    if (semMarca && ok) {
+      mostrarPasso2();
     }
-    if (btn2) {
-      btn2.style.color       = ok ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)';
-      btn2.style.borderColor = ok ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.15)';
-    }
+    // Para logo/padrão — preview já apareceu via aplicarLogoCanvas/aplicarPadraoCanvas
   }
 
     function mostrarPasso2() {
-    setTimeout(() => {
-      mostrarToast('✅ Foto pronta! Role para ver o Passo 2.');
-      const p2 = document.getElementById('passo2Claude');
-      if (p2) {
-        p2.style.display = 'block';
-        setTimeout(() => p2.scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
-      }
-    }, 700);
-  }
-
-  // Salvar via Web Share API (melhor no mobile) ou fallback blob
-  async function baixarFotoPreparada() {
-    const foto = _cFotoComp || _cFoto;
-
-    try {
-      // Converte base64 para blob e faz download direto
-      const res  = await fetch(foto);
-      const blob = await res.blob();
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href     = url;
-      a.download = 'helena_foto_com_logo.jpg';
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => {
-        URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      }, 1000);
-      mostrarPasso2();
-    } catch(e) {
-      console.error('Erro download:', e);
-      abrirFotoNovaAba();
+    const p2 = document.getElementById('passo2Claude');
+    if (p2) {
+      p2.style.display = 'block';
+      setTimeout(() => p2.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
     }
-  }
-
-  function abrirFotoNovaAba() {
-    // Abre foto em nova aba — usuário toca e segura para salvar
-    const foto = _cFotoComp || _cFoto;
-    const w = window.open('', '_blank');
-    if (w) {
-      w.document.write(`<!DOCTYPE html><html><head>
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>Salvar foto Helena</title>
-      </head><body style="margin:0;background:#111;text-align:center;font-family:sans-serif;">
-        <p style="color:#fff;padding:16px;font-size:15px;">
-          📥 <strong>Toque e segure na foto → Salvar imagem</strong>
-        </p>
-        <img src="${foto}" style="max-width:100%;display:block;margin:0 auto;">
-      </body></html>`);
-    }
-    mostrarPasso2();
+    mostrarToast('✅ Ótimo! Role para ver o Passo 2.');
   }
 
   function abrirClaudeDireto() {
