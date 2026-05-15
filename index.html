@@ -769,19 +769,24 @@ html, body {
         </div>
 
         <!-- Preview resultado -->
-        <div id="cLogoPreviewWrap" style="display:none;margin-bottom:0.75rem;text-align:center;">
-          <img id="cLogoPreview" src=""
-            style="max-width:100%;max-height:120px;border-radius:10px;object-fit:cover;
-                   border:2px solid #E8657F;">
-          <p style="color:rgba(255,255,255,0.7);font-size:11px;margin-top:4px;">✅ Marca d'água aplicada!</p>
+        <div id="cLogoPreviewWrap" style="display:none;margin-bottom:1rem;">
+          <p style="color:rgba(255,255,255,0.8);font-size:12px;margin:0 0 6px;">📸 Prévia com marca d'água:</p>
+          <div style="position:relative;border-radius:14px;overflow:hidden;border:2px solid #E8657F;">
+            <img id="cLogoPreview" src=""
+              style="width:100%;max-height:280px;object-fit:contain;display:block;background:#000;">
+            <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.5));
+                        padding:0.5rem;text-align:center;">
+              <p style="color:#fff;font-size:11px;margin:0;opacity:0.9;">✅ Logo aplicado — aprovado?</p>
+            </div>
+          </div>
         </div>
 
         <button id="btnBaixarFoto" onclick="baixarFotoPreparada()" disabled
-          style="width:100%;padding:0.9rem;background:rgba(255,255,255,0.2);color:#ccc;border:none;
-                 border-radius:12px;font-size:14px;font-weight:500;cursor:not-allowed;
+          style="width:100%;padding:1rem;background:rgba(255,255,255,0.2);color:#ccc;border:none;
+                 border-radius:14px;font-size:15px;font-weight:600;cursor:not-allowed;
                  font-family:'DM Sans',sans-serif;transition:all 0.2s;
                  display:flex;align-items:center;justify-content:center;gap:8px;">
-          📥 Salvar foto com logo na galeria
+          📥 Salvar foto na galeria
         </button>
       </div>
 
@@ -1216,7 +1221,7 @@ function enviarPrompt(texto) {
       canvas.height = fotoImg.height;
       ctx.drawImage(fotoImg, 0, 0);
       const logoImg = new Image();
-      logoImg.crossOrigin = 'anonymous';
+      // base64 — no crossOrigin needed
       logoImg.onload = () => {
         const logoW  = Math.round(canvas.width * 0.22);
         const logoH  = Math.round(logoImg.height * (logoW / logoImg.width));
