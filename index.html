@@ -1771,7 +1771,8 @@ function enviarPrompt(texto) {
   }
 
   function abrirAdobeDireto() {
-    window.open('https://express.adobe.com', '_blank');
+    // Usa location.href para forçar abertura no app (window.open é bloqueado pelo Android)
+    window.location.href = 'https://express.adobe.com';
   }
 
   function abrirAdobeAgora() {
