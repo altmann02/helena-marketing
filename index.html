@@ -833,44 +833,67 @@ html, body {
       </div>
     </div>
     <div class="sub-body">
+
       <div class="claude-bubble">
-        <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">Selecione a foto da peça — o Adobe Express abre com ela já carregada para remover o fundo e criar nova arte! 💜</p>
+        <p class="claude-nome">Painel Helena · para Camila e Rita</p>
+        <p class="claude-txt">O Adobe Express vai abrir para você editar a foto manualmente e trocar o fundo! 💜</p>
       </div>
-      <p class="passo-label">Selecione a foto da peça</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
-        <div class="fundo-card" id="opcFotoGaleria" onclick="escolheFoto('galeria')"
-             style="text-align:center;padding:1rem 0.5rem;">
-          🖼️<br><span style="font-size:12px;margin-top:4px;display:block;">Da galeria</span>
+
+      <!-- Instruções -->
+      <div style="background:#F7F0FA;border-radius:16px;padding:1.25rem;margin-bottom:1.25rem;">
+        <p style="font-size:13px;font-weight:600;color:#4A1A5C;margin:0 0 0.75rem;">Como fazer no Adobe Express:</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="background:#E8657F;color:#fff;border-radius:50%;width:22px;height:22px;
+                         display:flex;align-items:center;justify-content:center;font-size:11px;
+                         font-weight:700;flex-shrink:0;">1</span>
+            <p style="color:#4A1A5C;font-size:13px;margin:0;line-height:1.5;">
+              Toque em <strong>"Abrir Adobe Express"</strong> abaixo
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="background:#E8657F;color:#fff;border-radius:50%;width:22px;height:22px;
+                         display:flex;align-items:center;justify-content:center;font-size:11px;
+                         font-weight:700;flex-shrink:0;">2</span>
+            <p style="color:#4A1A5C;font-size:13px;margin:0;line-height:1.5;">
+              Toque em <strong>"Remover fundo"</strong> nas ferramentas rápidas
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="background:#E8657F;color:#fff;border-radius:50%;width:22px;height:22px;
+                         display:flex;align-items:center;justify-content:center;font-size:11px;
+                         font-weight:700;flex-shrink:0;">3</span>
+            <p style="color:#4A1A5C;font-size:13px;margin:0;line-height:1.5;">
+              Selecione a <strong>foto da peça</strong> da galeria
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="background:#E8657F;color:#fff;border-radius:50%;width:22px;height:22px;
+                         display:flex;align-items:center;justify-content:center;font-size:11px;
+                         font-weight:700;flex-shrink:0;">4</span>
+            <p style="color:#4A1A5C;font-size:13px;margin:0;line-height:1.5;">
+              Fundo removido! Toque em <strong>"Editar mais"</strong> para escolher novo fundo
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="background:#4A1A5C;color:#fff;border-radius:50%;width:22px;height:22px;
+                         display:flex;align-items:center;justify-content:center;font-size:11px;
+                         font-weight:700;flex-shrink:0;">5</span>
+            <p style="color:#4A1A5C;font-size:13px;margin:0;line-height:1.5;">
+              Salve em <strong>PNG</strong> e publique! ✨
+            </p>
+          </div>
         </div>
-        <div class="fundo-card" id="opcFotoCamera" onclick="escolheFoto('camera')"
-             style="text-align:center;padding:1rem 0.5rem;">
-          📷<br><span style="font-size:12px;margin-top:4px;display:block;">Tirar foto agora</span>
-        </div>
       </div>
-      <div id="fotoPreviewWrap" style="display:none;margin-bottom:1rem;text-align:center;">
-        <img id="fotoPreview" src="" alt="Foto selecionada"
-          style="max-width:100%;max-height:160px;border-radius:12px;
-                 border:2px solid #EDE0F2;object-fit:cover;">
-        <p style="font-size:11px;color:#9B5AB5;margin-top:6px;">✅ Foto selecionada!</p>
-      </div>
-      <input type="file" id="inputGaleria" accept="image/*" style="display:none"
-             onchange="processarFoto(this)">
-      <input type="file" id="inputCamera" accept="image/*" capture="environment" style="display:none"
-             onchange="processarFoto(this)">
-      <div style="background:#FFF3F0;border-radius:12px;padding:0.9rem;margin-bottom:1rem;">
-        <p style="font-size:12px;color:#C2185B;line-height:1.6;margin:0;">
-          💡 <strong>No Adobe Express:</strong> toque na foto → <strong>"Remover fundo"</strong> → escolha o novo fundo → salve em PNG
-        </p>
-      </div>
-      <button id="btnGerarAdobe" onclick="abrirClaudeAdobe()" disabled
-        style="width:100%;padding:1.1rem;background:#ccc;color:#fff;border:none;
-               border-radius:16px;font-size:15px;font-weight:500;cursor:not-allowed;
+
+      <button onclick="abrirAdobeDireto()"
+        style="width:100%;padding:1.1rem;background:#E8657F;color:#fff;border:none;
+               border-radius:16px;font-size:16px;font-weight:600;cursor:pointer;
                font-family:'DM Sans',sans-serif;margin-bottom:10px;
-               display:flex;align-items:center;justify-content:center;gap:10px;
-               transition:background 0.2s;">
-        🎨 Abrir no Adobe Express
+               display:flex;align-items:center;justify-content:center;gap:10px;">
+        🎨 Abrir Adobe Express
       </button>
+
       <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
     </div>
   </div>
@@ -1703,6 +1726,10 @@ function enviarPrompt(texto) {
       mostrarLoadingAdobe(false);
       document.getElementById('instrucaoAdobe').style.display = 'flex';
     }, 900);
+  }
+
+  function abrirAdobeDireto() {
+    window.open('https://www.adobe.com/express/', '_blank');
   }
 
   function abrirAdobeAgora() {
