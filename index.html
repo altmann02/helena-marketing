@@ -898,7 +898,7 @@ html, body {
                          display:flex;align-items:center;justify-content:center;font-size:11px;
                          font-weight:700;flex-shrink:0;">2</span>
             <p style="color:#4A1A5C;font-size:13px;margin:0;line-height:1.5;">
-              No popup toque em <strong>"Adobe Express"</strong> para abrir o app 📲
+              O app abre direto nessa tela inicial 📲
             </p>
           </div>
           <div style="display:flex;gap:10px;align-items:flex-start;">
@@ -906,7 +906,7 @@ html, body {
                          display:flex;align-items:center;justify-content:center;font-size:11px;
                          font-weight:700;flex-shrink:0;">3</span>
             <p style="color:#4A1A5C;font-size:13px;margin:0;line-height:1.5;">
-              No app toque em <strong>"Remover fundo"</strong> nas ferramentas rápidas 🎨
+              Toque em <strong>"Remover fundo"</strong> — está visível na tela inicial 🎨
             </p>
           </div>
           <div style="display:flex;gap:10px;align-items:flex-start;">
@@ -1771,13 +1771,13 @@ function enviarPrompt(texto) {
   }
 
   function abrirAdobeDireto() {
-    window.open('https://www.adobe.com/express/', '_blank');
+    window.open('https://express.adobe.com', '_blank');
   }
 
   function abrirAdobeAgora() {
     document.getElementById('instrucaoAdobe').style.display = 'none';
     // URL principal do Adobe Express — sempre funciona no app e browser
-    window.open('https://www.adobe.com/express/', '_blank');
+    window.open('https://express.adobe.com', '_blank');
   }
 
   function fecharInstrucaoAdobe() {
