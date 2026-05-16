@@ -737,99 +737,84 @@ html, body {
       </div>
 
       <!-- LOGO -->
-      <p class="passo-label">3 — Marca d'água</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:0.75rem;">
+      <p class="passo-label">3 — Inserir logo da loja</p>
+      <!-- Sim / Não -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0.75rem;">
         <div onclick="cTipoMarca('logo')" id="cOpcLogo"
-          style="background:#fff;border-radius:10px;padding:0.6rem;
-                 text-align:center;cursor:pointer;color:#4A1A5C;font-size:11px;line-height:1.4;
-                 border:2px solid #EDE0F2;">
-          <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCAA8ADwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDRooorM+gCiiigAooooAKKKKACkBBJUEZHUZ6UtZs1ybS+u5DC8iCNCxUgY6+tNK5MpW3NKqs135DSFlDKo+UKcsSOSP8APSoHvLg3EgiVVijYAlgMcgHJOeOvpVWcxiS4Mhbm5YBVO3J2jOW6gYqlHuZyqdjWiuI5YwwO3JwVbgg+hqWsmI7UhCwmXznYqJXHBA5O7HIPvVh77NvCyPDHLKAwWUkjH4UOPYqM9NS9RUNnK09pFK4AZ1yQOlTVLLTurhVe5tEninXOxplCs3Xp0qxRQnYGk9yB4IWcO8Cu6DAYrzxURtUzKcybmkMgZeCp6cGrlFF2JxTKq2yh4W3SkxsxyxyWJ4yTTHsFdcRu0UboEdMZyo6cnpV2inzMOREdvCLeCOFSSEGATUlFFSO2lkFFb/8AY1t/el/76H+FH9jW396X/vof4U7GH1iPYwKK3/7Gtv70v/fQ/wAKP7Gtv70v/fQ/wosH1iPYwKK3/wCxrb+9L/30P8KP7Gtv70v/AH0P8KLB9Yj2MCit/wDsa2/vS/8AfQ/wo/sa2/vS/wDfQ/wosH1iJ//Z" style="width:36px;height:36px;border-radius:6px;object-fit:cover;display:block;margin:0 auto 2px;">
-          Logo<br><span style="opacity:0.6;font-size:9px;">canto direito</span>
-        </div>
-        <div onclick="cTipoMarca('padrao')" id="cOpcPadrao"
-          style="background:#fff;border-radius:10px;padding:0.6rem;
-                 text-align:center;cursor:pointer;color:#4A1A5C;font-size:11px;line-height:1.4;
-                 border:2px solid #EDE0F2;">
-          <img src="data:image/jpeg;base64,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" style="width:36px;height:36px;border-radius:6px;object-fit:cover;display:block;margin:0 auto 2px;">
-          Padrão<br><span style="opacity:0.6;font-size:9px;">translúcido</span>
+          style="background:#fff;border-radius:12px;padding:0.8rem;border:2px solid #EDE0F2;
+                 text-align:center;cursor:pointer;color:#4A1A5C;font-size:13px;font-weight:500;">
+          ✅ Sim, inserir logo
         </div>
         <div onclick="cTipoMarca('nenhum')" id="cOpcNenhum"
-          style="background:#fff;border-radius:10px;padding:0.6rem;
-                 text-align:center;cursor:pointer;color:#4A1A5C;font-size:11px;line-height:1.4;
-                 border:2px solid #EDE0F2;">
-          ❌<br><br>Sem<br><span style="opacity:0.6;font-size:9px;">marca</span>
+          style="background:#fff;border-radius:12px;padding:0.8rem;border:2px solid #EDE0F2;
+                 text-align:center;cursor:pointer;color:#4A1A5C;font-size:13px;font-weight:500;">
+          ❌ Não
         </div>
       </div>
 
-      <!-- Sub: Logo -->
+      <!-- Sub: escolha versão do logo -->
       <div id="cLogoOpcoes" style="display:none;margin-bottom:0.75rem;">
-        <p style="color:rgba(255,255,255,0.7);font-size:11px;margin:0 0 6px;">Versão do logo:</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
-          <div id="cLogo1" onclick="cSelecionaLogo('branco_preto')"
-            style="border-radius:12px;overflow:hidden;cursor:pointer;border:3px solid transparent;text-align:center;">
-            <img src="" id="prevLogo1" style="width:100%;height:60px;object-fit:cover;display:block;">
-            <p style="color:#fff;font-size:10px;margin:3px 0;opacity:0.8;">Branco</p>
+        <p style="color:#4A1A5C;font-size:12px;margin:0 0 6px;font-weight:500;">Versão do logo:</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0.75rem;">
+          <div id="cLogo1" onclick="cSelecionaLogo('branco')"
+            style="border-radius:12px;overflow:hidden;cursor:pointer;border:3px solid transparent;background:#222;">
+            <img src="" id="prevLogo1" style="width:100%;height:55px;object-fit:contain;display:block;padding:3px;">
+            <p style="color:#fff;font-size:10px;margin:0;padding:3px 0;text-align:center;">⬜ Branco</p>
           </div>
-          <div id="cLogo2" onclick="cSelecionaLogo('preto_branco')"
-            style="border-radius:12px;overflow:hidden;cursor:pointer;border:3px solid transparent;text-align:center;">
-            <img src="" id="prevLogo2" style="width:100%;height:60px;object-fit:cover;display:block;">
-            <p style="color:#fff;font-size:10px;margin:3px 0;opacity:0.8;">Violeta</p>
+          <div id="cLogo2" onclick="cSelecionaLogo('preto')"
+            style="border-radius:12px;overflow:hidden;cursor:pointer;border:3px solid transparent;background:#f5f5f5;">
+            <img src="" id="prevLogo2" style="width:100%;height:55px;object-fit:contain;display:block;padding:3px;">
+            <p style="color:#333;font-size:10px;margin:0;padding:3px 0;text-align:center;">⬛ Preto</p>
           </div>
-          <div id="cLogo3" onclick="cSelecionaLogo('rosa')"
-            style="border-radius:12px;overflow:hidden;cursor:pointer;border:3px solid transparent;text-align:center;">
-            <img src="" id="prevLogo3" style="width:100%;height:60px;object-fit:cover;display:block;">
-            <p style="color:#fff;font-size:10px;margin:3px 0;opacity:0.8;">Rosa</p>
+          <div id="cLogo3" onclick="cSelecionaLogo('violeta')"
+            style="border-radius:12px;overflow:hidden;cursor:pointer;border:3px solid transparent;background:#F7F0FA;">
+            <img src="" id="prevLogo3" style="width:100%;height:55px;object-fit:contain;display:block;padding:3px;">
+            <p style="color:#4A1A5C;font-size:10px;margin:0;padding:3px 0;text-align:center;">🟣 Violeta</p>
+          </div>
+          <div id="cLogo4" onclick="cSelecionaLogo('rosa')"
+            style="border-radius:12px;overflow:hidden;cursor:pointer;border:3px solid transparent;background:#4A1A5C;">
+            <img src="" id="prevLogo4" style="width:100%;height:55px;object-fit:contain;display:block;padding:3px;">
+            <p style="color:#E8657F;font-size:10px;margin:0;padding:3px 0;text-align:center;">🌸 Rosa</p>
+          </div>
+        </div>
+
+        <p style="color:#4A1A5C;font-size:12px;margin:0 0 6px;font-weight:500;">Posição do logo:</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0.75rem;">
+          <div id="cPos1" onclick="cSelecionaPos('inf-dir')"
+            style="background:#fff;border:2px solid #EDE0F2;border-radius:10px;padding:0.6rem;
+                   text-align:center;cursor:pointer;color:#4A1A5C;font-size:12px;">
+            ↘️ Inf. direito
+          </div>
+          <div id="cPos2" onclick="cSelecionaPos('inf-esq')"
+            style="background:#fff;border:2px solid #EDE0F2;border-radius:10px;padding:0.6rem;
+                   text-align:center;cursor:pointer;color:#4A1A5C;font-size:12px;">
+            ↙️ Inf. esquerdo
+          </div>
+          <div id="cPos3" onclick="cSelecionaPos('sup-dir')"
+            style="background:#fff;border:2px solid #EDE0F2;border-radius:10px;padding:0.6rem;
+                   text-align:center;cursor:pointer;color:#4A1A5C;font-size:12px;">
+            ↗️ Sup. direito
+          </div>
+          <div id="cPos4" onclick="cSelecionaPos('sup-esq')"
+            style="background:#fff;border:2px solid #EDE0F2;border-radius:10px;padding:0.6rem;
+                   text-align:center;cursor:pointer;color:#4A1A5C;font-size:12px;">
+            ↖️ Sup. esquerdo
           </div>
         </div>
       </div>
 
-      <!-- Sub: Padrão -->
-      <div id="cPadraoOpcoes" style="display:none;margin-bottom:0.75rem;">
-        <p style="color:rgba(255,255,255,0.7);font-size:11px;margin:0 0 6px;">Escolha o padrão:</p>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;" id="gridPadroes">
-          <div onclick="cSelecionaPadrao('padrao1')" id="cp1"
-            style="border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;">
-            <img src="data:image/jpeg;base64,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"
-              style="width:100%;height:65px;object-fit:cover;display:block;">
-            <p style="font-size:9px;color:#fff;margin:0;padding:3px;text-align:center;
-                      background:rgba(74,26,92,0.7);">Pixel art</p>
-          </div>
-          <div onclick="cSelecionaPadrao('padrao2')" id="cp2"
-            style="border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;">
-            <img src="data:image/jpeg;base64,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"
-              style="width:100%;height:65px;object-fit:cover;display:block;">
-            <p style="font-size:9px;color:#fff;margin:0;padding:3px;text-align:center;
-                      background:rgba(74,26,92,0.7);">Padrão e</p>
-          </div>
-          <div onclick="cSelecionaPadrao('padrao3')" id="cp3"
-            style="border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;">
-            <img src="data:image/jpeg;base64,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"
-              style="width:100%;height:65px;object-fit:cover;display:block;">
-            <p style="font-size:9px;color:#fff;margin:0;padding:3px;text-align:center;
-                      background:rgba(74,26,92,0.7);">Cruzes rosa</p>
-          </div>
-          <div onclick="cSelecionaPadrao('padrao4')" id="cp4"
-            style="border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;">
-            <img src="data:image/jpeg;base64,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"
-              style="width:100%;height:65px;object-fit:cover;display:block;">
-            <p style="font-size:9px;color:#fff;margin:0;padding:3px;text-align:center;
-                      background:rgba(74,26,92,0.7);">Cruzes violeta</p>
-          </div>
-          <div onclick="cSelecionaPadrao('padrao5')" id="cp5"
-            style="border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;">
-            <img src="data:image/jpeg;base64,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"
-              style="width:100%;height:65px;object-fit:cover;display:block;">
-            <p style="font-size:9px;color:#fff;margin:0;padding:3px;text-align:center;
-                      background:rgba(74,26,92,0.7);">Helena rosa</p>
-          </div>
-          <div onclick="cSelecionaPadrao('padrao6')" id="cp6"
-            style="border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;">
-            <img src="data:image/jpeg;base64,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"
-              style="width:100%;height:65px;object-fit:cover;display:block;">
-            <p style="font-size:9px;color:#fff;margin:0;padding:3px;text-align:center;
-                      background:rgba(74,26,92,0.7);">Helena violeta</p>
-          </div>
+      <!-- Preview logo aplicado -->
+      <div id="cLogoPreviewWrap" style="display:none;margin-bottom:0.75rem;">
+        <p style="color:rgba(255,255,255,0.9);font-size:12px;margin:0 0 6px;">✅ Prévia:</p>
+        <div style="border-radius:12px;overflow:hidden;border:2px solid #E8657F;">
+          <img id="cLogoPreview" src="" style="width:100%;display:block;" oncontextmenu="return true;">
         </div>
+        <button onclick="mostrarPasso2()"
+          style="width:100%;margin-top:8px;padding:0.9rem;background:#E8657F;color:#fff;
+                 border:none;border-radius:12px;font-size:14px;font-weight:600;
+                 font-family:'DM Sans',sans-serif;cursor:pointer;">
+          ✅ Gostei — continuar
+        </button>
       </div>
 
       <!-- BOTÃO GERAR -->
@@ -1236,8 +1221,22 @@ function enviarPrompt(texto) {
   let _cFotoMime  = 'image/jpeg';
   let _cComLogo   = null;
   let _cLogoSel   = null;
-  let _cTipoMarca = null;  // 'logo' | 'padrao' | 'nenhum'
+  let _cLogoPos   = 'inf-dir'; // default inferior direito
+  let _cTipoMarca = null;
   let _cPadraoSel = null;
+
+  function cSelecionaPos(pos) {
+    _cLogoPos = pos;
+    ['cPos1','cPos2','cPos3','cPos4'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.style.background = '#fff'; el.style.borderColor = '#EDE0F2'; }
+    });
+    const mapa = {'inf-dir':'cPos1','inf-esq':'cPos2','sup-dir':'cPos3','sup-esq':'cPos4'};
+    const el = document.getElementById(mapa[pos]);
+    if (el) { el.style.background = '#F7F0FA'; el.style.borderColor = '#E8657F'; }
+    // Re-aplica logo com nova posição se já selecionado
+    if (_cLogoSel) aplicarLogoCanvas(_cLogoSel);
+  }
 
   // Popula logos e padrões assim que a página carrega
   window.addEventListener('load', () => {
@@ -1297,7 +1296,8 @@ function enviarPrompt(texto) {
   /* logos in logos_assets.js */
 
   function verificarBtnGerar() {
-    const ok  = !!_cFoto && _cTipoMarca !== null;
+    const logoOk = _cTipoMarca === 'nenhum' || (_cTipoMarca === 'logo' && _cLogoSel);
+    const ok  = !!_cFoto && _cTipoMarca !== null && logoOk;
     const btn = document.getElementById('btnGerarCanvas');
     if (!btn) return;
     btn.disabled         = !ok;
@@ -1347,11 +1347,9 @@ function enviarPrompt(texto) {
       // 3. Aplica nitidez via convolução simples
       if (ajNitidez) aplicarNitidez(ctx, 1080, 1080);
 
-      // 4. Aplica logo ou padrão
+      // 4. Aplica logo
       if (_cTipoMarca === 'logo' && _cLogoSel) {
         await aplicarLogoFinal(ctx);
-      } else if (_cTipoMarca === 'padrao' && _cPadraoSel) {
-        await aplicarPadraoFinal(ctx);
       }
 
       // 5. Salva resultado
@@ -1390,12 +1388,17 @@ function enviarPrompt(texto) {
     return new Promise(resolve => {
       const logoImg = new Image();
       logoImg.onload = () => {
-        const logoW  = Math.round(1080 * 0.22);
+        const logoW  = Math.round(1080 * 0.20);
         const logoH  = Math.round(logoImg.height * (logoW / logoImg.width));
         const margin = Math.round(1080 * 0.03);
-        ctx.globalAlpha = 0.55;
-        ctx.drawImage(logoImg, 1080 - logoW - margin, 1080 - logoH - margin, logoW, logoH);
-        ctx.globalAlpha = 1.0;
+        // Posição baseada em _cLogoPos
+        let x, y;
+        if (_cLogoPos === 'inf-dir')  { x = 1080 - logoW - margin; y = 1080 - logoH - margin; }
+        if (_cLogoPos === 'inf-esq')  { x = margin;                 y = 1080 - logoH - margin; }
+        if (_cLogoPos === 'sup-dir')  { x = 1080 - logoW - margin; y = margin; }
+        if (_cLogoPos === 'sup-esq')  { x = margin;                 y = margin; }
+        ctx.globalAlpha = 1.0; // logo opaco — fiel e visível
+        ctx.drawImage(logoImg, x, y, logoW, logoH);
         resolve();
       };
       logoImg.onerror = resolve;
@@ -1424,22 +1427,19 @@ function enviarPrompt(texto) {
   function cTipoMarca(tipo) {
     _cTipoMarca = tipo;
     _cLogoSel   = null;
-    _cPadraoSel = null;
     _cFotoComp  = _cFoto;
 
-    ['cOpcLogo','cOpcPadrao','cOpcNenhum'].forEach(id => {
+    ['cOpcLogo','cOpcNenhum'].forEach(id => {
       const el = document.getElementById(id);
-      if (el) el.style.background = 'rgba(255,255,255,0.12)';
+      if (el) { el.style.background = '#fff'; el.style.borderColor = '#EDE0F2'; }
     });
-    const mapa = {logo:'cOpcLogo', padrao:'cOpcPadrao', nenhum:'cOpcNenhum'};
+    const mapa = {logo:'cOpcLogo', nenhum:'cOpcNenhum'};
     const el = document.getElementById(mapa[tipo]);
-    if (el) el.style.background = 'rgba(232,101,127,0.5)';
+    if (el) { el.style.background = '#F7F0FA'; el.style.borderColor = '#E8657F'; }
 
     const loEl = document.getElementById('cLogoOpcoes');
-    const paEl = document.getElementById('cPadraoOpcoes');
     const prEl = document.getElementById('cLogoPreviewWrap');
-    if (loEl) loEl.style.display = tipo === 'logo'   ? 'block' : 'none';
-    if (paEl) paEl.style.display = tipo === 'padrao' ? 'block' : 'none';
+    if (loEl) loEl.style.display = tipo === 'logo' ? 'block' : 'none';
     if (prEl) prEl.style.display = 'none';
 
     verificarBtnGerar();
@@ -1487,9 +1487,13 @@ function enviarPrompt(texto) {
         const logoW  = Math.round(canvas.width * 0.22);
         const logoH  = Math.round(logoImg.height * (logoW / logoImg.width));
         const margin = Math.round(canvas.width * 0.03);
-        ctx.globalAlpha = 0.55;
-        ctx.drawImage(logoImg, canvas.width - logoW - margin, canvas.height - logoH - margin, logoW, logoH);
+        let lx, ly;
+        if (_cLogoPos === 'inf-dir')  { lx = canvas.width - logoW - margin; ly = canvas.height - logoH - margin; }
+        else if (_cLogoPos === 'inf-esq')  { lx = margin; ly = canvas.height - logoH - margin; }
+        else if (_cLogoPos === 'sup-dir')  { lx = canvas.width - logoW - margin; ly = margin; }
+        else                               { lx = margin; ly = margin; }
         ctx.globalAlpha = 1.0;
+        ctx.drawImage(logoImg, lx, ly, logoW, logoH);
         _cFotoComp = canvas.toDataURL('image/jpeg', 0.92);
         mostrarPreviewComBotao();
       };
