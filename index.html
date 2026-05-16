@@ -1707,25 +1707,8 @@ function enviarPrompt(texto) {
 
   function abrirAdobeAgora() {
     document.getElementById('instrucaoAdobe').style.display = 'none';
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    if (isAndroid) {
-      // Tenta abrir app instalado, se não tiver vai para Play Store
-      const fallback = setTimeout(() => {
-        window.open('https://play.google.com/store/apps/details?id=com.adobe.spark.post', '_blank');
-      }, 2000);
-      window.addEventListener('blur', () => clearTimeout(fallback), { once: true });
-      window.location.href = 'intent://express.adobe.com/#Intent;scheme=https;package=com.adobe.spark.post;end';
-    } else if (isIOS) {
-      const fallback = setTimeout(() => {
-        window.open('https://apps.apple.com/br/app/adobe-express/id1440129768', '_blank');
-      }, 2000);
-      window.addEventListener('blur', () => clearTimeout(fallback), { once: true });
-      window.location.href = 'adobeexpress://';
-    } else {
-      window.open('https://express.adobe.com/pt-BR/', '_blank');
-    }
+    // Abre o Adobe Express — Chrome Android pergunta automaticamente se quer abrir no app
+    window.open('https://express.adobe.com/pt-BR/', '_blank');
   }
 
   function fecharInstrucaoAdobe() {
@@ -2037,9 +2020,9 @@ document.addEventListener('touchend', function(e) {
       <p style="font-size:13px;color:#4A1A5C;line-height:1.7;margin:0;">
         <strong>1.</strong> A foto foi salva na sua galeria 📥<br>
         <strong>2.</strong> Toque em <strong>"Abrir Adobe Express"</strong> abaixo<br>
-        <strong>3.</strong> No Adobe Express, toque em <strong>"+"</strong> ou <strong>"Editar foto"</strong><br>
-        <strong>4.</strong> Selecione a foto que acabou de salvar<br>
-        <strong>5.</strong> Edite e baixe a arte pronta! ✨
+        <strong>3.</strong> Se perguntar, escolha <strong>"Abrir no app"</strong> 📲<br>
+        <strong>4.</strong> No Adobe Express toque em <strong>"Editar foto"</strong><br>
+        <strong>5.</strong> Selecione a foto salva → remova fundo → edite ✨
       </p>
     </div>
 
