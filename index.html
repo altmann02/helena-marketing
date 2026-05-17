@@ -1,22 +1,4 @@
-  function cSelecionaPos(pos) {
-    _cLogoPos = pos;
-    ['cPos1','cPos2','cPos3','cPos4'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.style.background = '#fff'; el.style.borderColor = '#EDE0F2'; }
-    });
-    const mapa = {'sup-esq':'cPos1','sup-dir':'cPos2','inf-esq':'cPos3','inf-dir':'cPos4'};
-    const el = document.getElementById(mapa[pos]);
-    if (el) { el.style.background = '#F7F0FA'; el.style.borderColor = '#E8657F'; }
-
-    // Mostra opções de logo após escolher canto
-    const vEl = document.getElementById('cLogoVersoesWrap');
-    if (vEl) vEl.style.display = 'block';
-
-    // Re-aplica logo se já escolhido
-    if (_cLogoSel) aplicarLogoCanvas(_cLogoSel);
-  }
-
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -519,6 +501,26 @@ body > * {
 </style>
 <script src="logos_assets.js"></script>
 <script defer>
+  function cSelecionaPos(pos) {
+    _cLogoPos = pos;
+    ['cPos1','cPos2','cPos3','cPos4'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.style.background = '#fff'; el.style.borderColor = '#EDE0F2'; }
+    });
+    const mapa = {'sup-esq':'cPos1','sup-dir':'cPos2','inf-esq':'cPos3','inf-dir':'cPos4'};
+    const el = document.getElementById(mapa[pos]);
+    if (el) { el.style.background = '#F7F0FA'; el.style.borderColor = '#E8657F'; }
+
+    // Mostra opções de logo após escolher canto
+    const vEl = document.getElementById('cLogoVersoesWrap');
+    if (vEl) vEl.style.display = 'block';
+
+    // Re-aplica logo se já escolhido
+    if (_cLogoSel) aplicarLogoCanvas(_cLogoSel);
+  }
+
+  
+
 
 function ir(tela) {
   document.querySelectorAll('.screen').forEach(s => {
