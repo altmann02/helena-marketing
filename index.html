@@ -1158,6 +1158,11 @@ function enviarPrompt(texto) {
     }, 900);
   }
 
+  function abrirAdobeIA() {
+    // Abre o Assistente de IA Beta do Adobe Express
+    window.location.href = 'https://express.adobe.com/sp/design/post';
+  }
+
   function abrirAdobeDireto() {
     // Usa location.href para forçar abertura no app (window.open é bloqueado pelo Android)
     window.location.href = 'https://express.adobe.com';
@@ -1352,8 +1357,8 @@ function enviarPrompt(texto) {
           <div class="card-body">
             <p class="card-num">01</p>
             <span class="card-badge badge-1">IA + foto real</span>
-            <p class="card-title">Ajustar arte da foto</p>
-            <p class="card-desc">Melhore a foto ou troque o fundo com Adobe Express — pronta para o Instagram</p>
+            <p class="card-title">Ajustar arte da foto ou vídeo</p>
+            <p class="card-desc">Ajuste rápido, edição manual ou assistência IA da Adobe</p>
           </div>
           <span class="card-arrow">›</span>
         </div>
@@ -1441,61 +1446,149 @@ function enviarPrompt(texto) {
     <div class="sub-header">
       <button class="back-btn" onclick="ir('home')">‹</button>
       <div class="sub-header-info">
-        <p class="sub-header-title">Ajustar arte da foto ✨</p>
-        <p class="sub-header-sub">helena acessórios · foto profissional</p>
+        <p class="sub-header-title">Ajustar arte da foto ou vídeo ✨</p>
+        <p class="sub-header-sub">helena acessórios · escolha o método</p>
       </div>
     </div>
     <div class="sub-body">
       <div class="claude-bubble">
-        <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">O que você deseja fazer com a foto da peça? 💜</p>
+        <p class="claude-nome">Painel Helena · para Camila e Rita</p>
+        <p class="claude-txt">Como você quer ajustar a arte hoje? 💜</p>
       </div>
 
+      <!-- OPÇÃO 1: Canvas -->
       <div onclick="ir('otimizarClaude')"
-        style="background:#4A1A5C;border-radius:18px;padding:1.25rem 1.2rem;
-               margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px;">
-        <span style="font-size:32px;">✨</span>
-        <div>
-          <p style="color:#fff;font-size:15px;font-weight:500;margin:0;">Otimização automática com Canvas</p>
-          <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:4px 0 0;line-height:1.5;">
-            Ajusta brilho, cores e nitidez — adiciona logo sem mudar o fundo
+        style="background:#4A1A5C;border-radius:18px;padding:1.1rem 1.2rem;
+               margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;">
+        <span style="font-size:28px;flex-shrink:0;">✨</span>
+        <div style="flex:1;">
+          <p style="color:#E8657F;font-size:10px;font-weight:600;letter-spacing:1px;margin:0 0 2px;">OPÇÃO 1</p>
+          <p style="color:#fff;font-size:14px;font-weight:600;margin:0;">Ajuste rápido com Canvas</p>
+          <p style="color:rgba(255,255,255,0.7);font-size:11px;margin:3px 0 0;line-height:1.4;">
+            Brilho, cores, nitidez e logo — tudo automático no painel
           </p>
         </div>
-        <span style="color:rgba(255,255,255,0.5);font-size:22px;margin-left:auto;">›</span>
+        <span style="color:rgba(255,255,255,0.4);font-size:22px;">›</span>
       </div>
 
+      <!-- OPÇÃO 2: Adobe Manual -->
       <div onclick="ir('otimizarAdobe')"
-        style="background:#E8657F;border-radius:18px;padding:1.25rem 1.2rem;
-               margin-bottom:1.5rem;cursor:pointer;display:flex;align-items:center;gap:14px;">
-        <!-- Ícone A do Adobe Express -->
-        <span style="width:40px;height:40px;border-radius:10px;background:#fff;
-                     display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="26" height="26" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="adobeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#DA1F26"/>
-                <stop offset="50%" style="stop-color:#9B1FBF"/>
-                <stop offset="100%" style="stop-color:#1473E6"/>
-              </linearGradient>
-            </defs>
-            <rect width="100" height="100" rx="18" fill="url(#adobeGrad)"/>
-            <text x="50" y="72" font-family="Arial Black,sans-serif" font-size="62"
-                  font-weight="900" fill="white" text-anchor="middle">A</text>
+        style="background:#E8657F;border-radius:18px;padding:1.1rem 1.2rem;
+               margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;">
+        <span style="width:36px;height:36px;border-radius:8px;background:#fff;flex-shrink:0;
+                     display:flex;align-items:center;justify-content:center;">
+          <svg width="22" height="22" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="ag2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#DA1F26"/>
+              <stop offset="50%" style="stop-color:#9B1FBF"/>
+              <stop offset="100%" style="stop-color:#1473E6"/>
+            </linearGradient></defs>
+            <rect width="100" height="100" rx="18" fill="url(#ag2)"/>
+            <text x="50" y="72" font-family="Arial Black,sans-serif" font-size="62" font-weight="900" fill="white" text-anchor="middle">A</text>
           </svg>
         </span>
-        <div>
-          <p style="color:#fff;font-size:15px;font-weight:500;margin:0;">Editar manualmente no Adobe</p>
-          <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:4px 0 0;line-height:1.5;">
-            Adobe Express — remove fundo e cria nova arte profissional
+        <div style="flex:1;">
+          <p style="color:rgba(255,255,255,0.8);font-size:10px;font-weight:600;letter-spacing:1px;margin:0 0 2px;">OPÇÃO 2</p>
+          <p style="color:#fff;font-size:14px;font-weight:600;margin:0;">Ajuste manual com Adobe Express</p>
+          <p style="color:rgba(255,255,255,0.7);font-size:11px;margin:3px 0 0;line-height:1.4;">
+            Troca fundo, edita foto ou cria vídeo para WhatsApp
           </p>
         </div>
-        <span style="color:rgba(255,255,255,0.5);font-size:22px;margin-left:auto;">›</span>
+        <span style="color:rgba(255,255,255,0.4);font-size:22px;">›</span>
+      </div>
+
+      <!-- OPÇÃO 3: IA Beta Adobe -->
+      <div onclick="ir('adobeIA')"
+        style="background:linear-gradient(135deg,#1a0533,#3d0f6b);border-radius:18px;
+               padding:1.1rem 1.2rem;margin-bottom:1.5rem;cursor:pointer;
+               display:flex;align-items:center;gap:14px;border:1px solid rgba(232,101,127,0.3);">
+        <span style="width:36px;height:36px;border-radius:8px;flex-shrink:0;background:linear-gradient(135deg,#ff6ec7,#a855f7);
+                     display:flex;align-items:center;justify-content:center;font-size:18px;">✦</span>
+        <div style="flex:1;">
+          <p style="color:#E8657F;font-size:10px;font-weight:600;letter-spacing:1px;margin:0 0 2px;">OPÇÃO 3 · BETA</p>
+          <p style="color:#fff;font-size:14px;font-weight:600;margin:0;">Ajuste com IA da Adobe</p>
+          <p style="color:rgba(255,255,255,0.7);font-size:11px;margin:3px 0 0;line-height:1.4;">
+            Assistente IA transforma a foto profissionalmente com poucos toques
+          </p>
+        </div>
+        <span style="color:rgba(255,255,255,0.4);font-size:22px;">›</span>
       </div>
 
       <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
     </div>
   </div>
 </div>
+
+<!-- ════════════ ADOBE IA BETA ════════════ -->
+<div class="screen" id="adobeIA">
+  <div class="sub-screen">
+    <div class="sub-header">
+      <button class="back-btn" onclick="ir('novidade')">‹</button>
+      <div class="sub-header-info">
+        <p class="sub-header-title">✦ IA da Adobe · Beta</p>
+        <p class="sub-header-sub">helena acessórios · 3 passos simples</p>
+      </div>
+    </div>
+    <div class="sub-body">
+
+      <div class="claude-bubble">
+        <p class="claude-nome">Painel Helena · para Camila e Rita</p>
+        <p class="claude-txt">O Assistente de IA da Adobe transforma sua foto em algo profissional! Siga os 3 passos abaixo 💜</p>
+      </div>
+
+      <div style="background:#F7F0FA;border-radius:16px;padding:1.25rem;margin-bottom:1.25rem;">
+        <p style="color:#4A1A5C;font-size:13px;font-weight:700;margin:0 0 1rem;">No Adobe Express — Assistente de IA:</p>
+
+        <!-- Passo 1 -->
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:1rem;">
+          <div style="background:#4A1A5C;color:#fff;border-radius:50%;width:28px;height:28px;min-width:28px;
+                      display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">1</div>
+          <div>
+            <p style="color:#4A1A5C;font-size:13px;font-weight:600;margin:0 0 2px;">Toque no ícone ✦ (estrela colorida)</p>
+            <p style="color:#666;font-size:12px;margin:0;line-height:1.5;">
+              No canto superior esquerdo do Adobe Express — abre o <strong>Assistente de IA Beta</strong>
+            </p>
+          </div>
+        </div>
+
+        <!-- Passo 2 -->
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:1rem;">
+          <div style="background:#E8657F;color:#fff;border-radius:50%;width:28px;height:28px;min-width:28px;
+                      display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">2</div>
+          <div>
+            <p style="color:#4A1A5C;font-size:13px;font-weight:600;margin:0 0 2px;">Toque em <strong>"Editar imagem"</strong></p>
+            <p style="color:#666;font-size:12px;margin:0;line-height:1.5;">
+              Na tela do assistente, escolha a opção <strong>"Editar imagem"</strong> (botão em destaque)
+            </p>
+          </div>
+        </div>
+
+        <!-- Passo 3 -->
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="background:#4A1A5C;color:#fff;border-radius:50%;width:28px;height:28px;min-width:28px;
+                      display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">3</div>
+          <div>
+            <p style="color:#4A1A5C;font-size:13px;font-weight:600;margin:0 0 2px;">Envie a foto e escolha o estilo</p>
+            <p style="color:#666;font-size:12px;margin:0;line-height:1.5;">
+              Toque em <strong>"Enviar uma imagem"</strong> → selecione a foto da peça → escolha <strong>"Transforme minha foto em uma foto profissional"</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="abrirAdobeIA()"
+        style="width:100%;padding:1rem;background:linear-gradient(135deg,#a855f7,#E8657F);color:#fff;border:none;
+               border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;
+               font-family:'DM Sans',sans-serif;margin-bottom:10px;
+               display:flex;align-items:center;justify-content:center;gap:8px;">
+        ✦ Abrir Assistente de IA da Adobe
+      </button>
+
+      <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- ════════════ MELHORAR FOTO VIA PAINEL ════════════ -->
 <div class="screen" id="otimizarClaude">
