@@ -1164,19 +1164,46 @@ function enviarPrompt(texto) {
   }
 
   function abrirAdobeDireto() {
-    // Usa location.href para forçar abertura no app (window.open é bloqueado pelo Android)
-    window.location.href = 'https://express.adobe.com';
+    abrirAppAdobe();
   }
 
   function abrirAdobeFoto() {
-    // Abre tela inicial — "Remover fundo" fica visível nas ferramentas rápidas
-    window.location.href = 'https://express.adobe.com';
+    abrirAppAdobe();
   }
 
   function abrirAdobeVideo() {
-    // Abre Adobe Express — aba Vídeo onde Status do WhatsApp está visível
-    // Usa URL principal pois URLs específicas dão 404 no mobile
-    window.location.href = 'https://express.adobe.com';
+    abrirAppAdobe();
+  }
+
+  function abrirAdobeIA() {
+    abrirAppAdobe();
+  }
+
+  // Abre app Adobe Express instalado no celular
+  // Se não tiver instalado, redireciona para a loja
+  function abrirAppAdobe() {
+    var isAndroid = /Android/i.test(navigator.userAgent);
+    var isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isAndroid) {
+      // Tenta abrir via intent — funciona mesmo com "Abrir links compatíveis" ativado
+      var intent = 'intent://express.adobe.com/#Intent;' +
+                   'scheme=https;' +
+                   'package=com.adobe.spark.post;' +
+                   'S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.adobe.spark.post;' +
+                   'end';
+      window.location.href = intent;
+    } else if (isIOS) {
+      // Tenta deep link do app iOS
+      window.location.href = 'adobeexpress://';
+      // Fallback para App Store após 2s se app não abrir
+      setTimeout(function() {
+        window.location.href = 'https://apps.apple.com/br/app/adobe-express/id1440129768';
+      }, 2000);
+    } else {
+      // Desktop — abre no browser
+      window.location.href = 'https://express.adobe.com';
+    }
   }
 
   function abrirAdobeAgora() {
