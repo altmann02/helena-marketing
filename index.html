@@ -501,20 +501,7 @@ body > * {
 </style>
 <script src="logos_assets.js"></script>
 <script defer>
-  function cSelecionaPos(pos) {
-    _cLogoPos = pos;
-    ['cPos1','cPos2','cPos3','cPos4'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.style.background = '#fff'; el.style.borderColor = '#EDE0F2'; el.style.color = '#4A1A5C'; }
-    });
-    const mapa = {'inf-esq':'cPos1','inf-dir':'cPos2','sup-esq':'cPos3','sup-dir':'cPos4'};
-    const el = document.getElementById(mapa[pos]);
-    if (el) { el.style.background = '#F7F0FA'; el.style.borderColor = '#E8657F'; }
-    // Mostra logos após escolher canto
-    const vEl = document.getElementById('cLogoVersoesWrap');
-    if (vEl) { vEl.style.display = 'block'; vEl.scrollIntoView({behavior:'smooth', block:'nearest'}); }
-    if (_cLogoSel) aplicarLogoCanvas(_cLogoSel);
-  }
+
 
   
 
@@ -779,12 +766,46 @@ function enviarPrompt(texto) {
     const vEl  = document.getElementById('cLogoVersoesWrap');
     if (loEl) loEl.style.display = tipo === 'logo' ? 'block' : 'none';
     if (prEl) prEl.style.display = 'none';
-    if (vEl)  vEl.style.display  = 'none';
+    if (vEl)  { vEl.style.display = 'none'; }
 
     verificarBtnGerar();
   }
 
-    function cSelecionaLogo(tipo) {
+    function cSelecionaPos(pos) {
+    _cLogoPos = pos;
+    // Reset todos os botões
+    ['cPos1','cPos2','cPos3','cPos4'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.background = '#fff';
+        el.style.borderColor = '#EDE0F2';
+        el.style.color = '#4A1A5C';
+      }
+    });
+    // Destaca o selecionado
+    const mapa = {
+      'sup-esq': 'cPos3',
+      'sup-dir': 'cPos4',
+      'inf-esq': 'cPos1',
+      'inf-dir': 'cPos2'
+    };
+    const el = document.getElementById(mapa[pos]);
+    if (el) {
+      el.style.background = '#EDE0F2';
+      el.style.borderColor = '#E8657F';
+      el.style.color = '#4A1A5C';
+    }
+    // Mostra opções de logo
+    const wrap = document.getElementById('cLogoVersoesWrap');
+    if (wrap) {
+      wrap.style.display = 'block';
+      setTimeout(() => wrap.scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
+    }
+    // Re-aplica logo se já escolhido
+    if (_cLogoSel) aplicarLogoCanvas(_cLogoSel);
+  }
+
+  function cSelecionaLogo(tipo) {
     _cLogoSel = tipo;
     ['cLogo1','cLogo2','cLogo3','cLogo4'].forEach(id => {
       const el = document.getElementById(id);
@@ -1252,17 +1273,7 @@ function enviarPrompt(texto) {
     window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
   }
 
-  function cSelecionaPos(pos) {
-    _cLogoPos = pos;
-    ['cPos1','cPos2','cPos3','cPos4'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.style.background = '#fff'; el.style.borderColor = '#EDE0F2'; }
-    });
-    const mapa = {'inf-dir':'cPos1','inf-esq':'cPos2','sup-dir':'cPos3','sup-esq':'cPos4'};
-    const el = document.getElementById(mapa[pos]);
-    if (el) { el.style.background = '#F7F0FA'; el.style.borderColor = '#E8657F'; }
-    if (_cLogoSel) aplicarLogoCanvas(_cLogoSel);
-  }
+
 
   async function baixarFotoPreparada() {
     const foto = _cFotoComp || _cFoto;
@@ -1636,16 +1647,7 @@ function enviarPrompt(texto) {
       </button>
 
       <!-- PRÉVIA FINAL -->
-      <div id="cLogoPreviewWrap" style="display:none;margin-bottom:1rem;">
-        <p style="color:rgba(255,255,255,0.9);font-size:13px;font-weight:500;margin:0 0 8px;">
-          🎨 Arte final pronta — toque e segure para salvar:
-        </p>
-        <div style="background:rgba(232,101,127,0.2);border:1px solid #E8657F;border-radius:12px;
-                    padding:0.6rem;margin-bottom:8px;text-align:center;">
-          <p style="color:#fff;font-size:13px;font-weight:600;margin:0;">
-            📲 Toque e segure na foto → <strong>Salvar imagem</strong>
-          </p>
-        </div>
+      </div>
         <div style="border-radius:14px;overflow:hidden;border:2px solid #E8657F;">
           <img id="cLogoPreview" src="" style="width:100%;display:block;" oncontextmenu="return true;">
         </div>
