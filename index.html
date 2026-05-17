@@ -1174,8 +1174,9 @@ function enviarPrompt(texto) {
   }
 
   function abrirAdobeVideo() {
-    // Abre na aba Vídeo — "Status do WhatsApp" fica visível
-    window.location.href = 'https://express.adobe.com/create/video';
+    // Abre Adobe Express — aba Vídeo onde Status do WhatsApp está visível
+    // Usa URL principal pois URLs específicas dão 404 no mobile
+    window.location.href = 'https://express.adobe.com';
   }
 
   function abrirAdobeAgora() {
@@ -1458,60 +1459,41 @@ function enviarPrompt(texto) {
 
       <!-- OPÇÃO 1: Canvas -->
       <div onclick="ir('otimizarClaude')"
-        style="background:#4A1A5C;border-radius:18px;padding:1.1rem 1.2rem;
-               margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;">
-        <span style="font-size:28px;flex-shrink:0;">✨</span>
-        <div style="flex:1;">
-          <p style="color:#E8657F;font-size:10px;font-weight:600;letter-spacing:1px;margin:0 0 2px;">OPÇÃO 1</p>
-          <p style="color:#fff;font-size:14px;font-weight:600;margin:0;">Ajuste rápido com Canvas</p>
-          <p style="color:rgba(255,255,255,0.7);font-size:11px;margin:3px 0 0;line-height:1.4;">
+        style="background:#4A1A5C;border-radius:18px;padding:1.25rem 1.2rem;
+               margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px;">
+        <span style="font-size:32px;flex-shrink:0;">✨</span>
+        <div>
+          <p style="color:#fff;font-size:15px;font-weight:500;margin:0;">Ajuste rápido com Canvas</p>
+          <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:4px 0 0;line-height:1.5;">
             Brilho, cores, nitidez e logo — tudo automático no painel
           </p>
         </div>
-        <span style="color:rgba(255,255,255,0.4);font-size:22px;">›</span>
+        <span style="color:rgba(255,255,255,0.5);font-size:22px;margin-left:auto;">›</span>
       </div>
 
       <!-- OPÇÃO 2: Adobe Manual -->
       <div onclick="ir('otimizarAdobe')"
-        style="background:#E8657F;border-radius:18px;padding:1.1rem 1.2rem;
-               margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;">
-        <span style="width:36px;height:36px;border-radius:8px;background:#fff;flex-shrink:0;
+        style="background:#E8657F;border-radius:18px;padding:1.25rem 1.2rem;
+               margin-bottom:1.5rem;cursor:pointer;display:flex;align-items:center;gap:14px;">
+        <span style="width:40px;height:40px;border-radius:10px;background:#fff;flex-shrink:0;
                      display:flex;align-items:center;justify-content:center;">
-          <svg width="22" height="22" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs><linearGradient id="ag2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <svg width="26" height="26" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="adobeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" style="stop-color:#DA1F26"/>
               <stop offset="50%" style="stop-color:#9B1FBF"/>
               <stop offset="100%" style="stop-color:#1473E6"/>
             </linearGradient></defs>
-            <rect width="100" height="100" rx="18" fill="url(#ag2)"/>
+            <rect width="100" height="100" rx="18" fill="url(#adobeGrad)"/>
             <text x="50" y="72" font-family="Arial Black,sans-serif" font-size="62" font-weight="900" fill="white" text-anchor="middle">A</text>
           </svg>
         </span>
-        <div style="flex:1;">
-          <p style="color:rgba(255,255,255,0.8);font-size:10px;font-weight:600;letter-spacing:1px;margin:0 0 2px;">OPÇÃO 2</p>
-          <p style="color:#fff;font-size:14px;font-weight:600;margin:0;">Ajuste manual com Adobe Express</p>
-          <p style="color:rgba(255,255,255,0.7);font-size:11px;margin:3px 0 0;line-height:1.4;">
+        <div>
+          <p style="color:#fff;font-size:15px;font-weight:500;margin:0;">Ajuste manual com Adobe Express</p>
+          <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:4px 0 0;line-height:1.5;">
             Troca fundo, edita foto ou cria vídeo para WhatsApp
           </p>
         </div>
-        <span style="color:rgba(255,255,255,0.4);font-size:22px;">›</span>
-      </div>
-
-      <!-- OPÇÃO 3: IA Beta Adobe -->
-      <div onclick="ir('adobeIA')"
-        style="background:linear-gradient(135deg,#1a0533,#3d0f6b);border-radius:18px;
-               padding:1.1rem 1.2rem;margin-bottom:1.5rem;cursor:pointer;
-               display:flex;align-items:center;gap:14px;border:1px solid rgba(232,101,127,0.3);">
-        <span style="width:36px;height:36px;border-radius:8px;flex-shrink:0;background:linear-gradient(135deg,#ff6ec7,#a855f7);
-                     display:flex;align-items:center;justify-content:center;font-size:18px;">✦</span>
-        <div style="flex:1;">
-          <p style="color:#E8657F;font-size:10px;font-weight:600;letter-spacing:1px;margin:0 0 2px;">OPÇÃO 3 · BETA</p>
-          <p style="color:#fff;font-size:14px;font-weight:600;margin:0;">Ajuste com IA da Adobe</p>
-          <p style="color:rgba(255,255,255,0.7);font-size:11px;margin:3px 0 0;line-height:1.4;">
-            Assistente IA transforma a foto profissionalmente com poucos toques
-          </p>
-        </div>
-        <span style="color:rgba(255,255,255,0.4);font-size:22px;">›</span>
+        <span style="color:rgba(255,255,255,0.5);font-size:22px;margin-left:auto;">›</span>
       </div>
 
       <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
@@ -1859,7 +1841,7 @@ function enviarPrompt(texto) {
             <div style="display:flex;gap:8px;align-items:flex-start;">
               <span style="background:#E8657F;color:#fff;border-radius:50%;width:20px;height:20px;min-width:20px;
                            display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">1</span>
-              <p style="color:#4A1A5C;font-size:12px;margin:0;line-height:1.5;">Toque em <strong>"Vídeo"</strong> no menu superior</p>
+              <p style="color:#4A1A5C;font-size:12px;margin:0;line-height:1.5;">Toque em <strong>"Vídeo"</strong> no menu superior do app</p>
             </div>
             <div style="display:flex;gap:8px;align-items:flex-start;">
               <span style="background:#E8657F;color:#fff;border-radius:50%;width:20px;height:20px;min-width:20px;
