@@ -688,7 +688,7 @@ html, body {
       <button class="back-btn" onclick="ir('novidade')">‹</button>
       <div class="sub-header-info">
         <p class="sub-header-title">Otimizar com Canva 🎨</p>
-        <p class="sub-header-sub">helena acessórios · edição rápida</p>
+        <p class="sub-header-sub">helena acessórios · filtros rápidos</p>
       </div>
     </div>
 
@@ -697,48 +697,40 @@ html, body {
       <div class="claude-bubble">
         <p class="claude-nome">Claude · para Camila e Rita</p>
         <p class="claude-txt">
-          Escolha o fundo e toque em <strong>Abrir Claude</strong>. 
-          Lá você envia a foto, a IA coloca no fundo escolhido 
-          e depois pergunta se quer melhorar filtros, sombra e cores 
-          com o Canva! 💜
+          Envie a foto da peça, escolha o filtro e o logo. 
+          A IA melhora as cores, gera uma <strong>prévia</strong> 
+          e depois baixa em JPEG ou PNG! 💜
         </p>
       </div>
 
-      <!-- FUNDO -->
-      <p class="passo-label">Passo 1 — escolha o fundo</p>
-      <p class="q-titulo">Qual fundo para a peça?</p>
+      <!-- FILTRO -->
+      <p class="passo-label">Passo 1 — filtro</p>
+      <p class="q-titulo">Qual estilo de filtro?</p>
       <p class="q-hint">Toque para selecionar.</p>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
-        <div class="fundo-card" onclick="escolheFundoCanva(this,'mármore branco com veios suaves')">🤍 Mármore branco</div>
-        <div class="fundo-card" onclick="escolheFundoCanva(this,'mármore preto sofisticado')">🖤 Mármore preto</div>
-        <div class="fundo-card" onclick="escolheFundoCanva(this,'pétalas de flores delicadas rosé')">🌸 Flores</div>
-        <div class="fundo-card" onclick="escolheFundoCanva(this,'madeira clara natural com textura')">🪵 Madeira clara</div>
-        <div class="fundo-card" onclick="escolheFundoCanva(this,'tecido de veludo elegante')">🪡 Veludo</div>
-        <div class="fundo-card" onclick="escolheFundoCanva(this,'página de revista Vogue, layout editorial sofisticado com tipografia elegante')">📰 Revista Vogue</div>
-        <div class="fundo-card" onclick="escolheFundoCanva(this,'fundo branco infinito de estúdio fotográfico profissional')">⬜ Estúdio branco</div>
-        <div class="fundo-card" onclick="escolheFundoCanva(this,'fundo com as cores da identidade visual da Helena Acessórios: violeta escuro e rosa')">💜 Marca Helena</div>
-      </div>
-
-      <div style="margin-bottom:1.25rem;">
-        <div class="fundo-card" id="cardOutroCanva" onclick="escolheFundoCanva(this,'outro')"
-             style="text-align:left;display:flex;align-items:center;gap:8px;">
-          ✏️ Outro fundo (descreva)
-        </div>
-        <div id="outroWrapCanva" style="display:none;margin-top:8px;">
-          <input id="outroTextoCanva" type="text" placeholder="Ex: areia da praia, espelho, granito..."
-            style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;
-                   border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;"
-            oninput="atualizaOutroCanva(this)">
-        </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
+        <div class="fundo-card" id="filtro-natural"   onclick="escolheFiltroCanva(this,'natural e luminoso: brilho +15, contraste +10, saturação +10, nitidez +10')">☀️ Natural</div>
+        <div class="fundo-card" id="filtro-vibrante"  onclick="escolheFiltroCanva(this,'vibrante e marcante: brilho +10, contraste +20, saturação +30, nitidez +15')">🌈 Vibrante</div>
+        <div class="fundo-card" id="filtro-suave"     onclick="escolheFiltroCanva(this,'suave e delicado: brilho +20, contraste +5, saturação -5, nitidez +5')">🌸 Suave</div>
+        <div class="fundo-card" id="filtro-editorial" onclick="escolheFiltroCanva(this,'editorial sofisticado: brilho +5, contraste +25, saturação +5, nitidez +20')">🖤 Editorial</div>
+        <div class="fundo-card" id="filtro-golden"    onclick="escolheFiltroCanva(this,'golden hour quente: brilho +15, contraste +15, temperatura mais quente, saturação +20')">✨ Golden</div>
+        <div class="fundo-card" id="filtro-clean"     onclick="escolheFiltroCanva(this,'clean minimalista: brilho +25, contraste +5, saturação -10, fundo mais neutro')">⬜ Clean</div>
       </div>
 
       <!-- LOGO -->
       <p class="passo-label">Passo 2 — logo</p>
       <p class="q-titulo">Adicionar logo discreto?</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
-        <div class="fundo-card" id="simLogoCanva" onclick="escolheLogoCanva(true)" style="text-align:center;">✅ Sim</div>
+        <div class="fundo-card" id="simLogoCanva" onclick="escolheLogoCanva(true)"  style="text-align:center;">✅ Sim</div>
         <div class="fundo-card" id="naoLogoCanva" onclick="escolheLogoCanva(false)" style="text-align:center;">❌ Não</div>
+      </div>
+
+      <!-- FORMATO -->
+      <p class="passo-label">Passo 3 — formato de saída</p>
+      <p class="q-titulo">Baixar como?</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
+        <div class="fundo-card" id="fmtJpeg" onclick="escolheFormatoCanva('JPEG')" style="text-align:center;">🖼️ JPEG</div>
+        <div class="fundo-card" id="fmtPng"  onclick="escolheFormatoCanva('PNG')"  style="text-align:center;">🔳 PNG</div>
       </div>
 
       <!-- BOTÃO -->
@@ -773,58 +765,74 @@ html, body {
       <div class="claude-bubble">
         <p class="claude-nome">Claude · para Camila e Rita</p>
         <p class="claude-txt">
-          Escolha o fundo e toque em <strong>Abrir Claude</strong>. 
-          Lá você envia a foto, a IA coloca no fundo escolhido 
-          e depois pergunta se quer melhorar filtros, sombra e cores 
-          com o Adobe Express! 💜
+          Toque em <strong>Abrir Adobe Express</strong> e siga o guia abaixo para editar sua foto! 💜
         </p>
       </div>
 
-      <!-- FUNDO -->
-      <p class="passo-label">Passo 1 — escolha o fundo</p>
-      <p class="q-titulo">Qual fundo para a peça?</p>
-      <p class="q-hint">Toque para selecionar.</p>
+      <!-- GUIA -->
+      <p class="passo-label">Guia rápido</p>
+      <p class="q-titulo">O que fazer no Adobe Express</p>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'mármore branco com veios suaves')">🤍 Mármore branco</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'mármore preto sofisticado')">🖤 Mármore preto</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'pétalas de flores delicadas rosé')">🌸 Flores</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'madeira clara natural com textura')">🪵 Madeira clara</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'tecido de veludo elegante')">🪡 Veludo</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'página de revista Vogue, layout editorial sofisticado com tipografia elegante')">📰 Revista Vogue</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'fundo branco infinito de estúdio fotográfico profissional')">⬜ Estúdio branco</div>
-        <div class="fundo-card" onclick="escolheFundoAdobe(this,'fundo com as cores da identidade visual da Helena Acessórios: violeta escuro e rosa')">💜 Marca Helena</div>
-      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem;">
 
-      <div style="margin-bottom:1.25rem;">
-        <div class="fundo-card" id="cardOutroAdobe" onclick="escolheFundoAdobe(this,'outro')"
-             style="text-align:left;display:flex;align-items:center;gap:8px;">
-          ✏️ Outro fundo (descreva)
+        <div style="background:#fff;border-radius:14px;border:1.5px solid #EDE0F2;padding:0.9rem 1rem;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:10px;background:#E8F4FD;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">📤</div>
+          <div>
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px;">1 · Fazer upload da foto</p>
+            <p style="font-size:12px;color:#666;line-height:1.5;">Toque em <strong>"Editar foto"</strong> → selecione a foto da peça da sua galeria</p>
+          </div>
         </div>
-        <div id="outroWrapAdobe" style="display:none;margin-top:8px;">
-          <input id="outroTextoAdobe" type="text" placeholder="Ex: areia da praia, espelho, granito..."
-            style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;
-                   border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;"
-            oninput="atualizaOutroAdobe(this)">
+
+        <div style="background:#fff;border-radius:14px;border:1.5px solid #EDE0F2;padding:0.9rem 1rem;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:10px;background:#FFF3E0;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">✂️</div>
+          <div>
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px;">2 · Remover fundo (opcional)</p>
+            <p style="font-size:12px;color:#666;line-height:1.5;">Toque na foto → <strong>"Remover fundo"</strong> — IA remove automaticamente ✨</p>
+          </div>
         </div>
+
+        <div style="background:#fff;border-radius:14px;border:1.5px solid #EDE0F2;padding:0.9rem 1rem;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:10px;background:#F3E5F5;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🎚️</div>
+          <div>
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px;">3 · Ajustar brilho e cores</p>
+            <p style="font-size:12px;color:#666;line-height:1.5;"><strong>"Editar"</strong> → <strong>"Ajustes"</strong>: brilho · contraste · saturação · nitidez</p>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:14px;border:1.5px solid #EDE0F2;padding:0.9rem 1rem;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:10px;background:#FCE4EC;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">✨</div>
+          <div>
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px;">4 · Aplicar filtro</p>
+            <p style="font-size:12px;color:#666;line-height:1.5;">Toque em <strong>"Filtros"</strong> → prefira filtros neutros ou "Clarear" para semi joias</p>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:14px;border:1.5px solid #EDE0F2;padding:0.9rem 1rem;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:10px;background:#E8F5E9;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🏷️</div>
+          <div>
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px;">5 · Adicionar logo Helena</p>
+            <p style="font-size:12px;color:#666;line-height:1.5;"><strong>"Elementos"</strong> → <strong>"Upload"</strong> → posicione no canto inferior direito com opacidade ~30%</p>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:14px;border:1.5px solid #EDE0F2;padding:0.9rem 1rem;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:10px;background:#E8F4FD;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">💾</div>
+          <div>
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px;">6 · Salvar e baixar</p>
+            <p style="font-size:12px;color:#666;line-height:1.5;">Toque em <strong>"Baixar"</strong> → JPEG qualidade máxima → vai direto para a galeria 📲</p>
+          </div>
+        </div>
+
       </div>
 
-      <!-- LOGO -->
-      <p class="passo-label">Passo 2 — logo</p>
-      <p class="q-titulo">Adicionar logo discreto?</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
-        <div class="fundo-card" id="simLogoAdobe" onclick="escolheLogoAdobe(true)" style="text-align:center;">✅ Sim</div>
-        <div class="fundo-card" id="naoLogoAdobe" onclick="escolheLogoAdobe(false)" style="text-align:center;">❌ Não</div>
-      </div>
-
-      <!-- BOTÃO -->
-      <button id="btnAbrirAdobe" onclick="abrirClaudeAdobe()" disabled
-        style="width:100%;padding:1.1rem;background:#ccc;color:white;border:none;
-               border-radius:16px;font-size:16px;font-weight:500;
-               font-family:'DM Sans',sans-serif;margin-bottom:10px;
-               transition:background 0.2s;cursor:not-allowed;
-               display:flex;align-items:center;justify-content:center;gap:10px;">
-        🤖 Abrir Claude
+      <!-- BOTÃO PRINCIPAL -->
+      <button onclick="window.open('https://express.adobe.com','_blank')"
+        style="width:100%;padding:1.1rem;background:linear-gradient(135deg,#FF0000,#FF6B35);
+               color:white;border:none;border-radius:16px;font-size:16px;font-weight:600;
+               font-family:'DM Sans',sans-serif;margin-bottom:10px;cursor:pointer;
+               display:flex;align-items:center;justify-content:center;gap:10px;
+               box-shadow:0 4px 14px rgba(255,0,0,0.3);">
+        ✏️ Abrir Adobe Express
       </button>
 
       <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
@@ -970,39 +978,36 @@ function enviarPrompt(texto) {
   }
 
   // ── OPÇÃO CANVA ──
-  let fundoCanvaEscolhido = null;
-  let logoCanvaEscolhido  = null;
+  let filtroCanvaEscolhido  = null;
+  let logoCanvaEscolhido    = null;
+  let formatoCanvaEscolhido = null;
 
-  function escolheFundoCanva(el, valor) {
+  function escolheFiltroCanva(el, valor) {
     document.querySelectorAll('#otimizar-canva .fundo-card').forEach(c => {
-      if (!['simLogoCanva','naoLogoCanva'].includes(c.id))
+      if (!['simLogoCanva','naoLogoCanva','fmtJpeg','fmtPng'].includes(c.id))
         c.classList.remove('selecionado');
     });
     el.classList.add('selecionado');
-    if (valor === 'outro') {
-      document.getElementById('outroWrapCanva').style.display = 'block';
-      fundoCanvaEscolhido = document.getElementById('outroTextoCanva').value.trim() || null;
-    } else {
-      document.getElementById('outroWrapCanva').style.display = 'none';
-      fundoCanvaEscolhido = valor;
-    }
-    atualizaBotaoCanva();
-  }
-
-  function atualizaOutroCanva(input) {
-    fundoCanvaEscolhido = input.value.trim() || null;
+    filtroCanvaEscolhido = valor;
     atualizaBotaoCanva();
   }
 
   function escolheLogoCanva(sim) {
     logoCanvaEscolhido = sim;
-    document.getElementById('simLogoCanva').className = 'fundo-card' + (sim ? ' logo-sim' : '');
+    document.getElementById('simLogoCanva').className = 'fundo-card' + (sim  ? ' logo-sim' : '');
     document.getElementById('naoLogoCanva').className  = 'fundo-card' + (!sim ? ' logo-nao' : '');
     atualizaBotaoCanva();
   }
 
+  function escolheFormatoCanva(fmt) {
+    formatoCanvaEscolhido = fmt;
+    document.getElementById('fmtJpeg').className = 'fundo-card' + (fmt === 'JPEG' ? ' selecionado' : '');
+    document.getElementById('fmtPng').className  = 'fundo-card' + (fmt === 'PNG'  ? ' selecionado' : '');
+    atualizaBotaoCanva();
+  }
+
   function atualizaBotaoCanva() {
-    const ok  = fundoCanvaEscolhido && logoCanvaEscolhido !== null;
+    const ok  = filtroCanvaEscolhido && logoCanvaEscolhido !== null && formatoCanvaEscolhido;
     const btn = document.getElementById('btnAbrirCanva');
     btn.disabled         = !ok;
     btn.style.background = ok ? '#E8657F' : '#ccc';
@@ -1011,51 +1016,27 @@ function enviarPrompt(texto) {
 
   function abrirClaudeCanva() {
     const logo = logoCanvaEscolhido
-      ? 'Adicione o logo da Helena Acessórios como marca dágua bem discreta no canto inferior direito.'
+      ? 'Adicione o logo da Helena Acessórios como marca dágua bem discreta no canto inferior direito (opacidade ~30%).'
       : 'Não incluir logo.';
 
     const prompt =
-      'Olá! Sou da Helena Acessórios.\n\n' +
+      'Olá! Sou da Helena Acessórios. Preciso otimizar uma foto de peça com filtros.\n\n' +
       'PASSO 1 — Peça a foto assim:\n' +
-      '"Oi! 💜 Toque em ＋ aqui no chat, selecione a foto da peça e envie."\n\n' +
-      'PASSO 2 — Após receber a foto, gere IMEDIATAMENTE a composição sem fazer perguntas:\n' +
-      '— Mantenha a peça exatamente como está na foto original\n' +
-      '— Recorte a peça com precisão removendo o fundo original\n' +
-      '— Recoloque a peça sobre este fundo: ' + fundoCanvaEscolhido + '\n' +
-      '— Aplique iluminação natural e sombra suave para a peça parecer que está dentro do ambiente\n' +
+      '"Oi! 💜 Toque em ＋ aqui no chat, selecione a foto da peça e envie para eu otimizar."\n\n' +
+      'PASSO 2 — Ao receber a foto, aplique IMEDIATAMENTE os seguintes ajustes SEM perguntar nada:\n' +
+      '— Filtro: ' + filtroCanvaEscolhido + '\n' +
+      '— Mantenha o fundo original da foto (não trocar o fundo)\n' +
       '— ' + logo + '\n' +
       '— Formato quadrado 1080x1080px\n' +
-      '— Entregue como arquivo JPEG para download\n\n' +
-      'PASSO 3 — Após gerar a imagem, pergunte:\n' +
-      '"Gostou do resultado? Quer melhorar alguma coisa? Posso ajustar:\n' +
-      '— Filtros e cores\n' +
-      '— Brilho e contraste\n' +
-      '— Sombra e profundidade\n' +
-      '— Nitidez\n' +
-      '— Ou abrir no Canva para ajustes manuais rápidos?"\n\n' +
-      'PASSO 4 — Se quiser abrir no Canva, envie EXATAMENTE esta mensagem:\n' +
-      '"Ótimo! 🎨 Aqui está o link para abrir no Canva:\n' +
-      '👉 https://www.canva.com\n\n' +
-      'Ao entrar, siga estes passos para editar sua foto:\n\n' +
-      '1️⃣ FAZER UPLOAD DA FOTO\n' +
-      '   → Toque em "Criar novo design" → "Editar foto"\n' +
-      '   → Ou acesse "Projetos" → "Fazer upload" e selecione a imagem\n\n' +
-      '2️⃣ REMOVER O FUNDO\n' +
-      '   → Toque na foto → "Editar foto" → "Remover fundo"\n' +
-      '   → O Canva remove o fundo automaticamente com IA ✨\n\n' +
-      '3️⃣ AJUSTAR BRILHO E CORES\n' +
-      '   → Toque na foto → "Editar foto" → "Ajustar"\n' +
-      '   → Brilho: aumente se a peça parecer escura\n' +
-      '   → Contraste: deixa a peça mais definida\n' +
-      '   → Saturação: cores mais vivas e atraentes\n' +
-      '   → Nitidez: detalhes mais nítidos da peça\n\n' +
-      '4️⃣ APLICAR FILTRO\n' +
-      '   → Toque em "Filtros" e deslize para ver as opções\n' +
-      '   → Para semi joias: prefira filtros "Clarear" ou "Brilho"\n\n' +
-      '5️⃣ SALVAR E BAIXAR\n' +
-      '   → Toque em "Compartilhar" → "Baixar"\n' +
-      '   → Formato: PNG ou JPEG, qualidade máxima 📲"\n\n' +
-      'PASSO 5 — Quando aprovada pergunte se deseja enviar para Camila (+55 16 98114-544) postar no Instagram.';
+      '— Gere a imagem otimizada e mostre como PRÉVIA inline no chat\n' +
+      '— Entregue também como arquivo ' + formatoCanvaEscolhido + ' para download\n\n' +
+      'PASSO 3 — Após mostrar a prévia, pergunte:\n' +
+      '"Gostou? 😍 Posso ajustar:\n' +
+      '— Mais brilho ou contraste\n' +
+      '— Cores mais vivas ou mais suaves\n' +
+      '— Trocar o filtro\n' +
+      '— Ou está aprovada para postar? 💜"\n\n' +
+      'PASSO 4 — Quando aprovada, pergunte se deseja enviar para Camila (+55 16 98114-544) postar no Instagram.';
 
     const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
     window.open(url, '_blank');
