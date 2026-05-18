@@ -688,86 +688,115 @@ html, body {
       <button class="back-btn" onclick="ir('novidade')">‹</button>
       <div class="sub-header-info">
         <p class="sub-header-title">Otimizar com Canva 🎨</p>
-        <p class="sub-header-sub">helena acessórios · filtros rápidos</p>
+        <p class="sub-header-sub">helena acessórios · ajuste rápido</p>
       </div>
     </div>
-
     <div class="sub-body">
 
       <div class="claude-bubble">
         <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">
-          Configure as opções abaixo e toque em <strong>Abrir Canva</strong>. 
-          Os ajustes serão feitos diretamente no Canva! 💜
-        </p>
+        <p class="claude-txt">Escolha de onde vem a foto e se quer incluir o logo.
+          Vou gerar uma <strong>prévia otimizada</strong> com sombra, nitidez e contraste —
+          e quando aprovar, baixamos em PNG! 💜</p>
       </div>
 
-      <!-- PASSO 1 — FONTE DA FOTO -->
+      <!-- PASSO 1 — FOTO -->
       <p class="passo-label">Passo 1 — foto</p>
-      <p class="q-titulo">De onde vem a foto?</p>
+      <p class="q-titulo">De onde vem a foto da peça?</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
-        <div class="fundo-card" id="fotoCamera"  onclick="escolheFotoCanva('camera')"  style="text-align:center;">📷 Câmera</div>
-        <div class="fundo-card" id="fotoGaleria" onclick="escolheFotoCanva('galeria')" style="text-align:center;">🖼️ Galeria</div>
-      </div>
-
-      <!-- PASSO 2 — FILTRO -->
-      <p class="passo-label">Passo 2 — filtro</p>
-      <p class="q-titulo">Qual estilo de filtro?</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
-        <div class="fundo-card" id="filtro-natural"   onclick="escolheFiltroCanva(this,'Natural — brilho +15, contraste +10, saturação +10, nitidez +10')">☀️ Natural</div>
-        <div class="fundo-card" id="filtro-vibrante"  onclick="escolheFiltroCanva(this,'Vibrante — brilho +10, contraste +20, saturação +30, nitidez +15')">🌈 Vibrante</div>
-        <div class="fundo-card" id="filtro-suave"     onclick="escolheFiltroCanva(this,'Suave — brilho +20, contraste +5, saturação -5, nitidez +5')">🌸 Suave</div>
-        <div class="fundo-card" id="filtro-editorial" onclick="escolheFiltroCanva(this,'Editorial — brilho +5, contraste +25, saturação +5, nitidez +20')">🖤 Editorial</div>
-        <div class="fundo-card" id="filtro-golden"    onclick="escolheFiltroCanva(this,'Golden Hour — brilho +15, contraste +15, temperatura quente, saturação +20')">✨ Golden</div>
-        <div class="fundo-card" id="filtro-clean"     onclick="escolheFiltroCanva(this,'Clean — brilho +25, contraste +5, saturação -10')">⬜ Clean</div>
-      </div>
-
-      <!-- PASSO 3 — LOGO -->
-      <p class="passo-label">Passo 3 — logo</p>
-      <p class="q-titulo">Colar logo na foto?</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
-        <div class="fundo-card" id="simLogoCanva" onclick="escolheLogoCanva(true)"  style="text-align:center;">✅ Sim</div>
-        <div class="fundo-card" id="naoLogoCanva" onclick="escolheLogoCanva(false)" style="text-align:center;">❌ Não</div>
-      </div>
-
-      <!-- SUB: canto do logo -->
-      <div id="logoOpcoesCanva" style="display:none;">
-        <p class="q-hint" style="margin-bottom:8px;">Em qual canto?</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;">
-          <div class="fundo-card" id="canto-si" onclick="escolheCantoCanva(this,'canto superior esquerdo')" style="text-align:center;font-size:12px;">↖️ Sup. esquerdo</div>
-          <div class="fundo-card" id="canto-sd" onclick="escolheCantoCanva(this,'canto superior direito')"  style="text-align:center;font-size:12px;">↗️ Sup. direito</div>
-          <div class="fundo-card" id="canto-ii" onclick="escolheCantoCanva(this,'canto inferior esquerdo')" style="text-align:center;font-size:12px;">↙️ Inf. esquerdo</div>
-          <div class="fundo-card" id="canto-id" onclick="escolheCantoCanva(this,'canto inferior direito')"  style="text-align:center;font-size:12px;">↘️ Inf. direito</div>
+        <div class="fundo-card" id="fotoCamera" onclick="escolheFotoCanva('camera')"
+          style="text-align:center;padding:1rem 0.5rem;">
+          <div style="font-size:28px;margin-bottom:4px;">📷</div>
+          <div style="font-size:13px;font-weight:600;">Câmera</div>
+          <div style="font-size:11px;color:#999;margin-top:2px;">Tirar agora</div>
         </div>
-
-        <p class="q-hint" style="margin-bottom:8px;">Quantos logos?</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.5rem;">
-          <div class="fundo-card" id="qtd4" onclick="escolheQtdLogo(4)" style="text-align:center;">4️⃣ 4 logos</div>
-          <div class="fundo-card" id="qtd6" onclick="escolheQtdLogo(6)" style="text-align:center;">6️⃣ 6 logos</div>
+        <div class="fundo-card" id="fotoGaleria" onclick="escolheFotoCanva('galeria')"
+          style="text-align:center;padding:1rem 0.5rem;">
+          <div style="font-size:28px;margin-bottom:4px;">🖼️</div>
+          <div style="font-size:13px;font-weight:600;">Galeria</div>
+          <div style="font-size:11px;color:#999;margin-top:2px;">Escolher foto</div>
         </div>
       </div>
 
-      <!-- PASSO 4 — FORMATO -->
-      <p class="passo-label">Passo 4 — formato</p>
-      <p class="q-titulo">Baixar como?</p>
+      <!-- PASSO 2 — LOGO -->
+      <p class="passo-label">Passo 2 — logo</p>
+      <p class="q-titulo">Incluir logo no canto inferior direito?</p>
+
+      <div class="fundo-card" id="semLogoCanva" onclick="escolheLogoCanva('sem')"
+        style="display:flex;align-items:center;gap:12px;margin-bottom:10px;padding:0.9rem 1rem;">
+        <div style="width:40px;height:40px;border-radius:10px;background:#f5f5f5;
+                    display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🚫</div>
+        <div>
+          <p style="font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:1px;">Sem logo</p>
+          <p style="font-size:11px;color:#999;">Só a foto otimizada</p>
+        </div>
+      </div>
+
+      <p style="font-size:11px;color:#9B59B6;font-weight:600;margin-bottom:8px;
+                text-transform:uppercase;letter-spacing:0.5px;">Ou escolha o logo</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
-        <div class="fundo-card" id="fmtJpeg" onclick="escolheFormatoCanva('JPEG')" style="text-align:center;">🖼️ JPEG</div>
-        <div class="fundo-card" id="fmtPng"  onclick="escolheFormatoCanva('PNG')"  style="text-align:center;">🔳 PNG</div>
+
+        <div class="fundo-card" id="logo-original" onclick="escolheLogoCanva('HELENA_MARCA_original.jpg')"
+          style="padding:10px;text-align:center;">
+          <img src="HELENA_MARCA_original.jpg"
+            style="width:100%;height:56px;object-fit:contain;border-radius:6px;margin-bottom:5px;">
+          <p style="font-size:11px;color:#555;">Original</p>
+        </div>
+
+        <div class="fundo-card" id="logo-preto" onclick="escolheLogoCanva('HELENA_MARCA_preto.jpg')"
+          style="padding:10px;text-align:center;background:#f0f0f0;">
+          <img src="HELENA_MARCA_preto.jpg"
+            style="width:100%;height:56px;object-fit:contain;border-radius:6px;margin-bottom:5px;">
+          <p style="font-size:11px;color:#555;">Preto</p>
+        </div>
+
+        <div class="fundo-card" id="logo-branco" onclick="escolheLogoCanva('HELENA_MARCA_fundopreto_marcabranca.jpg')"
+          style="padding:10px;text-align:center;">
+          <img src="HELENA_MARCA_fundopreto_marcabranca.jpg"
+            style="width:100%;height:56px;object-fit:contain;border-radius:6px;margin-bottom:5px;">
+          <p style="font-size:11px;color:#555;">Branco</p>
+        </div>
+
+        <div class="fundo-card" id="logo-rosa" onclick="escolheLogoCanva('HELENA_MARCA_fundorosa_duascores.jpg')"
+          style="padding:10px;text-align:center;">
+          <img src="HELENA_MARCA_fundorosa_duascores.jpg"
+            style="width:100%;height:56px;object-fit:contain;border-radius:6px;margin-bottom:5px;">
+          <p style="font-size:11px;color:#555;">Fundo rosa</p>
+        </div>
+
+        <div class="fundo-card" id="logo-violeta1" onclick="escolheLogoCanva('HELENA_MARCA_fundovioleta_duascores.jpg')"
+          style="padding:10px;text-align:center;">
+          <img src="HELENA_MARCA_fundovioleta_duascores.jpg"
+            style="width:100%;height:56px;object-fit:contain;border-radius:6px;margin-bottom:5px;">
+          <p style="font-size:11px;color:#555;">Violeta 2 cores</p>
+        </div>
+
+        <div class="fundo-card" id="logo-violeta2" onclick="escolheLogoCanva('HELENA_MARCA_fundovioleta_marcarosa.jpg')"
+          style="padding:10px;text-align:center;">
+          <img src="HELENA_MARCA_fundovioleta_marcarosa.jpg"
+            style="width:100%;height:56px;object-fit:contain;border-radius:6px;margin-bottom:5px;">
+          <p style="font-size:11px;color:#555;">Violeta + rosa</p>
+        </div>
+
       </div>
 
       <!-- BOTÃO -->
-      <button id="btnAbrirCanva" onclick="abrirCanvaDireto()" disabled
+      <button id="btnAbrirCanva" onclick="abrirClaudeCanva()" disabled
         style="width:100%;padding:1.1rem;background:#ccc;color:white;border:none;
                border-radius:16px;font-size:16px;font-weight:600;
                font-family:'DM Sans',sans-serif;margin-bottom:10px;
                transition:background 0.2s;cursor:not-allowed;
                display:flex;align-items:center;justify-content:center;gap:10px;">
-        🎨 Abrir Canva
+        ✨ Gerar prévia
       </button>
 
-      <div id="guiaCanvaPos" style="display:none;"></div>
-
       <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ OTIMIZAR — ADOBE EXPRESS ════════════ -->
 <div class="screen" id="otimizar-adobe">
   <div class="sub-screen">
     <div class="sub-header">
@@ -996,12 +1025,8 @@ function enviarPrompt(texto) {
   }
 
   // ── OPÇÃO CANVA ──
-  let fotoCanvaEscolhida    = null;
-  let filtroCanvaEscolhido  = null;
-  let logoCanvaEscolhido    = null;
-  let cantoLogoCanva        = null;
-  let qtdLogoCanva          = null;
-  let formatoCanvaEscolhido = null;
+  let fotoCanvaEscolhida = null;
+  let logoCanvaEscolhido = null; // 'sem' ou nome do arquivo
 
   function escolheFotoCanva(tipo) {
     fotoCanvaEscolhida = tipo;
@@ -1010,76 +1035,65 @@ function enviarPrompt(texto) {
     atualizaBotaoCanva();
   }
 
-  function escolheFiltroCanva(el, valor) {
-    ['filtro-natural','filtro-vibrante','filtro-suave','filtro-editorial','filtro-golden','filtro-clean']
+  function escolheLogoCanva(valor) {
+    logoCanvaEscolhido = valor;
+    ['semLogoCanva','logo-original','logo-preto','logo-branco','logo-rosa','logo-violeta1','logo-violeta2']
       .forEach(id => { const e = document.getElementById(id); if(e) e.classList.remove('selecionado'); });
-    el.classList.add('selecionado');
-    filtroCanvaEscolhido = valor;
-    atualizaBotaoCanva();
-  }
-
-  function escolheLogoCanva(sim) {
-    logoCanvaEscolhido = sim;
-    document.getElementById('simLogoCanva').className = 'fundo-card' + (sim  ? ' logo-sim' : '');
-    document.getElementById('naoLogoCanva').className = 'fundo-card' + (!sim ? ' logo-nao' : '');
-    document.getElementById('logoOpcoesCanva').style.display = sim ? 'block' : 'none';
-    if (!sim) { cantoLogoCanva = null; qtdLogoCanva = null; }
-    atualizaBotaoCanva();
-  }
-
-  function escolheCantoCanva(el, valor) {
-    ['canto-si','canto-sd','canto-ii','canto-id']
-      .forEach(id => { const e = document.getElementById(id); if(e) e.classList.remove('selecionado'); });
-    el.classList.add('selecionado');
-    cantoLogoCanva = valor;
-    atualizaBotaoCanva();
-  }
-
-  function escolheQtdLogo(n) {
-    qtdLogoCanva = n;
-    document.getElementById('qtd4').className = 'fundo-card' + (n === 4 ? ' selecionado' : '');
-    document.getElementById('qtd6').className = 'fundo-card' + (n === 6 ? ' selecionado' : '');
-    atualizaBotaoCanva();
-  }
-
-  function escolheFormatoCanva(fmt) {
-    formatoCanvaEscolhido = fmt;
-    document.getElementById('fmtJpeg').className = 'fundo-card' + (fmt === 'JPEG' ? ' selecionado' : '');
-    document.getElementById('fmtPng').className  = 'fundo-card' + (fmt === 'PNG'  ? ' selecionado' : '');
+    const mapa = {
+      'sem':                                   'semLogoCanva',
+      'HELENA_MARCA_original.jpg':             'logo-original',
+      'HELENA_MARCA_preto.jpg':                'logo-preto',
+      'HELENA_MARCA_fundopreto_marcabranca.jpg':'logo-branco',
+      'HELENA_MARCA_fundorosa_duascores.jpg':  'logo-rosa',
+      'HELENA_MARCA_fundovioleta_duascores.jpg':'logo-violeta1',
+      'HELENA_MARCA_fundovioleta_marcarosa.jpg':'logo-violeta2'
+    };
+    const el = document.getElementById(mapa[valor]);
+    if (el) el.classList.add('selecionado');
     atualizaBotaoCanva();
   }
 
   function atualizaBotaoCanva() {
-    const logoOk = !logoCanvaEscolhido || (cantoLogoCanva && qtdLogoCanva);
-    const ok = fotoCanvaEscolhida && filtroCanvaEscolhido && logoCanvaEscolhido !== null && logoOk && formatoCanvaEscolhido;
+    const ok  = fotoCanvaEscolhida && logoCanvaEscolhido !== null;
     const btn = document.getElementById('btnAbrirCanva');
     btn.disabled         = !ok;
-    btn.style.background = ok ? '#00C4A1' : '#ccc';
+    btn.style.background = ok ? '#9B59B6' : '#ccc';
     btn.style.cursor     = ok ? 'pointer' : 'not-allowed';
   }
 
-  function abrirCanvaDireto() {
-    // Monta parâmetro de design no Canva (foto + filtro + logo)
-    // Abre Canva direto — instrução de uso aparece no card de ajuda abaixo
-    const url = 'https://www.canva.com/photo-editor/';
-    window.open(url, '_blank');
+  function abrirClaudeCanva() {
+    const fotoTxt = fotoCanvaEscolhida === 'camera'
+      ? 'a usuária vai tirar a foto agora pela câmera do celular'
+      : 'a usuária vai enviar uma foto da galeria do celular';
 
-    // Após abrir, mostra card de instrução rápida
-    const guia = document.getElementById('guiaCanvaPos');
-    if (guia) {
-      guia.innerHTML =
-        '<div style="background:#F0FFF8;border:1.5px solid #00C4A1;border-radius:14px;padding:1rem;margin-top:12px;">' +
-        '<p style="font-size:13px;font-weight:600;color:#00796B;margin-bottom:8px;">✅ Canva abriu! Siga os passos:</p>' +
-        '<p style="font-size:12px;color:#333;line-height:1.7;">' +
-        '1 · Toque em <strong>"Editar foto"</strong> → ' + (fotoCanvaEscolhida === 'camera' ? '📷 abra a câmera' : '🖼️ escolha da galeria') + '<br>' +
-        '2 · Vá em <strong>"Ajustar"</strong> → aplique: <em>' + filtroCanvaEscolhido + '</em><br>' +
-        (logoCanvaEscolhido
-          ? '3 · Toque em <strong>"Elementos"</strong> → <strong>"Upload"</strong> → cole o logo no <em>' + cantoLogoCanva + '</em> · repita <em>' + qtdLogoCanva + 'x</em><br>'
-          : '3 · Sem logo ✓<br>') +
-        '4 · <strong>"Baixar"</strong> → formato <strong>' + formatoCanvaEscolhido + '</strong> · qualidade máxima 📲' +
-        '</p></div>';
-      guia.style.display = 'block';
-    }
+    const logoTxt = logoCanvaEscolhido === 'sem'
+      ? 'NÃO incluir logo na imagem.'
+      : 'Inclua o logo da loja (arquivo: ' + logoCanvaEscolhido + ') pequeno e discreto no CANTO INFERIOR DIREITO da imagem, com opacidade de ~30% como marca dágua.';
+
+    const prompt =
+      'Olá! Vou otimizar uma foto de semi joia para a loja.\n\n' +
+      'PASSO 1 — Peça a foto:\n' +
+      '"Oi! 💜 ' + (fotoCanvaEscolhida === 'camera'
+        ? 'Toque em ＋ e escolha "Câmera" para tirar a foto da peça agora.'
+        : 'Toque em ＋ e escolha a foto da peça na sua galeria.') + '"\n\n' +
+      'PASSO 2 — Ao receber a foto, gere IMEDIATAMENTE a imagem otimizada SEM fazer perguntas, aplicando:\n' +
+      '• Nitidez: aumentar para realçar os detalhes da joia\n' +
+      '• Contraste: +15 para destacar a peça\n' +
+      '• Brilho: +10 para iluminar a peça\n' +
+      '• Saturação: +10 para cores mais vivas\n' +
+      '• Sombra suave sob a peça para dar profundidade\n' +
+      '• Fundo mantido como está (não trocar)\n' +
+      '• Formato quadrado 1080x1080px\n' +
+      '• ' + logoTxt + '\n\n' +
+      'PASSO 3 — Mostre a imagem como PRÉVIA inline no chat e pergunte:\n' +
+      '"Gostou da prévia? 😍\n' +
+      '✅ Aprovar e baixar em PNG\n' +
+      '🔄 Ajustar algo (me diga o que mudar)"\n\n' +
+      'PASSO 4 — Se aprovada: entregue o arquivo PNG em alta resolução para download.\n' +
+      'PASSO 5 — Depois pergunte se deseja enviar para Camila (+55 16 98114-544) postar no Instagram.';
+
+    const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
+    window.open(url, '_blank');
   }
 
   // ── OPÇÃO ADOBE EXPRESS ──
