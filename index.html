@@ -5,12 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Helena">
 <meta name="theme-color" content="#4A1A5C">
-<meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
 <title>Helena Acessórios · Painel</title>
+  <!-- Adobe Express Embed SDK -->
+  <script src="https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -37,19 +35,8 @@ html, body {
   overflow-x: hidden;
 }
 
-/* ── CONTAINER DESKTOP ── */
-body {
-  display: flex;
-  justify-content: center;
-}
-
-body > * {
-  width: 100%;
-  max-width: 480px;
-}
-
 /* ── TELAS ── */
-.screen { display: none; min-height: 100vh; width: 100%; max-width: 480px; }
+.screen { display: none; min-height: 100vh; }
 .screen.active { display: block; }
 
 /* ════════════════════════════════
@@ -499,857 +486,6 @@ body > * {
   }
 
 </style>
-<script src="logos_assets.js"></script>
-<script defer>
-
-
-  
-
-
-function ir(tela) {
-  document.querySelectorAll('.screen').forEach(s => {
-    s.classList.remove('active');
-  });
-  const el = document.getElementById(tela);
-  if (el) {
-    el.classList.add('active');
-    window.scrollTo(0, 0);
-  }
-}
-
-function enviarPrompt(texto) {
-  // Dentro do Claude.ai, usa sendPrompt global
-  if (typeof sendPrompt === 'function') {
-    sendPrompt(texto);
-  } else {
-    // Fora do Claude.ai: abre claude.ai com o texto
-    const url = 'https://claude.ai/new?q=' + encodeURIComponent(texto);
-    window.open(url, '_blank');
-  }
-}
-
-  // ── ESTADO OTIMIZAR ──
-  let _fotoBase64 = null;
-  let _fotoMime   = 'image/jpeg';
-
-  // ── FOTO ──────────────────────────────────
-  function escolheFoto(tipo) {
-    document.getElementById('opcFotoGaleria').classList.toggle('selecionado', tipo === 'galeria');
-    document.getElementById('opcFotoCamera').classList.toggle('selecionado', tipo === 'camera');
-    if (tipo === 'galeria') document.getElementById('inputGaleria').click();
-    else                    document.getElementById('inputCamera').click();
-  }
-
-  function processarFoto(input) {
-    const file = input.files[0];
-    if (!file) return;
-    _fotoMime = file.type || 'image/jpeg';
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      _fotoBase64 = ev.target.result;
-      document.getElementById('fotoPreview').src = _fotoBase64;
-      document.getElementById('fotoPreviewWrap').style.display = 'block';
-      // Ativa botão Adobe
-      const btn = document.getElementById('btnGerarAdobe');
-      if (btn) { btn.disabled = false; btn.style.background = '#E8657F'; btn.style.cursor = 'pointer'; }
-    };
-    reader.readAsDataURL(file);
-  }
-
-  // ── VIA CLAUDE: estado ────────────────────
-  let _cFoto      = null;
-  let _cFotoComp  = null;
-  let _cFotoMime  = 'image/jpeg';
-  let _cComLogo   = null;
-  let _cLogoSel   = null;
-  let _cTipoMarca = null;  // 'logo' | 'padrao' | 'nenhum'
-  let _cPadraoSel = null;
-
-  // Popula logos e padrões assim que a página carrega
-  window.addEventListener('load', () => {
-    // Logos
-    if (typeof LOGOS !== 'undefined') {
-      const p1 = document.getElementById('prevLogo1');
-      const p2 = document.getElementById('prevLogo2');
-      const p3 = document.getElementById('prevLogo3');
-      const p4 = document.getElementById('prevLogo4');
-      if (p1) p1.src = LOGOS['branco'];
-      if (p2) p2.src = LOGOS['preto'];
-      if (p3) p3.src = LOGOS['violeta'];
-      if (p4) p4.src = LOGOS['rosa'];
-    }
-    // Padrões carregados estaticamente no HTML
-  });
-
-  function escolheFotoC(tipo) {
-    document.getElementById('ocFotoGal').style.background =
-      tipo === 'galeria' ? 'rgba(232,101,127,0.4)' : 'rgba(255,255,255,0.15)';
-    document.getElementById('ocFotoCam').style.background =
-      tipo === 'camera'  ? 'rgba(232,101,127,0.4)' : 'rgba(255,255,255,0.15)';
-    if (tipo === 'galeria') document.getElementById('cInputGaleria').click();
-    else                    document.getElementById('cInputCamera').click();
-  }
-
-  function processarFotoC(input) {
-    const file = input.files[0];
-    if (!file) return;
-    _cFotoMime = file.type || 'image/jpeg';
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      _cFoto = ev.target.result;
-      _cFotoComp = _cFoto;
-      document.getElementById('cFotoPreview').src = _cFoto;
-      document.getElementById('cFotoPreviewWrap').style.display = 'block';
-      verificarBtnGerar();
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function processarFotoC(input) {
-    const file = input.files[0];
-    if (!file) return;
-    _cFotoMime = file.type || 'image/jpeg';
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      _cFoto = ev.target.result;
-      _cFotoComp = _cFoto;
-      document.getElementById('cFotoPreview').src = _cFoto;
-      document.getElementById('cFotoPreviewWrap').style.display = 'block';
-      cAtualizaBtn();
-    };
-    reader.readAsDataURL(file);
-  }
-
-  /* LOGOS loaded from logos_assets.js */
-
-  function verificarBtnGerar() {
-    const ok  = !!_cFoto && _cTipoMarca !== null;
-    const btn = document.getElementById('btnGerarCanvas');
-    if (!btn) return;
-    btn.disabled         = !ok;
-    btn.style.background = ok ? 'linear-gradient(135deg,#E8657F,#4A1A5C)' : 'rgba(255,255,255,0.2)';
-    btn.style.color      = ok ? '#fff' : '#ccc';
-    btn.style.cursor     = ok ? 'pointer' : 'not-allowed';
-  }
-
-  async function gerarArteCanvas() {
-    if (!_cFoto) return;
-    const btn = document.getElementById('btnGerarCanvas');
-    if (btn) { btn.textContent = '⏳ Processando...'; btn.disabled = true; }
-
-    const canvas  = document.getElementById('cCanvas');
-    const ctx     = canvas.getContext('2d');
-    const fotoImg = new Image();
-
-    fotoImg.onload = async () => {
-      // 1. Recorta em quadrado 1080x1080
-      const tam   = Math.min(fotoImg.width, fotoImg.height);
-      const ox    = (fotoImg.width  - tam) / 2;
-      const oy    = (fotoImg.height - tam) / 2;
-      canvas.width  = 1080;
-      canvas.height = 1080;
-      ctx.drawImage(fotoImg, ox, oy, tam, tam, 0, 0, 1080, 1080);
-
-      // 2. Aplica ajustes via CSS filter no canvas
-      const ajBrilho    = document.getElementById('ajBrilho')?.checked;
-      const ajContraste = document.getElementById('ajContraste')?.checked;
-      const ajNitidez   = document.getElementById('ajNitidez')?.checked;
-
-      let filtros = '';
-      if (ajBrilho)    filtros += 'brightness(1.12) ';
-      if (ajContraste) filtros += 'contrast(1.10) saturate(1.15) ';
-
-      if (filtros) {
-        // Redesenha com filtros
-        const tmpCanvas = document.createElement('canvas');
-        tmpCanvas.width = tmpCanvas.height = 1080;
-        const tmpCtx = tmpCanvas.getContext('2d');
-        tmpCtx.filter = filtros.trim();
-        tmpCtx.drawImage(canvas, 0, 0);
-        ctx.clearRect(0, 0, 1080, 1080);
-        ctx.drawImage(tmpCanvas, 0, 0);
-      }
-
-      // 3. Aplica nitidez via convolução simples
-      if (ajNitidez) aplicarNitidez(ctx, 1080, 1080);
-
-      // 4. Aplica logo ou padrão
-      if (_cTipoMarca === 'logo' && _cLogoSel) {
-        await aplicarLogoFinal(ctx);
-      } else if (_cTipoMarca === 'padrao' && _cPadraoSel) {
-        await aplicarPadraoFinal(ctx);
-      }
-
-      // 5. Salva resultado
-      _cFotoComp = canvas.toDataURL('image/jpeg', 0.94);
-      mostrarPreviewComBotao();
-      if (btn) { btn.textContent = '✨ Gerar arte final'; btn.disabled = false; }
-    };
-    fotoImg.src = _cFoto;
-  }
-
-  function aplicarNitidez(ctx, w, h) {
-    try {
-      const imgData = ctx.getImageData(0, 0, w, h);
-      const d = imgData.data;
-      const kernel = [0, -0.5, 0, -0.5, 3, -0.5, 0, -0.5, 0];
-      const tmp = new Uint8ClampedArray(d);
-      for (let y = 1; y < h-1; y++) {
-        for (let x = 1; x < w-1; x++) {
-          for (let c = 0; c < 3; c++) {
-            let v = 0;
-            for (let ky = -1; ky <= 1; ky++) {
-              for (let kx = -1; kx <= 1; kx++) {
-                const idx = ((y+ky)*w + (x+kx))*4 + c;
-                v += tmp[idx] * kernel[(ky+1)*3+(kx+1)];
-              }
-            }
-            d[(y*w+x)*4+c] = Math.max(0, Math.min(255, v));
-          }
-        }
-      }
-      ctx.putImageData(imgData, 0, 0);
-    } catch(e) { console.log('nitidez ignorada:', e); }
-  }
-
-  function aplicarLogoFinal(ctx) {
-    return new Promise(resolve => {
-      const logoImg = new Image();
-      logoImg.onload = () => {
-        const logoW  = Math.round(1080 * 0.22);
-        const logoH  = Math.round(logoImg.height * (logoW / logoImg.width));
-        const margin = Math.round(1080 * 0.03);
-        ctx.globalAlpha = 0.55;
-        ctx.drawImage(logoImg, 1080 - logoW - margin, 1080 - logoH - margin, logoW, logoH);
-        ctx.globalAlpha = 1.0;
-        resolve();
-      };
-      logoImg.onerror = resolve;
-      logoImg.src = LOGOS[_cLogoSel];
-    });
-  }
-
-  function aplicarPadraoFinal(ctx) {
-    return new Promise(resolve => {
-      const padraoImg = new Image();
-      padraoImg.onload = () => {
-        ctx.globalAlpha = 0.28;
-        const pw = Math.min(padraoImg.width, 540);
-        const ph = Math.round(padraoImg.height * (pw / padraoImg.width));
-        for (let x = 0; x < 1080; x += pw)
-          for (let y = 0; y < 1080; y += ph)
-            ctx.drawImage(padraoImg, x, y, pw, ph);
-        ctx.globalAlpha = 1.0;
-        resolve();
-      };
-      padraoImg.onerror = resolve;
-      padraoImg.src = PADROES_MARCA_DAGUA[_cPadraoSel];
-    });
-  }
-
-
-
-  
-
-  // ── SEÇÃO 3: LOGO ────────────────────────────────────────
-  function cTipoMarca(tipo) {
-    _cTipoMarca = tipo;
-    _cLogoSel   = null;
-    _cLogoPos   = 'inf-dir';
-    _cFotoComp  = _cFoto;
-
-    // Reset visual dos botões Sim/Não
-    ['cOpcLogo','cOpcNenhum'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) { el.style.background = '#fff'; el.style.borderColor = '#EDE0F2'; }
-    });
-    var btn = document.getElementById(tipo === 'logo' ? 'cOpcLogo' : 'cOpcNenhum');
-    if (btn) { btn.style.background = '#F7F0FA'; btn.style.borderColor = '#E8657F'; }
-
-    // Mostra/esconde cantos
-    var loEl = document.getElementById('cLogoOpcoes');
-    var prEl = document.getElementById('cLogoPreviewWrap');
-    var vEl  = document.getElementById('cLogoVersoesWrap');
-    if (loEl) loEl.style.display = tipo === 'logo' ? 'block' : 'none';
-    if (prEl) prEl.style.display = 'none';
-    if (vEl)  vEl.style.display  = 'none';
-
-    // Reset cantos
-    ['cPos_sup_esq','cPos_sup_dir','cPos_inf_esq','cPos_inf_dir'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) { el.style.background = '#fff'; el.style.borderColor = '#EDE0F2'; }
-    });
-
-    verificarBtnGerar();
-  }
-
-  function cSelecionaPos(pos) {
-    _cLogoPos = pos;
-
-    // Reset visual de TODOS os cantos
-    ['cPos_sup_esq','cPos_sup_dir','cPos_inf_esq','cPos_inf_dir'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) { el.style.background = '#fff'; el.style.borderColor = '#EDE0F2'; }
-    });
-
-    // Destaca o canto escolhido
-    var idMap = {
-      'sup-esq': 'cPos_sup_esq',
-      'sup-dir': 'cPos_sup_dir',
-      'inf-esq': 'cPos_inf_esq',
-      'inf-dir': 'cPos_inf_dir'
-    };
-    var chosen = document.getElementById(idMap[pos]);
-    if (chosen) { chosen.style.background = '#EDE0F2'; chosen.style.borderColor = '#E8657F'; }
-
-    // Esconde preview anterior
-    var prEl = document.getElementById('cLogoPreviewWrap');
-    if (prEl) prEl.style.display = 'none';
-
-    // Mostra opções de logo
-    var wrap = document.getElementById('cLogoVersoesWrap');
-    if (wrap) {
-      wrap.style.display = 'block';
-      setTimeout(function() { wrap.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 150);
-    }
-
-    // Re-aplica logo se já tinha escolhido
-    if (_cLogoSel) aplicarLogoCanvas(_cLogoSel);
-  }
-
-  function cSelecionaLogo(tipo) {
-    _cLogoSel = tipo;
-    ['cLogo1','cLogo2','cLogo3','cLogo4'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.border = '3px solid transparent';
-    });
-    const mapa = {violeta:'cLogo1', branco:'cLogo2', original:'cLogo3', preto:'cLogo4'};
-    const el = document.getElementById(mapa[tipo]);
-    if (el) el.style.border = '3px solid #E8657F';
-    verificarBtnGerar();
-  }
-
-  function cSelecionaPadrao(pid) {
-    _cPadraoSel = pid;
-    for (let i = 1; i <= 6; i++) {
-      const el = document.getElementById('cp' + i);
-      if (el) el.style.border = '2px solid transparent';
-    }
-    const idx = pid.replace('padrao','');
-    const el = document.getElementById('cp' + idx);
-    if (el) el.style.border = '2px solid #E8657F';
-    verificarBtnGerar();
-  }
-
-  function aplicarLogoCanvas(tipoLogo) {
-    if (!_cFoto) { console.error('Sem foto!'); return; }
-    if (!LOGOS || !LOGOS[tipoLogo]) { console.error('Logo não encontrado:', tipoLogo); return; }
-
-    const canvas  = document.getElementById('cCanvas');
-    const ctx     = canvas.getContext('2d');
-    const fotoImg = new Image();
-
-    fotoImg.onload = () => {
-      canvas.width  = fotoImg.width;
-      canvas.height = fotoImg.height;
-      ctx.drawImage(fotoImg, 0, 0);
-
-      const logoImg = new Image();
-      logoImg.onload = () => {
-        const logoW  = Math.round(canvas.width * 0.22);
-        const logoH  = Math.round(logoImg.height * (logoW / logoImg.width));
-        const margin = Math.round(canvas.width * 0.03);
-        ctx.globalAlpha = 0.55;
-        ctx.drawImage(logoImg, canvas.width - logoW - margin, canvas.height - logoH - margin, logoW, logoH);
-        ctx.globalAlpha = 1.0;
-        _cFotoComp = canvas.toDataURL('image/jpeg', 0.92);
-        mostrarPreviewComBotao();
-      };
-      logoImg.onerror = (e) => {
-        console.error('Erro ao carregar logo:', e);
-        // Usa foto sem logo mesmo assim
-        _cFotoComp = canvas.toDataURL('image/jpeg', 0.92);
-        mostrarPreviewComBotao();
-      };
-      logoImg.src = LOGOS[tipoLogo];
-    };
-
-    fotoImg.onerror = (e) => console.error('Erro ao carregar foto:', e);
-    fotoImg.src = _cFoto;
-  }
-
-  function aplicarPadraoCanvas(pid) {
-    if (!_cFoto) return;
-    const canvas  = document.getElementById('cCanvas');
-    const ctx     = canvas.getContext('2d');
-    const fotoImg = new Image();
-
-    fotoImg.onload = () => {
-      canvas.width  = fotoImg.width;
-      canvas.height = fotoImg.height;
-      ctx.drawImage(fotoImg, 0, 0);
-
-      const padraoImg = new Image();
-      padraoImg.onload = () => {
-        ctx.globalAlpha = 0.28;
-        const pw = Math.min(padraoImg.width, Math.round(canvas.width / 2));
-        const ph = Math.round(padraoImg.height * (pw / padraoImg.width));
-        for (let x = 0; x < canvas.width; x += pw) {
-          for (let y = 0; y < canvas.height; y += ph) {
-            ctx.drawImage(padraoImg, x, y, pw, ph);
-          }
-        }
-        ctx.globalAlpha = 1.0;
-        _cFotoComp = canvas.toDataURL('image/jpeg', 0.92);
-        mostrarPreviewComBotao();
-      };
-      padraoImg.onerror = () => {
-        _cFotoComp = canvas.toDataURL('image/jpeg', 0.92);
-        mostrarPreviewComBotao();
-      };
-      padraoImg.src = PADROES_MARCA_DAGUA[pid];
-    };
-    fotoImg.src = _cFoto;
-  }
-
-  function mostrarPreviewComBotao() {
-    // Chamada após logo/padrão aplicado com sucesso
-    const prev = document.getElementById('cLogoPreview');
-    const wrap = document.getElementById('cLogoPreviewWrap');
-    const btn  = document.getElementById('btnContinuar');
-    if (prev) prev.src = _cFotoComp;
-    if (wrap) wrap.style.display = 'block';
-    if (btn)  btn.style.display  = 'block';
-    // Scrolla para o preview
-    setTimeout(() => {
-      if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 200);
-  }
-
-  // Legacy - não faz mais nada
-  function cAtualizaBtn() {}
-
-  function mostrarAjustes() {
-    const painel = document.getElementById('painelAjustes');
-    if (!painel) return;
-    painel.style.display = 'block';
-    // Mostra foto atual no preview de ajuste
-    document.getElementById('previewAjuste').src = _cFotoComp || _cFoto;
-    setTimeout(() => painel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
-  }
-
-  function mostrarPasso2Final() {
-    document.getElementById('painelAjustes').style.display = 'none';
-    const p2 = document.getElementById('passo2Claude');
-    p2.style.display = 'block';
-    setTimeout(() => p2.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
-    mostrarToast('🎉 Foto finalizada!');
-  }
-
-  function resetarAjustes() {
-    document.getElementById('slBrilho').value    = 0;
-    document.getElementById('slContraste').value = 0;
-    document.getElementById('slSaturacao').value = 0;
-    document.getElementById('slNitidez').value   = 0;
-    document.getElementById('lblBrilho').textContent    = '0';
-    document.getElementById('lblContraste').textContent = '0';
-    document.getElementById('lblSaturacao').textContent = '0';
-    document.getElementById('lblNitidez').textContent   = '0';
-    document.getElementById('previewAjuste').src = _cFotoComp || _cFoto;
-  }
-
-  function aplicarAjustes() {
-    const brilho    = parseInt(document.getElementById('slBrilho').value);
-    const contraste = parseInt(document.getElementById('slContraste').value);
-    const saturacao = parseInt(document.getElementById('slSaturacao').value);
-    const nitidez   = parseInt(document.getElementById('slNitidez').value);
-
-    const src = _cFotoComp || _cFoto;
-    const img = new Image();
-    img.onload = () => {
-      const c   = document.createElement('canvas');
-      c.width   = img.width;
-      c.height  = img.height;
-      const ctx = c.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-
-      const imageData = ctx.getImageData(0, 0, c.width, c.height);
-      const d = imageData.data;
-
-      // Fator de contraste (0.0 a 2.0)
-      const cf = (259 * (contraste + 255)) / (255 * (259 - contraste));
-
-      for (let i = 0; i < d.length; i += 4) {
-        let r = d[i], g = d[i+1], b = d[i+2];
-
-        // Brilho
-        r += brilho; g += brilho; b += brilho;
-
-        // Contraste
-        r = cf * (r - 128) + 128;
-        g = cf * (g - 128) + 128;
-        b = cf * (b - 128) + 128;
-
-        // Saturação
-        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-        const sf   = (saturacao + 100) / 100;
-        r = gray + sf * (r - gray);
-        g = gray + sf * (g - gray);
-        b = gray + sf * (b - gray);
-
-        d[i]   = Math.max(0, Math.min(255, r));
-        d[i+1] = Math.max(0, Math.min(255, g));
-        d[i+2] = Math.max(0, Math.min(255, b));
-      }
-
-      ctx.putImageData(imageData, 0, 0);
-
-      // Nitidez via convolução simples
-      if (nitidez > 0) {
-        const sharpData = ctx.getImageData(0, 0, c.width, c.height);
-        const src2 = new Uint8ClampedArray(sharpData.data);
-        const w = c.width, h = c.height;
-        const amount = nitidez * 0.3;
-        const kernel = [-amount, -amount, -amount,
-                        -amount, 1 + 8 * amount, -amount,
-                        -amount, -amount, -amount];
-        for (let y = 1; y < h - 1; y++) {
-          for (let x = 1; x < w - 1; x++) {
-            for (let ch = 0; ch < 3; ch++) {
-              let val = 0;
-              for (let ky = -1; ky <= 1; ky++) {
-                for (let kx = -1; kx <= 1; kx++) {
-                  val += src2[((y + ky) * w + (x + kx)) * 4 + ch]
-                       * kernel[(ky + 1) * 3 + (kx + 1)];
-                }
-              }
-              sharpData.data[(y * w + x) * 4 + ch] = Math.max(0, Math.min(255, val));
-            }
-          }
-        }
-        ctx.putImageData(sharpData, 0, 0);
-      }
-
-      const result = c.toDataURL('image/jpeg', 0.95);
-      document.getElementById('previewAjuste').src = result;
-      _cFotoFinal = result; // salva versão final ajustada
-    };
-    img.src = src;
-  }
-
-  let _cFotoFinal = null;
-
-  function mostrarPasso2() { mostrarPasso2Final(); }
-
-  function abrirClaudeDireto() {
-    const temLogo = _cTipoMarca === 'logo' || _cTipoMarca === 'padrao';
-
-    const prompt = temLogo
-      ? 'Sou da Helena Acessórios.\n\n' +
-        'ATENÇÃO: Esta foto JÁ TEM o logo da loja aplicado no canto inferior direito pelo nosso sistema.\n\n' +
-        'Sua única tarefa é melhorar a qualidade técnica da foto:\n' +
-        '— Aumentar brilho e claridade\n' +
-        '— Melhorar contraste e nitidez\n' +
-        '— Deixar as cores das pedras mais vibrantes\n' +
-        '— Formato 1080x1080px\n\n' +
-        'NÃO FAÇA:\n' +
-        '— NÃO adicione nenhum texto\n' +
-        '— NÃO escreva "helena", "acessorios", "semijoias" ou qualquer palavra\n' +
-        '— NÃO adicione logo, marca d\'água, assinatura ou overlay\n' +
-        '— NÃO altere o logo que já está na foto\n\n' +
-        'Entregue como imagem JPEG. Pode pedir a foto!'
-      : 'Sou da Helena Acessórios.\n\n' +
-        'Sua única tarefa é melhorar a qualidade técnica da foto:\n' +
-        '— Aumentar brilho e claridade\n' +
-        '— Melhorar contraste e nitidez\n' +
-        '— Deixar as cores das pedras mais vibrantes\n' +
-        '— Formato 1080x1080px\n\n' +
-        'NÃO FAÇA:\n' +
-        '— NÃO adicione nenhum texto\n' +
-        '— NÃO escreva "helena", "acessorios" ou qualquer palavra\n' +
-        '— NÃO adicione logo, marca d\'água ou assinatura\n\n' +
-        'Entregue como imagem JPEG. Pode pedir a foto!';
-
-    window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
-  }
-
-  function confirmarEnviarClaude() {
-    const modal  = document.getElementById('modalEnviarClaude');
-    const prompt = modal.dataset.prompt;
-    const foto   = modal.dataset.foto;
-    modal.style.display = 'none';
-
-    // Baixa a foto composta
-    const a = document.createElement('a');
-    a.href = foto;
-    a.download = 'helena_foto_para_claude.jpg';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-
-    // Abre Claude após 1s
-    setTimeout(() => {
-      window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
-    }, 1000);
-  }
-
-  function fecharEnviarClaude() {
-    document.getElementById('modalEnviarClaude').style.display = 'none';
-  }
-  // ── VIA ADOBE — funções legadas mantidas ──
-  function escolheFundoAdobe() {}
-  function atualizaOutroAdobe() {}
-  function escolheLogoAdobe() {}
-  function escolheTexto() {}
-  function atualizaTextoArte() {}
-  function atualizaBotoes() {}
-  function gerarComClaude() { abrirClaudeDireto(); }
-  function abrirClaudeAgora() {
-    const prompt = document.getElementById('modalInstrucaoClaude').dataset.prompt;
-    document.getElementById('modalInstrucaoClaude').style.display = 'none';
-    window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
-  }
-  function fecharModalClaude() {
-    const m = document.getElementById('modalInstrucaoClaude');
-    if (m) m.style.display = 'none';
-  }
-
-  // ── OPÇÃO B: ADOBE EXPRESS SDK v4 ────────
-  const ADOBE_CLIENT_ID = 'b50fafca5539467f8572721d11795548';
-  let _adobeSDK = null;
-
-  async function initAdobeSDK() {
-    if (_adobeSDK) return _adobeSDK;
-    try {
-      console.log('[Adobe] Carregando SDK...');
-      await import('https://cc-embed.adobe.com/sdk/v4/CCEverywhere.js');
-      console.log('[Adobe] CCEverywhere:', typeof window.CCEverywhere);
-      _adobeSDK = await window.CCEverywhere.initialize(
-        { clientId: ADOBE_CLIENT_ID, appName: 'Helena Acessórios' },
-        { locale: 'pt_BR' }
-      );
-      console.log('[Adobe] SDK pronto! Keys:', Object.keys(_adobeSDK));
-      return _adobeSDK;
-    } catch (err) {
-      console.error('[Adobe] Erro init:', err);
-      return null;
-    }
-  }
-
-  async function abrirClaudeAdobe() {
-    if (!_fotoBase64) { mostrarToast('⚠️ Selecione a foto primeiro.'); return; }
-
-    mostrarLoadingAdobe(true);
-
-    try {
-      // Salva a foto via blob
-      const res  = await fetch(_fotoBase64);
-      const blob = await res.blob();
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href = url; a.download = 'helena_peca_adobe.jpg';
-      document.body.appendChild(a); a.click();
-      setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 1000);
-    } catch(e) {
-      console.log('download falhou:', e);
-    }
-
-    setTimeout(() => {
-      mostrarLoadingAdobe(false);
-      document.getElementById('instrucaoAdobe').style.display = 'flex';
-    }, 900);
-  }
-
-  function abrirAdobeIA() {
-    // Abre o Assistente de IA Beta do Adobe Express
-    window.location.href = 'https://express.adobe.com/sp/design/post';
-  }
-
-  function abrirAdobeDireto() {
-    abrirAppAdobe();
-  }
-
-  function abrirAdobeFoto() {
-    abrirAppAdobe();
-  }
-
-  function abrirAdobeVideo() {
-    abrirAppAdobe();
-  }
-
-  function abrirAdobeIA() {
-    abrirAppAdobe();
-  }
-
-  // Abre app Adobe Express instalado no celular
-  // Se não tiver instalado, redireciona para a loja
-  function abrirAppAdobe() {
-    var isAndroid = /Android/i.test(navigator.userAgent);
-    var isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    if (isAndroid) {
-      // Tenta abrir via intent — funciona mesmo com "Abrir links compatíveis" ativado
-      var intent = 'intent://express.adobe.com/#Intent;' +
-                   'scheme=https;' +
-                   'package=com.adobe.spark.post;' +
-                   'S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.adobe.spark.post;' +
-                   'end';
-      window.location.href = intent;
-    } else if (isIOS) {
-      // Tenta deep link do app iOS
-      window.location.href = 'adobeexpress://';
-      // Fallback para App Store após 2s se app não abrir
-      setTimeout(function() {
-        window.location.href = 'https://apps.apple.com/br/app/adobe-express/id1440129768';
-      }, 2000);
-    } else {
-      // Desktop — abre no browser
-      window.location.href = 'https://express.adobe.com';
-    }
-  }
-
-  function abrirAdobeAgora() {
-    document.getElementById('instrucaoAdobe').style.display = 'none';
-    // URL principal do Adobe Express — sempre funciona no app e browser
-    window.open('https://express.adobe.com', '_blank');
-  }
-
-  function fecharInstrucaoAdobe() {
-    document.getElementById('instrucaoAdobe').style.display = 'none';
-  }
-
-  function fecharModalAdobe() { mostrarLoadingAdobe(false); }
-
-  function mostrarLoadingAdobe(show) {
-    document.getElementById('adobeLoadingOverlay').style.display = show ? 'flex' : 'none';
-  }
-
-  function mostrarToast(msg) {
-    const t = document.getElementById('toastHelena');
-    t.textContent = msg;
-    t.style.opacity   = '1';
-    t.style.transform = 'translateX(-50%) translateY(0)';
-    setTimeout(() => {
-      t.style.opacity   = '0';
-      t.style.transform = 'translateX(-50%) translateY(20px)';
-    }, 3500);
-  }
-
-  // ── SLIDE SHOW ────────────────────────────
-  let ss = { tipo: null, qtd: null, musica: null, musicaEstilo: '', logo: null };
-
-  function ssTipo(valor) {
-    ss.tipo = valor;
-    document.querySelectorAll('[id^="ss_tipo_"]').forEach(el => el.classList.remove('selecionado'));
-    event.currentTarget.classList.add('selecionado');
-    ssAtualizaBtn();
-  }
-
-  function ssQtd(n) {
-    ss.qtd = n;
-    document.querySelectorAll('[id^="ss_qtd_"]').forEach(el => el.classList.remove('selecionado'));
-    document.getElementById('ss_qtd_' + n).classList.add('selecionado');
-    document.getElementById('ss_qtd_input_wrap').style.display = 'none';
-    ssAtualizaBtn();
-  }
-
-  function ssQtdOutro() {
-    document.querySelectorAll('[id^="ss_qtd_"]').forEach(el => el.classList.remove('selecionado'));
-    document.getElementById('ss_qtd_outro').classList.add('selecionado');
-    document.getElementById('ss_qtd_input_wrap').style.display = 'block';
-    ss.qtd = null;
-    ssAtualizaBtn();
-  }
-
-  function ssQtdCustom(val) {
-    ss.qtd = parseInt(val) || null;
-    ssAtualizaBtn();
-  }
-
-  function ssMusica(sim) {
-    ss.musica = sim;
-    document.getElementById('ss_musica_sim').className = 'fundo-card' + (sim  ? ' selecionado' : '');
-    document.getElementById('ss_musica_nao').className = 'fundo-card' + (!sim ? ' selecionado' : '');
-    document.getElementById('ss_musica_wrap').style.display = sim ? 'block' : 'none';
-    if (!sim) ss.musicaEstilo = '';
-    ssAtualizaBtn();
-  }
-
-  function ssMusicaEstilo(val) { ss.musicaEstilo = val; }
-
-  function ssLogo(sim) {
-    ss.logo = sim;
-    document.getElementById('ss_logo_sim').className = 'fundo-card' + (sim  ? ' selecionado' : '');
-    document.getElementById('ss_logo_nao').className = 'fundo-card' + (!sim ? ' selecionado' : '');
-    ssAtualizaBtn();
-  }
-
-  function ssAtualizaBtn() {
-    const ok = ss.tipo && ss.qtd && ss.musica !== null && ss.logo !== null;
-    const btn = document.getElementById('btnGerarSlide');
-    btn.disabled       = !ok;
-    btn.style.background = ok ? '#4A1A5C' : '#ccc';
-    btn.style.cursor     = ok ? 'pointer'  : 'not-allowed';
-  }
-
-  // Previne zoom duplo toque no iOS
-
-  function gerarSlideShow() {
-    const musicaTxt = ss.musica
-      ? `Sim — sugira músicas ${ss.musicaEstilo ? 'com estilo ' + ss.musicaEstilo : 'que combinem com o tema'} disponíveis no Instagram Reels.`
-      : 'Não precisa sugerir música.';
-
-    const logoTxt = ss.logo
-      ? 'Sim — crie um slide final de encerramento com o logo da Helena Acessórios centralizado, @helena_acessorios_semijoias, e uma chamada para ação como "Visite nossa loja" ou "Mande uma mensagem". Fundo nas cores da marca (violeta #4A1A5C e rosa #E8657F).'
-      : 'Não precisa de slide final com logo.';
-
-    const prompt =
-      'Quero criar um SLIDE SHOW / CARROSSEL para o Instagram da Helena Acessórios.\n\n' +
-      'Configurações escolhidas:\n' +
-      '— Tipo: ' + ss.tipo + '\n' +
-      '— Quantidade de slides: ' + ss.qtd + ' slides\n' +
-      '— Música: ' + musicaTxt + '\n' +
-      '— Slide final com logo: ' + logoTxt + '\n\n' +
-      'Agora pergunte uma coisa de cada vez para coletar o conteúdo:\n' +
-      '1. Peça as fotos das peças (se aplicável ao tipo escolhido)\n' +
-      '2. Pergunte se tem textos, preços ou informações específicas para cada slide\n' +
-      '3. Pergunte o fundo preferido (identidade Helena violeta/rosa, outro tema, ou vai enviar imagem)\n\n' +
-      'Depois crie o carrossel completo com ' + ss.qtd + ' slides no estilo editorial do @helena_acessorios_semijoias, cores violeta #4A1A5C e rosa #E8657F, logo da Helena discreta em cada slide como marca d\'água.\n\n' +
-      'Comece pedindo as fotos ou o conteúdo!';
-
-    window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
-  }
-
-
-
-  async function baixarFotoPreparada() {
-    const foto = _cFotoComp || _cFoto;
-    try {
-      const res  = await fetch(foto);
-      const blob = await res.blob();
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href = url; a.download = 'helena_foto_com_logo.jpg';
-      document.body.appendChild(a); a.click();
-      setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 1000);
-    } catch(e) { abrirFotoNovaAba(); }
-    mostrarPasso2();
-  }
-
-  function abrirFotoNovaAba() {
-    const foto = _cFotoComp || _cFoto;
-    const w = window.open('','_blank');
-    if (w) w.document.write('<html><body style="margin:0;background:#111;text-align:center;"><p style="color:#fff;padding:16px;font-family:sans-serif;">📥 Toque e segure → Salvar imagem</p><img src="'+foto+'" style="max-width:100%;"></body></html>');
-    mostrarPasso2();
-  }
-
-  document.addEventListener('touchend', function(e) {
-  const now = Date.now();
-  if (now - (document._lastTouch || 0) < 300) {
-    e.preventDefault();
-  }
-  document._lastTouch = now;
-}, { passive: false });
-
-</script>
 </head>
 <body>
 
@@ -1364,7 +500,7 @@ function enviarPrompt(texto) {
       <span class="saudacao-emoji">👋✨</span>
       <p class="saudacao-nome">Olá Camila e Rita!</p>
       <p class="saudacao-ia">Sou a Claude IA e estou aqui pra te ajudar em marketing para a loja! Em que posso te ajudar hoje para fazermos excelentes vendas?</p>
-
+      <p class="saudacao-txt" id="fraseMotivacional">Carregando frase do dia...</p>
     </div>
 
     <svg class="home-wave" viewBox="0 0 390 30" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -1376,8 +512,6 @@ function enviarPrompt(texto) {
     <p class="section-label">O que vamos criar hoje?</p>
 
     <div class="cards">
-
-      <!-- 01 · Otimizar foto -->
       <div class="card" onclick="ir('novidade')">
         <div class="card-stripe stripe-1"></div>
         <div class="card-inner">
@@ -1385,29 +519,27 @@ function enviarPrompt(texto) {
           <div class="card-body">
             <p class="card-num">01</p>
             <span class="card-badge badge-1">IA + foto real</span>
-            <p class="card-title">Ajustar arte da foto ou vídeo</p>
-            <p class="card-desc">Ajuste rápido, edição manual ou assistência IA da Adobe</p>
+            <p class="card-title">Otimizar foto da peça</p>
+            <p class="card-desc">Melhora a foto com corte, brilho, fundo profissional e logo discreto da loja</p>
           </div>
           <span class="card-arrow">›</span>
         </div>
       </div>
 
-      <!-- 02 · Slide show -->
-      <div class="card" onclick="ir('slideshow')">
-        <div class="card-stripe" style="background:linear-gradient(90deg,#1565C0,#42A5F5);"></div>
+      <div class="card" onclick="ir('horario')">
+        <div class="card-stripe stripe-2"></div>
         <div class="card-inner">
-          <div class="card-icon" style="background:#E3F2FD;">🎞️</div>
+          <div class="card-icon icon-2">🕐</div>
           <div class="card-body">
             <p class="card-num">02</p>
-            <span class="card-badge" style="background:#E3F2FD;color:#1565C0;">Carrossel</span>
-            <p class="card-title">Criar slide show</p>
-            <p class="card-desc">Sequência de imagens para Stories ou carrossel no Instagram</p>
+            <span class="card-badge badge-2">Atendimento</span>
+            <p class="card-title">Aviso de horário especial</p>
+            <p class="card-desc">Arte para comunicar horário diferenciado</p>
           </div>
           <span class="card-arrow">›</span>
         </div>
       </div>
 
-      <!-- 03 · Promoção -->
       <div class="card" onclick="ir('promocao')">
         <div class="card-stripe stripe-3"></div>
         <div class="card-inner">
@@ -1416,13 +548,12 @@ function enviarPrompt(texto) {
             <p class="card-num">03</p>
             <span class="card-badge badge-3">Promoção</span>
             <p class="card-title">Arte para promoção</p>
-            <p class="card-desc">Brinde, desconto, combo ou oferta especial da loja</p>
+            <p class="card-desc">Brinde, desconto ou oferta especial da loja</p>
           </div>
           <span class="card-arrow">›</span>
         </div>
       </div>
 
-      <!-- 04 · Comemorativa -->
       <div class="card" onclick="ir('comemorativa')">
         <div class="card-stripe" style="background:linear-gradient(90deg,#C2185B,#E91E8C);"></div>
         <div class="card-inner">
@@ -1431,27 +562,11 @@ function enviarPrompt(texto) {
             <p class="card-num">04</p>
             <span class="card-badge" style="background:#FCE4EC;color:#C2185B;">Data especial</span>
             <p class="card-title">Folder de data comemorativa</p>
-            <p class="card-desc">Arte com frase especial para Mães, Namorados, Natal e mais</p>
+            <p class="card-desc">Arte com frase especial para datas como Mães, Namorados, Natal e mais</p>
           </div>
           <span class="card-arrow">›</span>
         </div>
       </div>
-
-      <!-- 05 · Horário -->
-      <div class="card" onclick="ir('horario')">
-        <div class="card-stripe stripe-2"></div>
-        <div class="card-inner">
-          <div class="card-icon icon-2">🕐</div>
-          <div class="card-body">
-            <p class="card-num">05</p>
-            <span class="card-badge badge-2">Atendimento</span>
-            <p class="card-title">Aviso de horário especial</p>
-            <p class="card-desc">Arte para comunicar horário diferenciado às clientes</p>
-          </div>
-          <span class="card-arrow">›</span>
-        </div>
-      </div>
-
     </div>
 
     <div class="paleta">
@@ -1468,506 +583,252 @@ function enviarPrompt(texto) {
   </div>
 </div>
 
-<!-- ════════════ AJUSTAR ARTE DA FOTO ════════════ -->
+<!-- ════════════ NOVIDADE — ESCOLHA O MODO ════════════ -->
 <div class="screen" id="novidade">
   <div class="sub-screen">
     <div class="sub-header">
       <button class="back-btn" onclick="ir('home')">‹</button>
       <div class="sub-header-info">
-        <p class="sub-header-title">Ajustar arte da foto ou vídeo ✨</p>
-        <p class="sub-header-sub">helena acessórios · escolha o método</p>
+        <p class="sub-header-title">Otimizar foto da peça ✨</p>
+        <p class="sub-header-sub">helena acessórios · foto profissional</p>
       </div>
     </div>
-    <div class="sub-body">
-      <div class="claude-bubble">
-        <p class="claude-nome">Painel Helena · para Camila e Rita</p>
-        <p class="claude-txt">Como você quer ajustar a arte hoje? 💜</p>
-      </div>
 
-      <!-- OPÇÃO 1: Canvas -->
-      <div onclick="ir('otimizarClaude')"
-        style="background:#4A1A5C;border-radius:18px;padding:1.25rem 1.2rem;
-               margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px;">
-        <span style="font-size:32px;flex-shrink:0;">✨</span>
-        <div>
-          <p style="color:#fff;font-size:15px;font-weight:500;margin:0;">Ajuste rápido com Canvas</p>
-          <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:4px 0 0;line-height:1.5;">
-            Brilho, cores, nitidez e logo — tudo automático no painel
-          </p>
-        </div>
-        <span style="color:rgba(255,255,255,0.5);font-size:22px;margin-left:auto;">›</span>
-      </div>
-
-      <!-- OPÇÃO 2: Adobe Manual -->
-      <div onclick="ir('otimizarAdobe')"
-        style="background:#E8657F;border-radius:18px;padding:1.25rem 1.2rem;
-               margin-bottom:1.5rem;cursor:pointer;display:flex;align-items:center;gap:14px;">
-        <span style="width:40px;height:40px;border-radius:10px;background:#fff;flex-shrink:0;
-                     display:flex;align-items:center;justify-content:center;">
-          <svg width="26" height="26" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs><linearGradient id="adobeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#DA1F26"/>
-              <stop offset="50%" style="stop-color:#9B1FBF"/>
-              <stop offset="100%" style="stop-color:#1473E6"/>
-            </linearGradient></defs>
-            <rect width="100" height="100" rx="18" fill="url(#adobeGrad)"/>
-            <text x="50" y="72" font-family="Arial Black,sans-serif" font-size="62" font-weight="900" fill="white" text-anchor="middle">A</text>
-          </svg>
-        </span>
-        <div>
-          <p style="color:#fff;font-size:15px;font-weight:500;margin:0;">Ajuste manual com Adobe Express</p>
-          <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:4px 0 0;line-height:1.5;">
-            Troca fundo, edita foto ou cria vídeo para WhatsApp
-          </p>
-        </div>
-        <span style="color:rgba(255,255,255,0.5);font-size:22px;margin-left:auto;">›</span>
-      </div>
-
-      <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════ ADOBE IA BETA ════════════ -->
-<div class="screen" id="adobeIA">
-  <div class="sub-screen">
-    <div class="sub-header">
-      <button class="back-btn" onclick="ir('novidade')">‹</button>
-      <div class="sub-header-info">
-        <p class="sub-header-title">✦ IA da Adobe · Beta</p>
-        <p class="sub-header-sub">helena acessórios · 3 passos simples</p>
-      </div>
-    </div>
-    <div class="sub-body">
-
-      <div class="claude-bubble">
-        <p class="claude-nome">Painel Helena · para Camila e Rita</p>
-        <p class="claude-txt">O Assistente de IA da Adobe transforma sua foto em algo profissional! Siga os 3 passos abaixo 💜</p>
-      </div>
-
-      <div style="background:#F7F0FA;border-radius:16px;padding:1.25rem;margin-bottom:1.25rem;">
-        <p style="color:#4A1A5C;font-size:13px;font-weight:700;margin:0 0 1rem;">No Adobe Express — Assistente de IA:</p>
-
-        <!-- Passo 1 -->
-        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:1rem;">
-          <div style="background:#4A1A5C;color:#fff;border-radius:50%;width:28px;height:28px;min-width:28px;
-                      display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">1</div>
-          <div>
-            <p style="color:#4A1A5C;font-size:13px;font-weight:600;margin:0 0 2px;">Toque no ícone ✦ (estrela colorida)</p>
-            <p style="color:#666;font-size:12px;margin:0;line-height:1.5;">
-              No canto superior esquerdo do Adobe Express — abre o <strong>Assistente de IA Beta</strong>
-            </p>
-          </div>
-        </div>
-
-        <!-- Passo 2 -->
-        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:1rem;">
-          <div style="background:#E8657F;color:#fff;border-radius:50%;width:28px;height:28px;min-width:28px;
-                      display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">2</div>
-          <div>
-            <p style="color:#4A1A5C;font-size:13px;font-weight:600;margin:0 0 2px;">Toque em <strong>"Editar imagem"</strong></p>
-            <p style="color:#666;font-size:12px;margin:0;line-height:1.5;">
-              Na tela do assistente, escolha a opção <strong>"Editar imagem"</strong> (botão em destaque)
-            </p>
-          </div>
-        </div>
-
-        <!-- Passo 3 -->
-        <div style="display:flex;gap:12px;align-items:flex-start;">
-          <div style="background:#4A1A5C;color:#fff;border-radius:50%;width:28px;height:28px;min-width:28px;
-                      display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">3</div>
-          <div>
-            <p style="color:#4A1A5C;font-size:13px;font-weight:600;margin:0 0 2px;">Envie a foto e escolha o estilo</p>
-            <p style="color:#666;font-size:12px;margin:0;line-height:1.5;">
-              Toque em <strong>"Enviar uma imagem"</strong> → selecione a foto da peça → escolha <strong>"Transforme minha foto em uma foto profissional"</strong>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <button onclick="abrirAdobeIA()"
-        style="width:100%;padding:1rem;background:linear-gradient(135deg,#a855f7,#E8657F);color:#fff;border:none;
-               border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;
-               font-family:'DM Sans',sans-serif;margin-bottom:10px;
-               display:flex;align-items:center;justify-content:center;gap:8px;">
-        ✦ Abrir Assistente de IA da Adobe
-      </button>
-
-      <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- ════════════ MELHORAR FOTO VIA PAINEL ════════════ -->
-<div class="screen" id="otimizarClaude">
-  <div class="sub-screen">
-    <div class="sub-header">
-      <button class="back-btn" onclick="ir('novidade')">‹</button>
-      <div class="sub-header-info">
-        <p class="sub-header-title">✨ Melhorar foto da peça</p>
-        <p class="sub-header-sub">helena acessórios · ajustes automáticos</p>
-      </div>
-    </div>
-    <div class="sub-body">
-
-      <div class="claude-bubble">
-        <p class="claude-nome">Painel Helena · para Camila e Rita</p>
-        <p class="claude-txt">Selecione a foto, escolha o logo e os ajustes — o painel gera a arte final pronta! 💜</p>
-      </div>
-
-      <!-- FOTO -->
-      <p class="passo-label">1 — Selecione a foto</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
-        <div onclick="escolheFotoC('galeria')" id="ocFotoGal"
-          style="background:#3d1650;border-radius:14px;padding:1.1rem 0.5rem;
-                 text-align:center;cursor:pointer;color:#fff;
-                 display:flex;flex-direction:column;align-items:center;gap:6px;">
-          <span style="font-size:30px;">🖼️</span>
-          <span style="font-size:13px;">Da galeria</span>
-        </div>
-        <div onclick="escolheFotoC('camera')" id="ocFotoCam"
-          style="background:#3d1650;border-radius:14px;padding:1.1rem 0.5rem;
-                 text-align:center;cursor:pointer;color:#fff;
-                 display:flex;flex-direction:column;align-items:center;gap:6px;">
-          <span style="font-size:30px;">📷</span>
-          <span style="font-size:13px;">Tirar foto</span>
-        </div>
-      </div>
-      <div id="cFotoPreviewWrap" style="display:none;margin-bottom:1rem;text-align:center;">
-        <img id="cFotoPreview" src=""
-          style="max-width:100%;max-height:130px;border-radius:10px;object-fit:cover;
-                 border:2px solid rgba(255,255,255,0.3);">
-        <p style="color:rgba(255,255,255,0.6);font-size:11px;margin-top:4px;">✅ Foto selecionada</p>
-      </div>
-      <input type="file" id="cInputGaleria" accept="image/*" style="display:none" onchange="processarFotoC(this)">
-      <input type="file" id="cInputCamera" accept="image/*" capture="environment" style="display:none" onchange="processarFotoC(this)">
-
-      <!-- AJUSTES -->
-      <p class="passo-label">2 — Ajustes automáticos</p>
-      <div style="background:#F7F0FA;border-radius:12px;padding:1rem;margin-bottom:1rem;">
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <label style="color:#4A1A5C;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;">
-            <input type="checkbox" id="ajBrilho" checked style="width:18px;height:18px;accent-color:#E8657F;">
-            ☀️ Brilho e claridade
-          </label>
-          <label style="color:#4A1A5C;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;">
-            <input type="checkbox" id="ajContraste" checked style="width:18px;height:18px;accent-color:#E8657F;">
-            🎨 Contraste e cores
-          </label>
-          <label style="color:#4A1A5C;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;">
-            <input type="checkbox" id="ajNitidez" checked style="width:18px;height:18px;accent-color:#E8657F;">
-            🔍 Nitidez
-          </label>
-          <label style="color:#4A1A5C;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;">
-            <input type="checkbox" id="ajCrop" checked style="width:18px;height:18px;accent-color:#E8657F;">
-            📐 Recortar 1080x1080px
-          </label>
-        </div>
-      </div>
-
-      <!-- LOGO -->
-      <p class="passo-label">3 — Inserir logo da loja na foto</p>
-
-      <!-- Sim / Não -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0.75rem;">
-        <div id="cOpcLogo"   onclick="cTipoMarca('logo')"
-          style="background:#fff;border-radius:12px;padding:0.8rem;border:2px solid #EDE0F2;
-                 text-align:center;cursor:pointer;color:#4A1A5C;font-size:13px;font-weight:500;">
-          ✅ Sim, inserir logo
-        </div>
-        <div id="cOpcNenhum" onclick="cTipoMarca('nenhum')"
-          style="background:#fff;border-radius:12px;padding:0.8rem;border:2px solid #EDE0F2;
-                 text-align:center;cursor:pointer;color:#4A1A5C;font-size:13px;font-weight:500;">
-          ❌ Não
-        </div>
-      </div>
-
-      <!-- PASSO A: cantos (aparece após Sim) -->
-      <div id="cLogoOpcoes" style="display:none;">
-
-        <p style="color:#4A1A5C;font-size:12px;font-weight:600;margin:0 0 6px;">📍 Em qual canto?</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;">
-          <div id="cPos_sup_esq" onclick="cSelecionaPos('sup-esq')"
-            style="background:#fff;border:2px solid #EDE0F2;border-radius:10px;padding:0.7rem;
-                   text-align:center;cursor:pointer;color:#4A1A5C;font-size:12px;font-weight:500;">
-            ↖️ Sup. esquerdo
-          </div>
-          <div id="cPos_sup_dir" onclick="cSelecionaPos('sup-dir')"
-            style="background:#fff;border:2px solid #EDE0F2;border-radius:10px;padding:0.7rem;
-                   text-align:center;cursor:pointer;color:#4A1A5C;font-size:12px;font-weight:500;">
-            ↗️ Sup. direito
-          </div>
-          <div id="cPos_inf_esq" onclick="cSelecionaPos('inf-esq')"
-            style="background:#fff;border:2px solid #EDE0F2;border-radius:10px;padding:0.7rem;
-                   text-align:center;cursor:pointer;color:#4A1A5C;font-size:12px;font-weight:500;">
-            ↙️ Inf. esquerdo
-          </div>
-          <div id="cPos_inf_dir" onclick="cSelecionaPos('inf-dir')"
-            style="background:#fff;border:2px solid #EDE0F2;border-radius:10px;padding:0.7rem;
-                   text-align:center;cursor:pointer;color:#4A1A5C;font-size:12px;font-weight:500;">
-            ↘️ Inf. direito
-          </div>
-        </div>
-
-        <!-- PASSO B: logos (aparece após escolher canto) -->
-        <div id="cLogoVersoesWrap" style="display:none;margin-bottom:0.75rem;">
-          <p style="color:#4A1A5C;font-size:12px;font-weight:600;margin:0 0 6px;">🖼️ Qual versão do logo?</p>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <div id="cLogo1" onclick="cSelecionaLogo('violeta')"
-              style="border-radius:12px;overflow:hidden;cursor:pointer;border:3px solid transparent;">
-              <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAB4AHgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDqKKKK5z9FCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoqvfX1rYRLLe3EcEbNtDSHAJ9KsDkcUWFdXsFFFFAyvf3cNhavc3LFYVIBYDPUgD9SKskEHGOawNfis7u9ht0uoodY2/uA7E/KT83y9DkBuvSsvUoru58N60PDCPFoukxPJd3rOxDt/wA8o2PJPPJ7fz2jS5rWOStilRu57fr/AF/Wp2VFY9rJqOi3dtpPiQATzxLLZ3g/1d2hAPB/vjOCP8m8b6EaiLLJ84xedn+HG7GM+ue1RKDi7GlHEQrQU4vRlqiiioNwooooAKKKKACiiigDjvij/wAgG2/6+l/9BauvT7i/QfyrkPil/wAgC2/6+V/9BasXxPBrug6dFctr9xMJG2BVyuPlJ9faumMOeEVfuefOt7GrOVrqy/U9A1TUbTS7U3F9MsUQOATySfQDuaydL8X6RqN0ttFLJFK5wgmTaH+hrnvF0c11rPh5ZLmOCJ4AUmmXegl4J3A8c/L1q/cWElveWUnijV7C5tRJ+7ia3CEvjjBHbP4UlSioq+7/AK7DliKjm1FaK39b6fcyHXZVg+JGmyvu2pb7iFUsej9AOpos4PEF9a61b6TGNJ0XVU8ue1uckP6uEx8jH1GPxqTVc/8ACz9J9fJ/o9Y+s6k2sa9eRXo1NtOtnMSRWS5yQcZY1tG+luxy1YwlzKevvPT5Lqbl5ca9Dr9nf+J4TqsMMS29vJbAlbUAYyI8dTjk/rWt/YFi175uyL7I37w2+DgzZz5uc9ccVleBIbhLu5NvNfLpi4VYL1MOHPOVPTFYnhrQrTW7/XGvWnzDcEJ5chXqzdfyqJattu1jSko04xjCN7t2T8vO2p6XnPOc1lX/AIh0rT7pre8vEimUAlSrHGeR0FYfgW9gsPBjXV5JshjmkLMee4wPc1V/tbw3rGpo2o6VLHJcYWO4uEIV+w5B4rNUrSad2l2OmWJvCLi0m+52Gm6jaanA01hOs0StsLAEc+nP1q3XH/C/jQrkel038hXYVnUioycUbUKjqU1N9QoooqDYKKKKAMfxPoo12wjtjOYNkok3Bd2cAjH61ifFGJ30G1WNHcifoqk/wN6V2dGcdK0hUcWn2MKtCNSMls5GbNptrqmjW9tfwiSPykODwVO0cg9jVDTPCGk6fdLcpHLNKhyhnk3BPoK2n8/7ZFtx9n2nf657flj9aiP2n7NF/rPM8weZ0zjvj2oUpJWTB04N8zjdo53U7O5f4iaZcpBK1ukOGlCnapw/U/iKkvdJ1bTdWudQ8OvA6XR3T20xwN394H/PWuibz/tM2N3lmP5emA3t/wDXqJhdGC2xvEgPz8j14z7Yzx9Kr2j09LGfsI6773/QztBtdbOoPfa3dooZQiWkJyi89T71neBbS4t7zXjcQSxLLcZQupG4ZfkZ69a6Qi6867Ib5Cv7kcdcf41J+/8Atv8AF5O32x0/POf0pObs13KVFJxeul/xOT1bwvNB4NfTrGRrmWOf7QAV2l+eVxVDWNRn8U2drpVnpVzDMJFaR5UwkIHBwf8A9Vd3Z+b5GLjO/J5bGSPwqfJPUmmqzW+rIlhVJWi7JqzXkct8PLG5sNGnivIJIZDcMwEgwSMDmupoorOcueTkzopU1TgoLoFFFFSaBRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQB0f/CF67/z6L/3+T/Gj/hC9d/59F/7/ACf40UVryI+T/tzEdl+P+Yf8IXrv/Pov/f5P8aP+EL13/n0X/v8AJ/jRRRyIP7cxHZfj/mH/AAheu/8APov/AH+T/Gj/AIQvXf8An0X/AL/J/jRRRyIP7cxHZfj/AJh/wheu/wDPov8A3+T/ABo/4QvXf+fRf+/yf40UUciD+3MR2X4/5h/wheu/8+i/9/k/xo/4QvXf+fRf+/yf40UUciD+3MR2X4/5h/wheu/8+i/9/k/xo/4QvXf+fRf+/wAn+NFFHIg/tzEdl+P+Yf8ACF67/wA+i/8Af5P8aP8AhC9d/wCfRf8Av8n+NFFHIg/tzEdl+P8AmH/CF67/AM+i/wDf5P8AGiiijkQf25iOy/H/ADP/2Q==" style="width:100%;height:60px;object-fit:cover;display:block;">
-              <p style="background:#e8657f;color:#4A1A5C;font-size:10px;margin:0;padding:3px 0;text-align:center;font-weight:500;">🟣 Violeta</p>
-            </div>
-            <div id="cLogo2" onclick="cSelecionaLogo('branco')"
-              style="border-radius:12px;overflow:hidden;cursor:pointer;border:3px solid transparent;">
-              <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAB4AHgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDyOiiivTPVCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAorQ0TRdT126e20awuL64RPMaOBdxC5Az9MkfnWeQQSDwRwaBBRRRQMv6FpN5ruqRadpsayXcquyIzhchVLNyfZTWeGBUMCCOua7zwHdatpWj3d/Nplzd+EhITetCiKfMCgJiT7y4YoSAcEcHOa9M+HnhB7zXbHxJ8Qkjn1e92C0sPISMKoHEsiKABx0GPc89M5VFDVkXd2krnzxRXq/wAVPh9BbJdeIPCcbNpSyMLyzHL2bZOSB3jP6fTp54NDvT4dbWgqfY1uhaFcnzN5Tfnbj7uB19aqM1JXRT00ejMuiiiqGFFFFABRRRQAUUUUAev/ALMX/I9aj/2DJP8A0ZHXkc3+vl/32/ma9d/ZgIHjzUSRkf2a/H/bSOuw+G194I8da9e6dF4FsLN7eEzmRwjhvnC4wAPXNYuXLJuxg58sm7Hgvhnw9qnibVF0/RLR7q5I3EAgKi/3mY8AV1Hib4S+K/D2lyahc2sFzaxDMzWkvmGIdyy4BwO5GcV6B8J57PTPCHxAkttNnvrmG9ZZbSzkMUxtskAIRyAPn6c8GsKw16G/0nWbf4a+FNb0/Umg/f3Md80qrGGBbKsSCxGQP4uTim5yvoNzlfTYv+B7WS9/Zx8R20JjEs2obFMjhFBLQ8ljwB7mt1PHnh3wVp2ladrmqy+J9bsOVuLFQVjBHEZkJG8D8T64rm/CuP8AhmPxVnp9sP8A6FDXWeD/AA5F4R8DaRc6O3hqPxDqMK3M11rMu3ajDIWMDnAyB1A6k5rOSTvfuRzcrbv1MnXPEWhePvB95pXhXWRoN4Wae4tNQKxfbR/cMucYz2z6ZGK80HjvWYtENoZboasjfZ1v9w3LaBcG2xjG3cA2faun+ON3YzaXp6X9posviR97vfaNMDA0Q42uCM7jnjPTHXtXa/EbxtqvgzQPBUeipZBbyxUy+fBv+6sYGORj7xpxSSSS3K5m9Xq33Pm/G3jBGO1dToPgDxRr+mx6hpGkS3VnIWVZVkQAkHB6sD1Fdr8btHvdd+MMemaRbedeXFrAEjXAHRiST2AHJNaR8KfETwj4cmTQPE9tcQWGXuLDT5Q0kOTubhl57nHX0FaOpomt2U6mituzyTxH4e1Xw1epaa5ZvZ3LxiVUZlJK5IzwT3BrKr179ps7vHGmtnOdNjOf+BvXkNVB80U2VCXNFNhRRRVFhRRRQB13wy8Zt4H1y41FbEXpmtmt/LMvl4yynOcH+7+tdp+zLdQweN9WkuJY4VexODI4UZMqHHNeO0hAPUA/WplBST8yJQUk/M6W18R6p4a8YahqOhXjW9x9pmBK4ZZFMhOGB4YVt+JPi14q1/S5dPmuLa0tpgRMLOHy2lB6gtknB74xmuNh+xf2PdCUt9vMiGHAOAg+8D9cj/vn3q2Dp39o3PFsbf7O3kffC7+Nu7PO7rntmhxW7QOKvdo9E8Navp0P7PPiTTJr61TUZrstHatKBI43RchepHB/I1U0fxX4V8R+FNO0H4gw3sU2lgpZalZjcwj/ALjDB7ADoQcDoa8+T7D/AGdabiguBP8AvRhslPc9gPbOc+3NtG0tb7Uc+UYGTEXytgZByE9wcAE9s9KnkRPItTe8dan4MTQINF8F6XK7JIZZdUvFxM5xjavTjp1AHoO9dF8b9VsL/RvAy6fe2109tYlZlhlDmNtsXDY6Hg9fSvOw+lmz0lSn79ZP9Mbnld3b1GPx9OtV/wDQv7GIAQXnmejbsZ/Lbt/HNPl1THy6pnqXhX4l2l98X4vEOt26adbXFn9gZlcuIT2fJA4zwfTNb3hHw9YfDHV9S8U6t4o069s2gkS3htZd0t4WII3DueO2eTnIFeG6x9l+25sCnklF4TOFPcAnk/X3qiAAeAB9BSdNPYTpp7aHqH7Qet6br3jCxutHvbe8gWwSNngfcqtvc7c+vIrzCiirjHlVi4x5VYKKKKZQUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAei/8KW8d/8AQIi/8DIv/iqP+FLeO/8AoERf+BkX/wAVRRXH9YkcX1iQf8KW8d/9AiL/AMDIv/iqP+FLeO/+gRF/4GRf/FUUUfWJB9YkH/ClvHf/AECIv/AyL/4qj/hS3jv/AKBEX/gZF/8AFUUUfWJB9YkH/ClvHf8A0CIv/AyL/wCKo/4Ut47/AOgRF/4GRf8AxVFFH1iQfWJB/wAKW8d/9AiL/wADIv8A4qj/AIUt47/6BEX/AIGRf/FUUUfWJB9YkH/ClvHf/QIi/wDAyL/4qj/hS3jv/oERf+BkX/xVFFH1iQfWJB/wpbx3/wBAiL/wMi/+Ko/4Ut47/wCgRF/4GRf/ABVFFH1iQfWJB/wpbx3/ANAiL/wMi/8AiqKKKPrEg+sSP//Z" style="width:100%;height:60px;object-fit:cover;display:block;">
-              <p style="background:#4A1A5C;color:#fff;font-size:10px;margin:0;padding:3px 0;text-align:center;font-weight:500;">⬜ Branco</p>
-            </div>
-            <div id="cLogo3" onclick="cSelecionaLogo('original')"
-              style="border-radius:12px;overflow:hidden;cursor:pointer;border:3px solid transparent;">
-              <img src="data:image/jpeg;base64,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" style="width:100%;height:60px;object-fit:cover;display:block;">
-              <p style="background:#f9f9f9;color:#4A1A5C;font-size:10px;margin:0;padding:3px 0;text-align:center;font-weight:500;">✨ Original</p>
-            </div>
-            <div id="cLogo4" onclick="cSelecionaLogo('preto')"
-              style="border-radius:12px;overflow:hidden;cursor:pointer;border:3px solid transparent;">
-              <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAB4AHgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD6pooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACisvxD4g0nw5Zx3Wu6hb2FvJIIkknfaC5BIX64B/KtRSGAIOQeRQAUUUUAZviLW7Lw9pMupapI0VpEyIzqhbBdwi8D/aYCtKvOPiLbaJq/iCy06DVbWz8ZmIfYlnd2HkliZP3X3WyiyAEgkHkYxXmvxA1+ceDNe0X4Y+ba+GNDikk1HVfPkfzXzk28EjEsTk8sDwOBgdQD6Roryn4ceNdSsL2x8K+PmC6pPCsmm6n0i1KMqDjJ6SjOCO/1698fEdgPE40Lc/2w2hvN2B5ewPsxuz97J6elAGxRRRQAUUUUAFFFFABRRRQB4j+1p/yT/Sv+wtF/wCi5K9qt/8AUR/7o/lXin7W4J+HulgHBOqxc/8AbOSuC+LGm+Pvh74ctdTl+Iep3q3E3kLHGXjK/u2bOST/AHf1oGfSPi7xTo/hHSH1LX71LS1B2qSCWduyqo5J+lcf4T+Nfg7xLrEWmW11dWd3McQLewGITHsFbJGT2BxmvNPjLb32q+OPhzHdarBp9rNYBoLy9hE0C3XBO9TwSf3Y545FdDqPh+407W9Cufix4y0HVNLW4/0a1k05ImeYghCrLyFBwTn5eme1AFHx9dx2H7UHhu6mEjRQ6Y0jLGhdiAk/AUck+wrHg8F+MvGUviSXw7p0PhDwvrilJ7HUWYmY55lEQH7tjjnGB9etdB4u/wCTrvCf/Xh/7LPXFeNfEs3jX4g63ba5H4rn8N6XO1pb2egxZ3OpILSt0ycE9CcYAx3AOntNL8W+DvHuna1470g+KLOOJLS0vNMDSDTgBjesGOpHVsZ9DnivSh8OtAl10XYhtf7Gf/Sjppjwpvd+4XWc537crjHeuP8AgDYajb6rqr6fd6/D4VRVSPT9etyJ1lPO6Ns42gdcdc9OMng/hb8P9G8da/48l1178tY6k4i8i5aPhnlJz6/dFAH1UpDDKkEe1ch4i+JfhDw3q0uma3rcNpfRBWeJo5CQGGRyFI6V598ANesPDnwPl1bWrnybK2u7gvI2WP3wAAOpJOABWV/wmHwy8a+KoZfEvhG7tbjUisdtqOpQFY7jA2qNwbjsAenqaAPbfCvifRvFenvfeHr5L20SQwtIisoDgAkfMAehFbNeJ/smDHw81IYxjVZhj/gCV7ZQIKKKKACiiigDivix4EX4g6Ba6Y+oNYCC7W68xYhJu2qw24yP73X2rz79rWzuLjwBpMVrBNcOt+MiKMuceTIM4ANe7UUAcndeFdI8WeCNP0vxDYrc2/2aIhWyrRsEA3KRyprB8KfBXwf4a1eLU7e2ury7hO6Br6cyiEjoVXAGR2Jziu6uP7Q/tu0MIT+zhG4mBIyXONpH02n/AL79qosupnTLUE3IuPtCm45QsU53bcEDbnGO+KAPM/E+iarP+0v4Z1WHTbyTTIbLZJdrExiRts3BboDyPzFWNd8F+MPC/jHU/EXw1nsJ4dWYSX2l3xKoZf76H3yT1HU9R09Nk/tD+073YJDbGD90crhX9h3J564xgdc8VHTV3sdMwJlnVv3uHXJwRgv7Fc5AzyR1xQBy/wAPNF8dN4gute8daxEgkiEMOj2LZt4xnO9s/wAXXoc88ngCuc/Z90TUtN1j4gnVNPu7JLvUd8DTwsglXdL8y56jkdPUV6f5esC81hvM/ctF/oSjbw23vnpz+HrVjF//AG4T8/2PZ6rs6fnuz+GKAPH/ABj8Jr3TvgnL4b0C5fVLq1vv7RVHjCGcbiWjwDjoeOecVzvjTxHqXxa0nSvCWjeENT0+8W5ilu7i7hMcNkEyDtOOnPsccYya+htD+2CwxqIfzg7DLlcsM8EgcD6ZrQoA8k/Zo0HVPD3ga+tNbsLmxuG1GSRUuE2syFEAbHocGvW6KKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//Z" style="width:100%;height:60px;object-fit:cover;display:block;">
-              <p style="background:#f5f5f5;color:#222;font-size:10px;margin:0;padding:3px 0;text-align:center;font-weight:500;">⬛ Preto</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- PASSO C: prévia (aparece após escolher logo) -->
-        <div id="cLogoPreviewWrap" style="display:none;margin-bottom:0.75rem;">
-          <p style="color:rgba(255,255,255,0.9);font-size:12px;margin:0 0 6px;">🎨 Prévia com logo:</p>
-          <div style="border-radius:12px;overflow:hidden;border:2px solid #E8657F;">
-            <img id="cLogoPreview" src="" style="width:100%;display:block;" oncontextmenu="return true;">
-          </div>
-          <button onclick="mostrarPasso2()"
-            style="width:100%;margin-top:8px;padding:0.9rem;background:#E8657F;color:#fff;
-                   border:none;border-radius:12px;font-size:14px;font-weight:600;
-                   font-family:'DM Sans',sans-serif;cursor:pointer;">
-            ✅ Gostei — continuar
-          </button>
-        </div>
-
-      </div>
-
-      <!-- BOTÃO GERAR -->
-      <button id="btnGerarCanvas" onclick="gerarArteCanvas()" disabled
-        style="width:100%;padding:1rem;background:rgba(255,255,255,0.2);color:#ccc;border:none;
-               border-radius:14px;font-size:15px;font-weight:600;cursor:not-allowed;
-               font-family:'DM Sans',sans-serif;transition:all 0.2s;margin-bottom:1rem;
-               display:flex;align-items:center;justify-content:center;gap:8px;">
-        ✨ Gerar arte final
-      </button>
-
-      <!-- PRÉVIA FINAL -->
-      </div>
-        <div style="border-radius:14px;overflow:hidden;border:2px solid #E8657F;">
-          <img id="cLogoPreview" src="" style="width:100%;display:block;" oncontextmenu="return true;">
-        </div>
-        <button onclick="mostrarPasso2()"
-          style="width:100%;margin-top:10px;padding:1rem;background:#E8657F;color:#fff;
-                 border:none;border-radius:14px;font-size:15px;font-weight:600;
-                 font-family:'DM Sans',sans-serif;cursor:pointer;">
-          ✅ Salvei — continuar
-        </button>
-      </div>
-
-      <!-- PASSO 2 -->
-      <div id="passo2Claude" style="display:none;background:#F7F0FA;border-radius:18px;
-           padding:1.25rem;margin-bottom:1.5rem;">
-        <p style="color:#E8657F;font-size:11px;font-weight:600;letter-spacing:1px;margin:0 0 0.4rem;">PRONTO! 🎉</p>
-        <p style="color:#4A1A5C;font-size:15px;font-weight:500;margin:0 0 0.5rem;">Arte salva na galeria!</p>
-        <p style="color:#666;font-size:13px;line-height:1.6;margin:0 0 1rem;">
-          Sua foto está pronta em <strong>1080x1080px</strong> com ajustes profissionais e logo da Helena. Publique direto no Instagram! 💜
-        </p>
-        <button onclick="ir('home')"
-          style="width:100%;padding:0.9rem;background:#4A1A5C;color:#fff;border:none;
-                 border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;
-                 font-family:'DM Sans',sans-serif;">
-          🏠 Voltar ao menu
-        </button>
-      </div>
-
-      <canvas id="cCanvas" style="display:none;"></canvas>
-      <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════ MUDAR FUNDO VIA ADOBE ════════════ -->
-<div class="screen" id="otimizarAdobe">
-  <div class="sub-screen">
-    <div class="sub-header">
-      <button class="back-btn" onclick="ir('novidade')">‹</button>
-      <div class="sub-header-info">
-        <p class="sub-header-title">🎨 Editar no Adobe Express</p>
-        <p class="sub-header-sub">helena acessórios · edição profissional</p>
-      </div>
-    </div>
-    <div class="sub-body">
-
-      <div class="claude-bubble">
-        <p class="claude-nome">Painel Helena · para Camila e Rita</p>
-        <p class="claude-txt">O que você quer criar no Adobe Express hoje? 💜</p>
-      </div>
-
-      <!-- OPÇÃO 1: EDITAR FOTO -->
-      <div style="background:#F7F0FA;border-radius:18px;padding:1.25rem;margin-bottom:1rem;">
-        <p style="color:#E8657F;font-size:11px;font-weight:600;letter-spacing:1px;margin:0 0 0.4rem;">OPÇÃO 1</p>
-        <p style="color:#4A1A5C;font-size:15px;font-weight:600;margin:0 0 0.5rem;">📸 Editar foto da peça</p>
-        <p style="color:#666;font-size:12.5px;line-height:1.6;margin:0 0 0.9rem;">
-          Troca o fundo da foto e adiciona o logo da Helena
-        </p>
-        <div style="background:#fff;border-radius:12px;padding:0.9rem;margin-bottom:1rem;border:1px solid #EDE0F2;">
-          <p style="font-size:12px;font-weight:600;color:#4A1A5C;margin:0 0 8px;">No Adobe Express:</p>
-          <div style="display:flex;flex-direction:column;gap:7px;">
-            <div style="display:flex;gap:8px;align-items:flex-start;">
-              <span style="background:#E8657F;color:#fff;border-radius:50%;width:20px;height:20px;min-width:20px;
-                           display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">1</span>
-              <p style="color:#4A1A5C;font-size:12px;margin:0;line-height:1.5;">Toque em <strong>"Remover fundo"</strong> nas ferramentas rápidas</p>
-            </div>
-            <div style="display:flex;gap:8px;align-items:flex-start;">
-              <span style="background:#E8657F;color:#fff;border-radius:50%;width:20px;height:20px;min-width:20px;
-                           display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">2</span>
-              <p style="color:#4A1A5C;font-size:12px;margin:0;line-height:1.5;">Selecione a foto da peça → aguarde o fundo ser removido</p>
-            </div>
-            <div style="display:flex;gap:8px;align-items:flex-start;">
-              <span style="background:#E8657F;color:#fff;border-radius:50%;width:20px;height:20px;min-width:20px;
-                           display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">3</span>
-              <p style="color:#4A1A5C;font-size:12px;margin:0;line-height:1.5;">Toque em <strong>"Abrir no editor"</strong></p>
-            </div>
-            <div style="display:flex;gap:8px;align-items:flex-start;">
-              <span style="background:#E8657F;color:#fff;border-radius:50%;width:20px;height:20px;min-width:20px;
-                           display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">4</span>
-              <p style="color:#4A1A5C;font-size:12px;margin:0;line-height:1.5;">Toque no <strong>X</strong> para fechar o painel lateral</p>
-            </div>
-            <div style="display:flex;gap:8px;align-items:flex-start;">
-              <span style="background:#E8657F;color:#fff;border-radius:50%;width:20px;height:20px;min-width:20px;
-                           display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">5</span>
-              <p style="color:#4A1A5C;font-size:12px;margin:0;line-height:1.5;">Toque no ícone <strong>"Seus itens"</strong> → <strong>Bibliotecas</strong> → <strong>Helena Acessórios</strong></p>
-            </div>
-            <div style="display:flex;gap:8px;align-items:flex-start;">
-              <span style="background:#E8657F;color:#fff;border-radius:50%;width:20px;height:20px;min-width:20px;
-                           display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">6</span>
-              <p style="color:#4A1A5C;font-size:12px;margin:0;line-height:1.5;">Escolha um fundo da biblioteca → toque em <strong>"Definir como fundo"</strong> ✨</p>
-            </div>
-          </div>
-        </div>
-        <button onclick="abrirAdobeFoto()"
-          style="width:100%;padding:0.9rem;background:#4A1A5C;color:#fff;border:none;
-                 border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;
-                 font-family:'DM Sans',sans-serif;
-                 display:flex;align-items:center;justify-content:center;gap:8px;">
-          📸 Abrir Adobe — Editar foto
-        </button>
-      </div>
-
-      <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- ════════════ SLIDE SHOW ════════════ -->
-<div class="screen" id="slideshow">
-  <div class="sub-screen">
-    <div class="sub-header">
-      <button class="back-btn" onclick="ir('home')">‹</button>
-      <div class="sub-header-info">
-        <p class="sub-header-title">Criar slide show 🎞️</p>
-        <p class="sub-header-sub">helena acessórios · carrossel instagram</p>
-      </div>
-    </div>
     <div class="sub-body">
 
       <div class="claude-bubble">
         <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">Vamos montar o slide show! Responda os passos abaixo e o Claude cria tudo certinho. 💜</p>
+        <p class="claude-txt">
+          Como você quer otimizar a foto hoje? 💜<br>
+          Escolha o modo que melhor combina com o que precisa!
+        </p>
       </div>
 
-      <!-- PASSO 1: TIPO -->
-      <p class="passo-label">Passo 1 — tipo de slide show</p>
-      <p class="q-titulo">Qual o objetivo?</p>
-      <div class="opcoes" style="margin-bottom:1rem;">
-        <div class="opc" id="ss_tipo_vitrine" onclick="ssTipo('Vitrine de produtos — mostrar peças com preço e destaque')">
-          <div class="opc-icon oi-1">💍</div>
-          <div class="opc-body"><p class="opc-titulo">Vitrine de produtos</p><p class="opc-desc">Peças com preço e destaque</p></div>
-          <span class="opc-arr">›</span>
+      <p class="passo-label">Escolha o modo</p>
+      <p class="q-titulo">Como deseja otimizar a foto?</p>
+      <p class="q-hint">Toque na opção desejada para continuar.</p>
+
+      <!-- OPÇÃO 1 — CANVA -->
+      <div onclick="ir('otimizar-canva')"
+        style="background:#fff;border-radius:18px;border:1.5px solid #EDE0F2;
+               padding:1.1rem 1.2rem;margin-bottom:12px;cursor:pointer;
+               display:flex;align-items:center;gap:14px;
+               box-shadow:0 2px 8px rgba(74,26,92,0.07);
+               transition:border-color 0.2s,transform 0.15s;"
+        onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+        <div style="width:48px;height:48px;border-radius:14px;background:#E8F5E9;
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:24px;flex-shrink:0;">🎨</div>
+        <div style="flex:1;">
+          <p style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:3px;">Otimizar com Canva</p>
+          <p style="font-size:12px;color:#888;line-height:1.4;">Edição rápida: fundo, brilho e filtros prontos</p>
+          <span style="display:inline-block;margin-top:5px;background:#E8F5E9;color:#2E7D32;
+                       font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;">
+            ⚡ Mais rápido
+          </span>
         </div>
-        <div class="opc" id="ss_tipo_lancamento" onclick="ssTipo('Lançamento de coleção nova')">
-          <div class="opc-icon oi-2">🌟</div>
-          <div class="opc-body"><p class="opc-titulo">Lançamento de coleção</p><p class="opc-desc">Nova coleção de forma impactante</p></div>
-          <span class="opc-arr">›</span>
-        </div>
-        <div class="opc" id="ss_tipo_dicas" onclick="ssTipo('Conteúdo educativo — dicas de como usar ou cuidar das semi joias')">
-          <div class="opc-icon oi-3">💡</div>
-          <div class="opc-body"><p class="opc-titulo">Dicas e conteúdo</p><p class="opc-desc">Como usar, cuidar ou combinar</p></div>
-          <span class="opc-arr">›</span>
-        </div>
-        <div class="opc" id="ss_tipo_livre" onclick="ssTipo('Tema livre — vou descrever o que quero')">
-          <div class="opc-icon oi-4">✏️</div>
-          <div class="opc-body"><p class="opc-titulo">Personalizado</p><p class="opc-desc">Descrevo o que quero</p></div>
-          <span class="opc-arr">›</span>
-        </div>
+        <span style="font-size:20px;color:#ccc;">›</span>
       </div>
 
-      <!-- PASSO 2: QUANTIDADE -->
-      <p class="passo-label">Passo 2 — quantidade de fotos/slides</p>
-      <p class="q-titulo">Quantos slides quer?</p>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;">
-        <div class="fundo-card" id="ss_qtd_3" onclick="ssQtd(3)" style="text-align:center;padding:0.75rem 0.5rem;">3</div>
-        <div class="fundo-card" id="ss_qtd_5" onclick="ssQtd(5)" style="text-align:center;padding:0.75rem 0.5rem;">5</div>
-        <div class="fundo-card" id="ss_qtd_7" onclick="ssQtd(7)" style="text-align:center;padding:0.75rem 0.5rem;">7</div>
-        <div class="fundo-card" id="ss_qtd_10" onclick="ssQtd(10)" style="text-align:center;padding:0.75rem 0.5rem;">10</div>
-      </div>
-      <div style="margin-bottom:1.25rem;">
-        <div class="fundo-card" id="ss_qtd_outro" onclick="ssQtdOutro()" style="text-align:center;">✏️ Outro número</div>
-        <div id="ss_qtd_input_wrap" style="display:none;margin-top:8px;">
-          <input id="ss_qtd_input" type="number" min="1" max="30" placeholder="Ex: 8"
-            style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;
-                   border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;"
-            oninput="ssQtdCustom(this.value)">
+      <!-- OPÇÃO 2 — ADOBE EXPRESS -->
+      <div onclick="ir('otimizar-adobe')"
+        style="background:#fff;border-radius:18px;border:1.5px solid #EDE0F2;
+               padding:1.1rem 1.2rem;margin-bottom:12px;cursor:pointer;
+               display:flex;align-items:center;gap:14px;
+               box-shadow:0 2px 8px rgba(74,26,92,0.07);
+               transition:border-color 0.2s,transform 0.15s;"
+        onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+        <div style="width:48px;height:48px;border-radius:14px;background:#FFF3E0;
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:24px;flex-shrink:0;">✏️</div>
+        <div style="flex:1;">
+          <p style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:3px;">Editar no Adobe Express</p>
+          <p style="font-size:12px;color:#888;line-height:1.4;">Controle total: ajustes manuais profissionais</p>
+          <span style="display:inline-block;margin-top:5px;background:#FFF3E0;color:#E65100;
+                       font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;">
+            🎛️ Controle manual
+          </span>
         </div>
+        <span style="font-size:20px;color:#ccc;">›</span>
       </div>
 
-      <!-- PASSO 3: MÚSICA -->
-      <p class="passo-label">Passo 3 — música ou som de fundo</p>
-      <p class="q-titulo">Quer sugerir música para o reels?</p>
-      <p class="q-hint">O Claude vai sugerir músicas do Instagram que combinam com o estilo.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.75rem;">
-        <div class="fundo-card" id="ss_musica_sim" onclick="ssMusica(true)" style="text-align:center;">🎵 Sim</div>
-        <div class="fundo-card" id="ss_musica_nao" onclick="ssMusica(false)" style="text-align:center;">🔇 Não</div>
+      <!-- OPÇÃO 3 — ADOBE FIREFLY IA -->
+      <div onclick="abrirFirefly()"
+        style="background:linear-gradient(135deg,#2D0057,#6B2A82);border-radius:18px;
+               border:1.5px solid #9B5AB5;
+               padding:1.1rem 1.2rem;margin-bottom:20px;cursor:pointer;
+               display:flex;align-items:center;gap:14px;
+               box-shadow:0 4px 16px rgba(74,26,92,0.25);
+               transition:opacity 0.2s,transform 0.15s;"
+        onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+        <div style="width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,0.15);
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:24px;flex-shrink:0;">🔥</div>
+        <div style="flex:1;">
+          <p style="font-size:15px;font-weight:600;color:#fff;margin-bottom:3px;">Criar arte com IA Firefly</p>
+          <p style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.4;">Adobe Firefly gera arte com inteligência artificial</p>
+          <span style="display:inline-block;margin-top:5px;background:rgba(232,101,127,0.35);color:#F4A0B4;
+                       font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;">
+            ✨ IA generativa
+          </span>
+        </div>
+        <span style="font-size:20px;color:rgba(255,255,255,0.5);">›</span>
       </div>
-      <div id="ss_musica_wrap" style="display:none;margin-bottom:1.25rem;">
-        <input id="ss_musica_estilo" type="text" placeholder="Ex: romântica, animada, luxo, trending..."
-          style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;
-                 border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;"
-          oninput="ssMusicaEstilo(this.value)">
-      </div>
-
-      <!-- PASSO 4: SLIDE FINAL -->
-      <p class="passo-label">Passo 4 — slide final com logo</p>
-      <p class="q-titulo">Quer um slide final com o logo da Helena?</p>
-      <p class="q-hint">Slide de encerramento com logo, @arroba e chamada para ação.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
-        <div class="fundo-card" id="ss_logo_sim" onclick="ssLogo(true)" style="text-align:center;">✅ Sim</div>
-        <div class="fundo-card" id="ss_logo_nao" onclick="ssLogo(false)" style="text-align:center;">❌ Não</div>
-      </div>
-
-      <!-- BOTÃO GERAR -->
-      <button id="btnGerarSlide" onclick="gerarSlideShow()" disabled
-        style="width:100%;padding:1.1rem;background:#ccc;color:#fff;border:none;
-               border-radius:16px;font-size:15px;font-weight:500;cursor:not-allowed;
-               font-family:'DM Sans',sans-serif;margin-bottom:10px;
-               display:flex;align-items:center;justify-content:center;gap:10px;
-               transition:background 0.2s;">
-        🤖 Criar slide show com Claude
-      </button>
 
       <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ OTIMIZAR — CANVA ════════════ -->
+<div class="screen" id="otimizar-canva">
+  <div class="sub-screen">
+    <div class="sub-header">
+      <button class="back-btn" onclick="ir('novidade')">‹</button>
+      <div class="sub-header-info">
+        <p class="sub-header-title">Otimizar com Canva 🎨</p>
+        <p class="sub-header-sub">helena acessórios · edição rápida</p>
+      </div>
+    </div>
+
+    <div class="sub-body">
+
+      <div class="claude-bubble">
+        <p class="claude-nome">Claude · para Camila e Rita</p>
+        <p class="claude-txt">
+          Escolha o fundo e toque em <strong>Abrir Claude</strong>. 
+          Lá você envia a foto, a IA coloca no fundo escolhido 
+          e depois pergunta se quer melhorar filtros, sombra e cores 
+          com o Canva! 💜
+        </p>
+      </div>
+
+      <!-- FUNDO -->
+      <p class="passo-label">Passo 1 — escolha o fundo</p>
+      <p class="q-titulo">Qual fundo para a peça?</p>
+      <p class="q-hint">Toque para selecionar.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+        <div class="fundo-card" onclick="escolheFundoCanva(this,'mármore branco com veios suaves')">🤍 Mármore branco</div>
+        <div class="fundo-card" onclick="escolheFundoCanva(this,'mármore preto sofisticado')">🖤 Mármore preto</div>
+        <div class="fundo-card" onclick="escolheFundoCanva(this,'pétalas de flores delicadas rosé')">🌸 Flores</div>
+        <div class="fundo-card" onclick="escolheFundoCanva(this,'madeira clara natural com textura')">🪵 Madeira clara</div>
+        <div class="fundo-card" onclick="escolheFundoCanva(this,'tecido de veludo elegante')">🪡 Veludo</div>
+        <div class="fundo-card" onclick="escolheFundoCanva(this,'página de revista Vogue, layout editorial sofisticado com tipografia elegante')">📰 Revista Vogue</div>
+        <div class="fundo-card" onclick="escolheFundoCanva(this,'fundo branco infinito de estúdio fotográfico profissional')">⬜ Estúdio branco</div>
+        <div class="fundo-card" onclick="escolheFundoCanva(this,'fundo com as cores da identidade visual da Helena Acessórios: violeta escuro e rosa')">💜 Marca Helena</div>
+      </div>
+
+      <div style="margin-bottom:1.25rem;">
+        <div class="fundo-card" id="cardOutroCanva" onclick="escolheFundoCanva(this,'outro')"
+             style="text-align:left;display:flex;align-items:center;gap:8px;">
+          ✏️ Outro fundo (descreva)
+        </div>
+        <div id="outroWrapCanva" style="display:none;margin-top:8px;">
+          <input id="outroTextoCanva" type="text" placeholder="Ex: areia da praia, espelho, granito..."
+            style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;
+                   border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;"
+            oninput="atualizaOutroCanva(this)">
+        </div>
+      </div>
+
+      <!-- LOGO -->
+      <p class="passo-label">Passo 2 — logo</p>
+      <p class="q-titulo">Adicionar logo discreto?</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
+        <div class="fundo-card" id="simLogoCanva" onclick="escolheLogoCanva(true)" style="text-align:center;">✅ Sim</div>
+        <div class="fundo-card" id="naoLogoCanva" onclick="escolheLogoCanva(false)" style="text-align:center;">❌ Não</div>
+      </div>
+
+      <!-- BOTÃO -->
+      <button id="btnAbrirCanva" onclick="abrirClaudeCanva()" disabled
+        style="width:100%;padding:1.1rem;background:#ccc;color:white;border:none;
+               border-radius:16px;font-size:16px;font-weight:500;
+               font-family:'DM Sans',sans-serif;margin-bottom:10px;
+               transition:background 0.2s;cursor:not-allowed;
+               display:flex;align-items:center;justify-content:center;gap:10px;">
+        🤖 Abrir Claude
+      </button>
+
+      <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ OTIMIZAR — ADOBE EXPRESS ════════════ -->
+<div class="screen" id="otimizar-adobe">
+  <div class="sub-screen">
+    <div class="sub-header">
+      <button class="back-btn" onclick="ir('novidade')">‹</button>
+      <div class="sub-header-info">
+        <p class="sub-header-title">Editar no Adobe Express ✏️</p>
+        <p class="sub-header-sub">helena acessórios · ajustes manuais</p>
+      </div>
+    </div>
+
+    <div class="sub-body">
+
+      <div class="claude-bubble">
+        <p class="claude-nome">Claude · para Camila e Rita</p>
+        <p class="claude-txt">
+          Escolha o fundo e toque em <strong>Abrir Claude</strong>. 
+          Lá você envia a foto, a IA coloca no fundo escolhido 
+          e depois pergunta se quer melhorar filtros, sombra e cores 
+          com o Adobe Express! 💜
+        </p>
+      </div>
+
+      <!-- FUNDO -->
+      <p class="passo-label">Passo 1 — escolha o fundo</p>
+      <p class="q-titulo">Qual fundo para a peça?</p>
+      <p class="q-hint">Toque para selecionar.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+        <div class="fundo-card" onclick="escolheFundoAdobe(this,'mármore branco com veios suaves')">🤍 Mármore branco</div>
+        <div class="fundo-card" onclick="escolheFundoAdobe(this,'mármore preto sofisticado')">🖤 Mármore preto</div>
+        <div class="fundo-card" onclick="escolheFundoAdobe(this,'pétalas de flores delicadas rosé')">🌸 Flores</div>
+        <div class="fundo-card" onclick="escolheFundoAdobe(this,'madeira clara natural com textura')">🪵 Madeira clara</div>
+        <div class="fundo-card" onclick="escolheFundoAdobe(this,'tecido de veludo elegante')">🪡 Veludo</div>
+        <div class="fundo-card" onclick="escolheFundoAdobe(this,'página de revista Vogue, layout editorial sofisticado com tipografia elegante')">📰 Revista Vogue</div>
+        <div class="fundo-card" onclick="escolheFundoAdobe(this,'fundo branco infinito de estúdio fotográfico profissional')">⬜ Estúdio branco</div>
+        <div class="fundo-card" onclick="escolheFundoAdobe(this,'fundo com as cores da identidade visual da Helena Acessórios: violeta escuro e rosa')">💜 Marca Helena</div>
+      </div>
+
+      <div style="margin-bottom:1.25rem;">
+        <div class="fundo-card" id="cardOutroAdobe" onclick="escolheFundoAdobe(this,'outro')"
+             style="text-align:left;display:flex;align-items:center;gap:8px;">
+          ✏️ Outro fundo (descreva)
+        </div>
+        <div id="outroWrapAdobe" style="display:none;margin-top:8px;">
+          <input id="outroTextoAdobe" type="text" placeholder="Ex: areia da praia, espelho, granito..."
+            style="width:100%;padding:0.75rem 1rem;border:1.5px solid #EDE0F2;
+                   border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;"
+            oninput="atualizaOutroAdobe(this)">
+        </div>
+      </div>
+
+      <!-- LOGO -->
+      <p class="passo-label">Passo 2 — logo</p>
+      <p class="q-titulo">Adicionar logo discreto?</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
+        <div class="fundo-card" id="simLogoAdobe" onclick="escolheLogoAdobe(true)" style="text-align:center;">✅ Sim</div>
+        <div class="fundo-card" id="naoLogoAdobe" onclick="escolheLogoAdobe(false)" style="text-align:center;">❌ Não</div>
+      </div>
+
+      <!-- BOTÃO -->
+      <button id="btnAbrirAdobe" onclick="abrirClaudeAdobe()" disabled
+        style="width:100%;padding:1.1rem;background:#ccc;color:white;border:none;
+               border-radius:16px;font-size:16px;font-weight:500;
+               font-family:'DM Sans',sans-serif;margin-bottom:10px;
+               transition:background 0.2s;cursor:not-allowed;
+               display:flex;align-items:center;justify-content:center;gap:10px;">
+        🤖 Abrir Claude
+      </button>
+
+      <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
+
     </div>
   </div>
 </div>
@@ -2080,7 +941,234 @@ function enviarPrompt(texto) {
   </div>
 </div>
 
+<script>
+function ir(tela) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+  });
+  const el = document.getElementById(tela);
+  if (el) {
+    el.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+}
 
+function enviarPrompt(texto) {
+  // Dentro do Claude.ai, usa sendPrompt global
+  if (typeof sendPrompt === 'function') {
+    sendPrompt(texto);
+  } else {
+    // Fora do Claude.ai: abre claude.ai com o texto
+    const url = 'https://claude.ai/new?q=' + encodeURIComponent(texto);
+    window.open(url, '_blank');
+  }
+}
+
+  // ── FIREFLY ──
+  function abrirFirefly() {
+    window.open('https://firefly.adobe.com', '_blank');
+  }
+
+  // ── OPÇÃO CANVA ──
+  let fundoCanvaEscolhido = null;
+  let logoCanvaEscolhido  = null;
+
+  function escolheFundoCanva(el, valor) {
+    document.querySelectorAll('#otimizar-canva .fundo-card').forEach(c => {
+      if (!['simLogoCanva','naoLogoCanva'].includes(c.id))
+        c.classList.remove('selecionado');
+    });
+    el.classList.add('selecionado');
+    if (valor === 'outro') {
+      document.getElementById('outroWrapCanva').style.display = 'block';
+      fundoCanvaEscolhido = document.getElementById('outroTextoCanva').value.trim() || null;
+    } else {
+      document.getElementById('outroWrapCanva').style.display = 'none';
+      fundoCanvaEscolhido = valor;
+    }
+    atualizaBotaoCanva();
+  }
+
+  function atualizaOutroCanva(input) {
+    fundoCanvaEscolhido = input.value.trim() || null;
+    atualizaBotaoCanva();
+  }
+
+  function escolheLogoCanva(sim) {
+    logoCanvaEscolhido = sim;
+    document.getElementById('simLogoCanva').className = 'fundo-card' + (sim ? ' logo-sim' : '');
+    document.getElementById('naoLogoCanva').className  = 'fundo-card' + (!sim ? ' logo-nao' : '');
+    atualizaBotaoCanva();
+  }
+
+  function atualizaBotaoCanva() {
+    const ok  = fundoCanvaEscolhido && logoCanvaEscolhido !== null;
+    const btn = document.getElementById('btnAbrirCanva');
+    btn.disabled         = !ok;
+    btn.style.background = ok ? '#E8657F' : '#ccc';
+    btn.style.cursor     = ok ? 'pointer'  : 'not-allowed';
+  }
+
+  function abrirClaudeCanva() {
+    const logo = logoCanvaEscolhido
+      ? 'Adicione o logo da Helena Acessórios como marca dágua bem discreta no canto inferior direito.'
+      : 'Não incluir logo.';
+
+    const prompt =
+      'Olá! Sou da Helena Acessórios.\n\n' +
+      'PASSO 1 — Peça a foto assim:\n' +
+      '"Oi! 💜 Toque em ＋ aqui no chat, selecione a foto da peça e envie."\n\n' +
+      'PASSO 2 — Após receber a foto, gere IMEDIATAMENTE a composição sem fazer perguntas:\n' +
+      '— Mantenha a peça exatamente como está na foto original\n' +
+      '— Recorte a peça com precisão removendo o fundo original\n' +
+      '— Recoloque a peça sobre este fundo: ' + fundoCanvaEscolhido + '\n' +
+      '— Aplique iluminação natural e sombra suave para a peça parecer que está dentro do ambiente\n' +
+      '— ' + logo + '\n' +
+      '— Formato quadrado 1080x1080px\n' +
+      '— Entregue como arquivo JPEG para download\n\n' +
+      'PASSO 3 — Após gerar a imagem, pergunte:\n' +
+      '"Gostou do resultado? Quer melhorar alguma coisa? Posso ajustar:\n' +
+      '— Filtros e cores\n' +
+      '— Brilho e contraste\n' +
+      '— Sombra e profundidade\n' +
+      '— Nitidez\n' +
+      '— Ou abrir no Canva para ajustes manuais rápidos?"\n\n' +
+      'PASSO 4 — Se quiser abrir no Canva, envie EXATAMENTE esta mensagem:\n' +
+      '"Ótimo! 🎨 Aqui está o link para abrir no Canva:\n' +
+      '👉 https://www.canva.com\n\n' +
+      'Ao entrar, siga estes passos para editar sua foto:\n\n' +
+      '1️⃣ FAZER UPLOAD DA FOTO\n' +
+      '   → Toque em "Criar novo design" → "Editar foto"\n' +
+      '   → Ou acesse "Projetos" → "Fazer upload" e selecione a imagem\n\n' +
+      '2️⃣ REMOVER O FUNDO\n' +
+      '   → Toque na foto → "Editar foto" → "Remover fundo"\n' +
+      '   → O Canva remove o fundo automaticamente com IA ✨\n\n' +
+      '3️⃣ AJUSTAR BRILHO E CORES\n' +
+      '   → Toque na foto → "Editar foto" → "Ajustar"\n' +
+      '   → Brilho: aumente se a peça parecer escura\n' +
+      '   → Contraste: deixa a peça mais definida\n' +
+      '   → Saturação: cores mais vivas e atraentes\n' +
+      '   → Nitidez: detalhes mais nítidos da peça\n\n' +
+      '4️⃣ APLICAR FILTRO\n' +
+      '   → Toque em "Filtros" e deslize para ver as opções\n' +
+      '   → Para semi joias: prefira filtros "Clarear" ou "Brilho"\n\n' +
+      '5️⃣ SALVAR E BAIXAR\n' +
+      '   → Toque em "Compartilhar" → "Baixar"\n' +
+      '   → Formato: PNG ou JPEG, qualidade máxima 📲"\n\n' +
+      'PASSO 5 — Quando aprovada pergunte se deseja enviar para Camila (+55 16 98114-544) postar no Instagram.';
+
+    const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
+    window.open(url, '_blank');
+  }
+
+  // ── OPÇÃO ADOBE EXPRESS ──
+  let fundoAdobeEscolhido = null;
+  let logoAdobeEscolhido  = null;
+
+  function escolheFundoAdobe(el, valor) {
+    document.querySelectorAll('.fundo-card').forEach(c => {
+      if (!['simLogoAdobe','naoLogoAdobe'].includes(c.id))
+        c.classList.remove('selecionado');
+    });
+    el.classList.add('selecionado');
+    if (valor === 'outro') {
+      document.getElementById('outroWrapAdobe').style.display = 'block';
+      fundoAdobeEscolhido = document.getElementById('outroTextoAdobe').value.trim() || null;
+    } else {
+      document.getElementById('outroWrapAdobe').style.display = 'none';
+      fundoAdobeEscolhido = valor;
+    }
+    atualizaBotaoAdobe();
+  }
+
+  function atualizaOutroAdobe(input) {
+    fundoAdobeEscolhido = input.value.trim() || null;
+    atualizaBotaoAdobe();
+  }
+
+  function escolheLogoAdobe(sim) {
+    logoAdobeEscolhido = sim;
+    document.getElementById('simLogoAdobe').className = 'fundo-card' + (sim ? ' logo-sim' : '');
+    document.getElementById('naoLogoAdobe').className  = 'fundo-card' + (!sim ? ' logo-nao' : '');
+    atualizaBotaoAdobe();
+  }
+
+  function atualizaBotaoAdobe() {
+    const ok  = fundoAdobeEscolhido && logoAdobeEscolhido !== null;
+    const btn = document.getElementById('btnAbrirAdobe');
+    btn.disabled         = !ok;
+    btn.style.background = ok ? '#E8657F' : '#ccc';
+    btn.style.cursor     = ok ? 'pointer'  : 'not-allowed';
+  }
+
+  function abrirClaudeAdobe() {
+    const logo = logoAdobeEscolhido
+      ? 'Adicione o logo da Helena Acessórios como marca dágua bem discreta no canto inferior direito.'
+      : 'Não incluir logo.';
+
+    const prompt =
+      'Olá! Sou da Helena Acessórios.\n\n' +
+      'PASSO 1 — Peça a foto assim:\n' +
+      '"Oi! 💜 Toque em ＋ aqui no chat, selecione a foto da peça e envie."\n\n' +
+      'PASSO 2 — Após receber a foto, gere IMEDIATAMENTE a composição sem fazer perguntas:\n' +
+      '— Mantenha a peça exatamente como está na foto original\n' +
+      '— Recorte a peça com precisão removendo o fundo original\n' +
+      '— Recoloque a peça sobre este fundo: ' + fundoAdobeEscolhido + '\n' +
+      '— Aplique iluminação natural e sombra suave para a peça parecer que está dentro do ambiente\n' +
+      '— ' + logo + '\n' +
+      '— Formato quadrado 1080x1080px\n' +
+      '— Entregue como arquivo JPEG para download\n\n' +
+      'PASSO 3 — Após gerar a imagem, pergunte:\n' +
+      '"Gostou do resultado? Quer melhorar alguma coisa? Posso ajustar:\n' +
+      '— Filtros e cores\n' +
+      '— Brilho e contraste\n' +
+      '— Sombra e profundidade\n' +
+      '— Nitidez\n' +
+      '— Ou abrir no Adobe Express para ajustes manuais?"\n\n' +
+      'PASSO 4 — Se quiser abrir no Adobe Express, envie EXATAMENTE esta mensagem:\n' +
+      '"Ótimo! 🎨 Aqui está o link para abrir no Adobe Express:\n' +
+      '👉 https://express.adobe.com\n\n' +
+      'Ao entrar, siga estes passos para editar sua foto:\n\n' +
+      '1️⃣ FAZER UPLOAD DA FOTO\n' +
+      '   → Toque em "Criar novo" ou "Editar foto"\n' +
+      '   → Selecione "Enviar foto" e escolha a imagem gerada ou a foto original da peça\n\n' +
+      '2️⃣ REMOVER O FUNDO (se necessário)\n' +
+      '   → Toque na foto → "Remover fundo"\n' +
+      '   → O Adobe Express remove automaticamente o fundo com IA\n\n' +
+      '3️⃣ AJUSTAR BRILHO E CORES\n' +
+      '   → Toque em "Editar" → "Ajustes"\n' +
+      '   → Brilho: aumente se a peça parecer escura\n' +
+      '   → Contraste: deixa a peça mais definida e com destaque\n' +
+      '   → Saturação: aumenta as cores para ficarem mais vivas\n' +
+      '   → Nitidez: deixa os detalhes da peça mais nítidos\n\n' +
+      '4️⃣ APLICAR FILTRO (opcional)\n' +
+      '   → Toque em "Filtros" e deslize para ver as opções\n' +
+      '   → Para semi joias: prefira filtros neutros ou "Clarear"\n' +
+      '   → Evite filtros muito coloridos que distorçam a cor real da peça\n\n' +
+      '5️⃣ ADICIONAR LOGO (se não foi incluído pela IA)\n' +
+      '   → Toque em "Elementos" → "Fazer upload"\n' +
+      '   → Envie o arquivo do logo da Helena Acessórios\n' +
+      '   → Posicione discretamente no canto inferior direito\n' +
+      '   → Reduza a opacidade para ~30% para ficar como marca d\'água\n\n' +
+      '6️⃣ SALVAR E BAIXAR\n' +
+      '   → Toque em "Baixar" no canto superior direito\n' +
+      '   → Escolha formato JPEG e qualidade máxima\n' +
+      '   → A foto vai direto para a galeria do seu celular! 📲"\n\n' +
+      'PASSO 5 — Quando aprovada pergunte se deseja enviar para Camila (+55 16 98114-544) postar no Instagram.';
+
+    const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
+    window.open(url, '_blank');
+  }
+
+  // Previne zoom duplo toque no iOS
+document.addEventListener('touchend', function(e) {
+  const now = Date.now();
+  if (now - (document._lastTouch || 0) < 300) {
+    e.preventDefault();
+  }
+  document._lastTouch = now;
+}, { passive: false });
+</script>
 
 
 <!-- ════════════ COMEMORATIVA ════════════ -->
@@ -2181,198 +1269,6 @@ function enviarPrompt(texto) {
       <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
     </div>
   </div>
-</div>
-
-<!-- ════ MODAL: Enviar para Claude ════ -->
-<div id="modalEnviarClaude" style="display:none;position:fixed;inset:0;z-index:9850;
-     background:rgba(74,26,92,0.95);align-items:center;justify-content:center;padding:1.25rem;">
-  <div style="background:#fff;border-radius:24px;padding:1.5rem;max-width:360px;width:100%;text-align:center;">
-
-    <p style="font-size:16px;font-weight:500;color:#4A1A5C;margin-bottom:0.25rem;">📎 Quase lá!</p>
-    <p style="font-size:12.5px;color:#666;margin-bottom:1rem;line-height:1.6;">
-      A foto com o logo já está pronta. Toque em <strong>"Salvar e Abrir Claude"</strong> — a foto vai para sua galeria e o Claude abre automaticamente. Lá é só tocar no 📎 e selecionar a foto <strong>helena_foto_para_claude</strong>.
-    </p>
-
-    <img id="previewEnviarClaude" src="" alt="Foto com logo"
-      style="width:100%;max-height:180px;object-fit:contain;border-radius:12px;
-             border:2px solid #EDE0F2;margin-bottom:1rem;background:#f9f4fc;">
-
-    <button onclick="confirmarEnviarClaude()"
-      style="width:100%;padding:1rem;background:#4A1A5C;color:#fff;border:none;
-             border-radius:14px;font-size:15px;font-weight:500;cursor:pointer;
-             font-family:'DM Sans',sans-serif;margin-bottom:10px;">
-      📎 Salvar e Abrir Claude
-    </button>
-    <button onclick="fecharEnviarClaude()"
-      style="width:100%;padding:0.75rem;background:transparent;color:#aaa;border:none;
-             font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">
-      Cancelar
-    </button>
-  </div>
-</div>
-
-<!-- ════ MODAL: Instrução Claude ════ -->
-<div id="modalInstrucaoClaude" style="display:none;position:fixed;inset:0;z-index:9800;
-     background:rgba(74,26,92,0.95);align-items:center;justify-content:center;
-     padding:1.25rem;overflow-y:auto;">
-  <div style="background:#fff;border-radius:24px;padding:1.5rem;
-              max-width:360px;width:100%;text-align:center;">
-
-    <p style="font-size:17px;font-weight:500;color:#4A1A5C;margin-bottom:0.25rem;">
-      🤖 Gerar arte com Claude
-    </p>
-    <p style="font-size:12px;color:#9B5AB5;margin-bottom:1rem;">Siga os 2 passos abaixo</p>
-
-    <!-- PASSO 1: Salvar foto -->
-    <div style="background:#F7F0FA;border-radius:14px;padding:1rem;margin-bottom:1rem;text-align:left;">
-      <p style="font-size:13px;font-weight:600;color:#4A1A5C;margin:0 0 0.5rem;">
-        Passo 1 — Salve a foto no celular
-      </p>
-      <p style="font-size:12.5px;color:#666;margin:0 0 0.75rem;line-height:1.6;">
-        Toque e segure a foto abaixo → <strong>"Salvar imagem"</strong>
-      </p>
-      <!-- Preview da foto -->
-      <img id="previewFotoModal" src="" alt="Foto da peça"
-        style="width:100%;max-height:160px;object-fit:contain;border-radius:10px;
-               border:2px solid #EDE0F2;background:#f9f4fc;">
-    </div>
-
-    <!-- PASSO 2: Abrir Claude -->
-    <div style="background:#F7F0FA;border-radius:14px;padding:1rem;margin-bottom:1.25rem;text-align:left;">
-      <p style="font-size:13px;font-weight:600;color:#4A1A5C;margin:0 0 0.5rem;">
-        Passo 2 — Abra o Claude e anexe a foto
-      </p>
-      <p style="font-size:12.5px;color:#666;margin:0;line-height:1.7;">
-        1. Toque em <strong>"Abrir Claude"</strong> abaixo<br>
-        2. No Claude, toque no ícone <strong>📎 clipe</strong><br>
-        3. Selecione a foto que acabou de salvar<br>
-        4. Toque em <strong>enviar ↑</strong> — arte gerada! ✨
-      </p>
-    </div>
-
-    <button onclick="abrirClaudeAgora()"
-      style="width:100%;padding:1rem;background:#4A1A5C;color:#fff;border:none;
-             border-radius:14px;font-size:15px;font-weight:500;cursor:pointer;
-             font-family:'DM Sans',sans-serif;margin-bottom:10px;">
-      🤖 Abrir Claude
-    </button>
-
-    <button onclick="fecharModalClaude()"
-      style="width:100%;padding:0.75rem;background:transparent;color:#aaa;border:none;
-             font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">
-      Cancelar
-    </button>
-  </div>
-</div>
-
-<!-- ════ MODAL: Instrução Adobe Express ════ -->
-<div id="instrucaoAdobe" style="display:none;position:fixed;inset:0;z-index:9900;
-     background:rgba(74,26,92,0.95);align-items:center;justify-content:center;padding:1.5rem;">
-  <div style="background:#fff;border-radius:24px;padding:2rem 1.5rem;max-width:360px;width:100%;text-align:center;">
-
-    <div style="font-size:42px;margin-bottom:0.5rem;">🎨</div>
-    <p style="font-size:17px;font-weight:500;color:#4A1A5C;margin-bottom:0.75rem;">Foto salva! Agora é só editar</p>
-
-    <div style="background:#F7F0FA;border-radius:14px;padding:1rem;margin-bottom:1.25rem;text-align:left;">
-      <p style="font-size:13px;color:#4A1A5C;line-height:1.7;margin:0;">
-        <strong>1.</strong> A foto foi salva na sua galeria 📥<br>
-        <strong>2.</strong> Toque em <strong>"Abrir Adobe Express"</strong> abaixo<br>
-        <strong>3.</strong> Se perguntar, escolha <strong>"Abrir no app"</strong> 📲<br>
-        <strong>4.</strong> Toque em <strong>"Carregar foto"</strong> e selecione a foto salva<br>
-        <strong>5.</strong> Fundo removido! Escolha novo fundo → salve ✨
-      </p>
-    </div>
-
-    <button onclick="abrirAdobeAgora()"
-      style="width:100%;padding:1rem;background:#E8657F;color:#fff;border:none;
-             border-radius:14px;font-size:15px;font-weight:500;
-             font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:10px;">
-      🎨 Abrir Adobe Express
-    </button>
-
-    <button onclick="fecharInstrucaoAdobe()"
-      style="width:100%;padding:0.75rem;background:transparent;color:#aaa;border:none;
-             font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">
-      Fechar
-    </button>
-  </div>
-</div>
-
-<!-- ════ LOADING OVERLAY ════ -->
-<div id="adobeLoadingOverlay" style="display:none;position:fixed;inset:0;z-index:9900;
-     background:rgba(74,26,92,0.93);flex-direction:column;
-     align-items:center;justify-content:center;gap:16px;">
-
-  <!-- Spinner animado nas cores Helena -->
-  <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
-       style="animation:girar 0.9s linear infinite;">
-    <circle cx="26" cy="26" r="22" stroke="rgba(244,160,180,0.2)" stroke-width="5"/>
-    <path d="M26 4 a22 22 0 0 1 22 22" stroke="#E8657F" stroke-width="5" stroke-linecap="round"/>
-  </svg>
-  <style>@keyframes girar { to { transform: rotate(360deg); } }</style>
-
-  <p style="color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:400;
-            text-align:center;line-height:1.6;margin:0 2rem;">
-    Abrindo Adobe Express<br>
-    <span style="color:rgba(244,160,180,0.7);font-size:13px;">com a foto já carregada… ✨</span>
-  </p>
-</div>
-
-<!-- ════ TOAST ════ -->
-<div id="toastHelena" style="
-  position:fixed;bottom:30px;left:50%;
-  transform:translateX(-50%) translateY(20px);
-  background:#4A1A5C;color:#fff;
-  padding:0.75rem 1.5rem;border-radius:30px;
-  font-family:'DM Sans',sans-serif;font-size:14px;
-  z-index:9999;opacity:0;
-  transition:opacity 0.3s,transform 0.3s;
-  pointer-events:none;white-space:nowrap;
-  box-shadow:0 4px 20px rgba(74,26,92,0.4);">
-</div>
-
-<!-- ════ PWA: Service Worker ════ -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('[PWA] Service Worker registrado'))
-        .catch(err => console.log('[PWA] Erro SW:', err));
-    });
-  }
-
-  // Prompt de instalação Android
-  let deferredPrompt;
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    document.getElementById('btnInstalarApp').style.display = 'flex';
-  });
-
-  function instalarApp() {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => {
-        deferredPrompt = null;
-        document.getElementById('btnInstalarApp').style.display = 'none';
-      });
-    }
-  }
-
-  window.addEventListener('appinstalled', () => {
-    document.getElementById('btnInstalarApp').style.display = 'none';
-  });
-</script>
-
-<!-- Botão flutuante instalar app -->
-<div id="btnInstalarApp" onclick="instalarApp()" style="
-  display:none;position:fixed;bottom:24px;right:16px;z-index:9990;
-  background:#4A1A5C;color:#fff;border:none;border-radius:30px;
-  padding:0.75rem 1.2rem;font-family:'DM Sans',sans-serif;
-  font-size:13px;font-weight:500;cursor:pointer;
-  box-shadow:0 4px 20px rgba(74,26,92,0.45);
-  align-items:center;gap:8px;">
-  📲 Instalar app
 </div>
 
 </body>
