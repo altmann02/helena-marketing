@@ -1,14 +1,12 @@
 {
-  "name": "Helena Acessórios · Painel",
+  "name": "Helena Acessórios",
   "short_name": "Helena",
-  "description": "Painel de marketing da Helena Acessórios",
-  "start_url": "/helena-marketing/",
-  "scope": "/helena-marketing/",
+  "description": "Assistente de marketing da Helena Acessórios",
+  "start_url": "./index.html",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#4A1A5C",
   "theme_color": "#4A1A5C",
-  "lang": "pt-BR",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon-192.png",
