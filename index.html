@@ -806,6 +806,44 @@ html, body {
 
         </div>
 
+        <!-- OPACIDADE DO LOGO — aparece após escolher um logo -->
+        <div id="wrapOpacidadeConfig" style="display:none;margin-bottom:1.5rem;">
+          <p class="passo-label" style="margin-bottom:6px;">Passo 4 — opacidade do logo</p>
+          <p class="q-titulo" style="margin-bottom:4px;">Quão visível deve ficar?</p>
+          <p class="q-hint" style="margin-bottom:10px;">100% = logo original · valores menores = mais discreto</p>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+
+            <div class="fundo-card" id="op-25" onclick="escolheOpacidadeConfig(25)"
+              style="text-align:center;padding:0.75rem 0.4rem;cursor:pointer;">
+              <div style="font-size:18px;margin-bottom:4px;">👁️‍🗨️</div>
+              <div style="font-size:13px;font-weight:700;color:#9B59B6;">25%</div>
+              <div style="font-size:10px;color:#aaa;margin-top:2px;">Sutil</div>
+            </div>
+
+            <div class="fundo-card" id="op-40" onclick="escolheOpacidadeConfig(40)"
+              style="text-align:center;padding:0.75rem 0.4rem;cursor:pointer;">
+              <div style="font-size:18px;margin-bottom:4px;">🔅</div>
+              <div style="font-size:13px;font-weight:700;color:#9B59B6;">40%</div>
+              <div style="font-size:10px;color:#aaa;margin-top:2px;">Discreto</div>
+            </div>
+
+            <div class="fundo-card" id="op-65" onclick="escolheOpacidadeConfig(65)"
+              style="text-align:center;padding:0.75rem 0.4rem;cursor:pointer;">
+              <div style="font-size:18px;margin-bottom:4px;">🔆</div>
+              <div style="font-size:13px;font-weight:700;color:#9B59B6;">65%</div>
+              <div style="font-size:10px;color:#aaa;margin-top:2px;">Visível</div>
+            </div>
+
+            <div class="fundo-card" id="op-100" onclick="escolheOpacidadeConfig(100)"
+              style="text-align:center;padding:0.75rem 0.4rem;cursor:pointer;">
+              <div style="font-size:18px;margin-bottom:4px;">💯</div>
+              <div style="font-size:13px;font-weight:700;color:#9B59B6;">100%</div>
+              <div style="font-size:10px;color:#aaa;margin-top:2px;">Original</div>
+            </div>
+
+          </div>
+        </div>
+
         <!-- BOTÃO GERAR -->
         <button id="btnGerarCanva" onclick="gerarOtimizacao()" disabled
           style="width:100%;padding:1.1rem;background:#ccc;color:white;border:none;
@@ -1253,11 +1291,35 @@ function enviarPrompt(texto) {
     };
     const el = document.getElementById(mapa[valor]);
     if (el) el.classList.add('selecionado');
+
+    // Mostrar/ocultar seletor de opacidade
+    const wrap = document.getElementById('wrapOpacidadeConfig');
+    if (wrap) {
+      if (valor === 'sem') {
+        wrap.style.display = 'none';
+        _logoOpacity = null;
+      } else {
+        wrap.style.display = 'block';
+        // Selecionar 40% como padrão se nenhum escolhido
+        if (_logoOpacity === null) escolheOpacidadeConfig(40);
+      }
+    }
+    atualizaBotaoGerarCanva();
+  }
+
+  function escolheOpacidadeConfig(val) {
+    _logoOpacity = val / 100;
+    ['op-25','op-40','op-65','op-100'].forEach(id => {
+      const e = document.getElementById(id); if(e) e.classList.remove('selecionado');
+    });
+    const el = document.getElementById('op-' + val);
+    if (el) el.classList.add('selecionado');
     atualizaBotaoGerarCanva();
   }
 
   function atualizaBotaoGerarCanva() {
-    const ok  = _fotoCanvaFile && _estiloCanva && _logoCanva !== null;
+    const logoOk = _logoCanva === 'sem' || (_logoCanva !== null && _logoOpacity !== null);
+    const ok  = _fotoCanvaFile && _estiloCanva && _logoCanva !== null && logoOk;
     const btn = document.getElementById('btnGerarCanva');
     if (!btn) return;
     btn.disabled         = !ok;
@@ -1388,6 +1450,11 @@ function enviarPrompt(texto) {
 
   function resetCanva() {
     _logoOpacity = null;
+    const wrap = document.getElementById('wrapOpacidadeConfig');
+    if (wrap) wrap.style.display = 'none';
+    ['op-25','op-40','op-65','op-100'].forEach(id => {
+      const e = document.getElementById(id); if(e) e.classList.remove('selecionado');
+    });
     document.getElementById('canva-config').style.display    = 'block';
     document.getElementById('canva-resultado').style.display = 'none';
     const btn = document.getElementById('btnGerarCanva');
