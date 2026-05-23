@@ -844,6 +844,30 @@ html, body {
           </div>
         </div>
 
+        <!-- PASSO 5 — DESTINO -->
+        <p class="passo-label">Passo 5 — destino</p>
+        <p class="q-titulo">Onde vai publicar?</p>
+        <p class="q-hint" style="margin-bottom:10px;">A IA ajusta tamanho e cores conforme a plataforma.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
+
+          <div class="fundo-card" id="dest-instagram" onclick="escolheDestinoCanva('instagram')"
+            style="text-align:center;padding:1rem 0.5rem;cursor:pointer;">
+            <div style="font-size:26px;margin-bottom:4px;">📸</div>
+            <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Instagram</div>
+            <div style="font-size:10px;color:#888;margin-top:3px;">1080×1080px</div>
+            <div style="font-size:10px;color:#888;">sRGB · alta saturação</div>
+          </div>
+
+          <div class="fundo-card" id="dest-whatsapp" onclick="escolheDestinoCanva('whatsapp')"
+            style="text-align:center;padding:1rem 0.5rem;cursor:pointer;">
+            <div style="font-size:26px;margin-bottom:4px;">💬</div>
+            <div style="font-size:13px;font-weight:600;color:#1a1a1a;">WhatsApp</div>
+            <div style="font-size:10px;color:#888;margin-top:3px;">800×800px</div>
+            <div style="font-size:10px;color:#888;">compactado · leve</div>
+          </div>
+
+        </div>
+
         <!-- BOTÃO GERAR -->
         <button id="btnGerarCanva" onclick="gerarOtimizacao()" disabled
           style="width:100%;padding:1.1rem;background:#ccc;color:white;border:none;
@@ -859,7 +883,8 @@ html, body {
 
       <!-- ESTADO: resultado -->
       <div id="canva-resultado" style="display:none;">
-        <p class="passo-label" style="margin-bottom:8px;">Prévia gerada 🎉</p>
+        <p class="passo-label" style="margin-bottom:4px;">Prévia gerada 🎉</p>
+      <p id="lblDestino" style="font-size:12px;color:#9B59B6;font-weight:600;margin-bottom:8px;"></p>
         <canvas id="canvasOtimizado"
           style="width:100%;border-radius:14px;box-shadow:0 4px 16px rgba(74,26,92,0.2);margin-bottom:1rem;">
         </canvas>
@@ -1180,7 +1205,7 @@ function enviarPrompt(texto) {
             <p style="font-size:11px;color:#9B59B6;margin-top:2px;">Veja como usar o Firefly antes de começar</p>
           </div>
         </div>
-        <button onclick="document.getElementById('modalFirefly').remove(); window.open('https://firefly.adobe.com','_blank');"
+        <button onclick="document.getElementById('modalFirefly').remove(); window.open('https://firefly.adobe.com/generate/image','_blank');"
           style="width:100%;padding:1rem;background:linear-gradient(135deg,#2D0057,#6B2A82);
                  color:white;border:none;border-radius:14px;font-size:15px;font-weight:600;
                  cursor:pointer;margin-bottom:10px;font-family:'DM Sans',sans-serif;">
@@ -1201,9 +1226,18 @@ function enviarPrompt(texto) {
   // ═══════════════════════════════════════════════
   //  EDITOR LOCAL — processa foto no app sem Claude
   // ═══════════════════════════════════════════════
-  let _fotoCanvaFile   = null;   // File object da foto
-  let _estiloCanva     = null;   // 'natural'|'vibrante'|'editorial'|'golden'
-  let _logoCanva       = null;   // 'sem'|'original'|'preto'|'branco'|'rosa'|'violeta'
+  let _fotoCanvaFile   = null;
+  let _estiloCanva     = null;
+  let _logoCanva       = null;
+  let _destinoCanva    = null; // 'instagram' | 'whatsapp'
+
+  // Configurações por destino
+  const DESTINOS = {
+    instagram: { size: 1080, quality: 0.95, label: 'Instagram 1080×1080px',
+                 satBoost: 0.08, sharpBoost: 0.05 },
+    whatsapp:  { size: 800,  quality: 0.82, label: 'WhatsApp 800×800px',
+                 satBoost: 0.0, sharpBoost: 0.0  },
+  };
 
   // Ajustes por estilo: [brilho -1..1, contraste 0..3, saturação 0..3, warm 0..1]
   const ESTILOS = {
@@ -1317,9 +1351,16 @@ function enviarPrompt(texto) {
     atualizaBotaoGerarCanva();
   }
 
+  function escolheDestinoCanva(val) {
+    _destinoCanva = val;
+    document.getElementById('dest-instagram').className = 'fundo-card' + (val === 'instagram' ? ' selecionado' : '');
+    document.getElementById('dest-whatsapp').className  = 'fundo-card' + (val === 'whatsapp'  ? ' selecionado' : '');
+    atualizaBotaoGerarCanva();
+  }
+
   function atualizaBotaoGerarCanva() {
     const logoOk = _logoCanva === 'sem' || (_logoCanva !== null && _logoOpacity !== null);
-    const ok  = _fotoCanvaFile && _estiloCanva && _logoCanva !== null && logoOk;
+    const ok  = _fotoCanvaFile && _estiloCanva && _logoCanva !== null && logoOk && _destinoCanva;
     const btn = document.getElementById('btnGerarCanva');
     if (!btn) return;
     btn.disabled         = !ok;
@@ -1359,7 +1400,8 @@ function enviarPrompt(texto) {
   }
 
   function _processarImagem(img) {
-    const SIZE = 1080;
+    const dest = DESTINOS[_destinoCanva] || DESTINOS.instagram;
+    const SIZE = dest.size;
     const canvas = document.getElementById('canvasOtimizado');
     canvas.width = SIZE; canvas.height = SIZE;
     const ctx = canvas.getContext('2d');
@@ -1370,12 +1412,16 @@ function enviarPrompt(texto) {
     const imageData = ctx.getImageData(0, 0, SIZE, SIZE);
     const d = imageData.data;
     const cfg = ESTILOS[_estiloCanva];
+
+    // Saturação extra para Instagram
+    const satFinal = cfg.saturation + dest.satBoost;
+
     for (let i = 0; i < d.length; i += 4) {
       let r = d[i], g = d[i+1], b = d[i+2];
       r += cfg.brightness*255; g += cfg.brightness*255; b += cfg.brightness*255;
       r = (r-128)*cfg.contrast+128; g = (g-128)*cfg.contrast+128; b = (b-128)*cfg.contrast+128;
       const gr = 0.299*r+0.587*g+0.114*b;
-      r = gr+(r-gr)*cfg.saturation; g = gr+(g-gr)*cfg.saturation; b = gr+(b-gr)*cfg.saturation;
+      r = gr+(r-gr)*satFinal; g = gr+(g-gr)*satFinal; b = gr+(b-gr)*satFinal;
       if (cfg.warm > 0) { r += cfg.warm*30; g += cfg.warm*10; b -= cfg.warm*20; }
       d[i]=Math.min(255,Math.max(0,r)); d[i+1]=Math.min(255,Math.max(0,g)); d[i+2]=Math.min(255,Math.max(0,b));
     }
@@ -1407,6 +1453,9 @@ function enviarPrompt(texto) {
   function _mostrarResultado(op) {
     document.getElementById('canva-config').style.display    = 'none';
     document.getElementById('canva-resultado').style.display = 'block';
+    const dest = DESTINOS[_destinoCanva] || DESTINOS.instagram;
+    const lblDest = document.getElementById('lblDestino');
+    if (lblDest) lblDest.textContent = '\u{1F4D0} ' + dest.label;
     const wrap = document.getElementById('wrapOpacidade');
     if (wrap) {
       if (_logoCanva !== 'sem' && op !== null) {
@@ -1441,18 +1490,25 @@ function enviarPrompt(texto) {
   }
 
   function baixarCanva(fmt) {
+    const dest   = DESTINOS[_destinoCanva] || DESTINOS.instagram;
     const canvas = document.getElementById('canvasOtimizado');
-    const mime = fmt === 'png' ? 'image/png' : 'image/jpeg';
-    const url  = canvas.toDataURL(mime, fmt === 'png' ? 1.0 : 0.92);
-    const a    = document.createElement('a');
-    a.href = url; a.download = 'helena_foto_otimizada.' + fmt; a.click();
+    const mime   = fmt === 'png' ? 'image/png' : 'image/jpeg';
+    const qual   = fmt === 'png' ? 1.0 : dest.quality;
+    const plat   = _destinoCanva === 'whatsapp' ? 'whatsapp' : 'instagram';
+    const url    = canvas.toDataURL(mime, qual);
+    const a      = document.createElement('a');
+    a.href = url; a.download = 'helena_' + plat + '_foto.' + fmt; a.click();
   }
 
   function resetCanva() {
     _logoOpacity = null;
+    _destinoCanva = null;
     const wrap = document.getElementById('wrapOpacidadeConfig');
     if (wrap) wrap.style.display = 'none';
     ['op-25','op-40','op-65','op-100'].forEach(id => {
+      const e = document.getElementById(id); if(e) e.classList.remove('selecionado');
+    });
+    ['dest-instagram','dest-whatsapp'].forEach(id => {
       const e = document.getElementById(id); if(e) e.classList.remove('selecionado');
     });
     document.getElementById('canva-config').style.display    = 'block';
