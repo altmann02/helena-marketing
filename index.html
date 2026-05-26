@@ -758,7 +758,84 @@ html, body {
       <p class="passo-label">Passo 3 — trilha sonora</p>
       <p class="q-titulo">Escolha a música de fundo</p>
       <p class="q-hint" style="margin-bottom:10px;">Toque para selecionar · ▶ para ouvir prévia 🎵</p>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;" id="listaMusicasItens"></div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;" id="listaMusicasItens">
+
+        <div id="musica-item-1" onclick="selecionarMusica({id:1,nome:'Escape Your Love',src:'music_01.mp3'})"
+          style="background:#fff;border-radius:12px;border:1.5px solid #EDE0F2;padding:0.75rem 1rem;
+                 display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <div style="width:36px;height:36px;border-radius:10px;background:#FCE4EC;
+                      display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">✨</div>
+          <div style="flex:1;">
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:1px;">Escape Your Love</p>
+            <p style="font-size:11px;color:#888;">Pop fashion · animado</p>
+          </div>
+          <button onclick="event.stopPropagation();previewMusica(1,'music_01.mp3')" id="btnPreview-1"
+            style="background:none;border:1.5px solid #C9A8E0;border-radius:8px;
+                   padding:4px 10px;font-size:11px;color:#6B2A82;cursor:pointer;font-weight:600;flex-shrink:0;">
+            ▶ Ouvir</button>
+        </div>
+
+        <div id="musica-item-2" onclick="selecionarMusica({id:2,nome:'Lo-Fi Chill',src:'music_02.mp3'})"
+          style="background:#fff;border-radius:12px;border:1.5px solid #EDE0F2;padding:0.75rem 1rem;
+                 display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <div style="width:36px;height:36px;border-radius:10px;background:#F5EEF8;
+                      display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🌸</div>
+          <div style="flex:1;">
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:1px;">Lo-Fi Chill</p>
+            <p style="font-size:11px;color:#888;">Lo-fi · relaxante</p>
+          </div>
+          <button onclick="event.stopPropagation();previewMusica(2,'music_02.mp3')" id="btnPreview-2"
+            style="background:none;border:1.5px solid #C9A8E0;border-radius:8px;
+                   padding:4px 10px;font-size:11px;color:#6B2A82;cursor:pointer;font-weight:600;flex-shrink:0;">
+            ▶ Ouvir</button>
+        </div>
+
+        <div id="musica-item-3" onclick="selecionarMusica({id:3,nome:'Space Sky Lo-Fi',src:'music_03.mp3'})"
+          style="background:#fff;border-radius:12px;border:1.5px solid #EDE0F2;padding:0.75rem 1rem;
+                 display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <div style="width:36px;height:36px;border-radius:10px;background:#F5EEF8;
+                      display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎵</div>
+          <div style="flex:1;">
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:1px;">Space Sky Lo-Fi</p>
+            <p style="font-size:11px;color:#888;">Lo-fi · suave e etéreo</p>
+          </div>
+          <button onclick="event.stopPropagation();previewMusica(3,'music_03.mp3')" id="btnPreview-3"
+            style="background:none;border:1.5px solid #C9A8E0;border-radius:8px;
+                   padding:4px 10px;font-size:11px;color:#6B2A82;cursor:pointer;font-weight:600;flex-shrink:0;">
+            ▶ Ouvir</button>
+        </div>
+
+        <div id="musica-item-4" onclick="selecionarMusica({id:4,nome:'Lo-Fi Background',src:'music_04.mp3'})"
+          style="background:#fff;border-radius:12px;border:1.5px solid #EDE0F2;padding:0.75rem 1rem;
+                 display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <div style="width:36px;height:36px;border-radius:10px;background:#F5EEF8;
+                      display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎻</div>
+          <div style="flex:1;">
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:1px;">Lo-Fi Background</p>
+            <p style="font-size:11px;color:#888;">Lo-fi · fundo delicado</p>
+          </div>
+          <button onclick="event.stopPropagation();previewMusica(4,'music_04.mp3')" id="btnPreview-4"
+            style="background:none;border:1.5px solid #C9A8E0;border-radius:8px;
+                   padding:4px 10px;font-size:11px;color:#6B2A82;cursor:pointer;font-weight:600;flex-shrink:0;">
+            ▶ Ouvir</button>
+        </div>
+
+        <div id="musica-item-5" onclick="selecionarMusica({id:5,nome:'Trap Beat',src:'music_05.mp3'})"
+          style="background:#fff;border-radius:12px;border:1.5px solid #EDE0F2;padding:0.75rem 1rem;
+                 display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <div style="width:36px;height:36px;border-radius:10px;background:#F5EEF8;
+                      display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎧</div>
+          <div style="flex:1;">
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:1px;">Trap Beat</p>
+            <p style="font-size:11px;color:#888;">Trap · moderno</p>
+          </div>
+          <button onclick="event.stopPropagation();previewMusica(5,'music_05.mp3')" id="btnPreview-5"
+            style="background:none;border:1.5px solid #C9A8E0;border-radius:8px;
+                   padding:4px 10px;font-size:11px;color:#6B2A82;cursor:pointer;font-weight:600;flex-shrink:0;">
+            ▶ Ouvir</button>
+        </div>
+
+      </div>
       <div id="trilhaStatus" style="display:none;background:#F5EEF8;border-radius:10px;padding:8px 12px;margin-bottom:1rem;">
         <p id="trilhaStatusTxt" style="font-size:12px;color:#6B2A82;font-weight:600;"></p>
       </div>
@@ -1778,21 +1855,15 @@ function enviarPrompt(texto) {
     });
   }
 
-  function previewMusica(id) {
-    const m = MUSICAS_LISTA.find(x=>x.id===id);
-    if (!m || !m.src) {
-      alert('Música ainda não disponível. Em breve!');
-      return;
-    }
+  function previewMusica(id, src) {
     if (_audioAtual) { _audioAtual.pause(); _audioAtual = null; }
-    // Resetar todos os botões
-    MUSICAS_LISTA.forEach(x => {
-      const btn = document.getElementById('btnPreview-'+x.id);
+    [1,2,3,4,5].forEach(x => {
+      const btn = document.getElementById('btnPreview-'+x);
       if(btn) btn.textContent = '▶ Ouvir';
     });
     const btn = document.getElementById('btnPreview-'+id);
-    _audioAtual = new Audio(m.src);
-    _audioAtual.play();
+    _audioAtual = new Audio(src);
+    _audioAtual.play().catch(()=>alert('Erro ao reproduzir. Verifique se o arquivo de música está na mesma pasta.'));
     if(btn) btn.textContent = '⏹ Parar';
     _audioAtual.onended = () => { if(btn) btn.textContent = '▶ Ouvir'; };
   }
@@ -1800,9 +1871,8 @@ function enviarPrompt(texto) {
   function selecionarMusica(m) {
     _musicaSelecionada = m;
     _slideTrilha = 'lista:' + m.nome;
-    // Highlight no item selecionado
-    MUSICAS_LISTA.forEach(x => {
-      const el = document.getElementById('musica-item-'+x.id);
+    [1,2,3,4,5].forEach(x => {
+      const el = document.getElementById('musica-item-'+x);
       if(el) el.style.borderColor = '#EDE0F2';
     });
     const el = document.getElementById('musica-item-'+m.id);
