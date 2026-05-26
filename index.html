@@ -530,8 +530,23 @@ html, body {
           <div class="card-body">
             <p class="card-num">01</p>
             <span class="card-badge badge-1">IA + foto real</span>
-            <p class="card-title">Otimizar foto da peça</p>
+            <p class="card-title">Otimizar foto antes de publicar</p>
             <p class="card-desc">Melhora a foto com corte, brilho, fundo profissional e logo discreto da loja</p>
+          </div>
+          <span class="card-arrow">›</span>
+        </div>
+      </div>
+
+
+      <div class="card" onclick="ir('video')">
+        <div class="card-stripe" style="background:linear-gradient(90deg,#E91E8C,#FF6B35);"></div>
+        <div class="card-inner">
+          <div class="card-icon" style="background:#FCE4EC;">🎬</div>
+          <div class="card-body">
+            <p class="card-num">02</p>
+            <span class="card-badge" style="background:#FCE4EC;color:#C2185B;">Vídeo curto</span>
+            <p class="card-title">Criar vídeo curto</p>
+            <p class="card-desc">Slideshow de fotos, vídeo no Adobe Express ou arte animada com IA Firefly</p>
           </div>
           <span class="card-arrow">›</span>
         </div>
@@ -542,7 +557,7 @@ html, body {
         <div class="card-inner">
           <div class="card-icon icon-2">🕐</div>
           <div class="card-body">
-            <p class="card-num">02</p>
+            <p class="card-num">03</p>
             <span class="card-badge badge-2">Atendimento</span>
             <p class="card-title">Aviso de horário especial</p>
             <p class="card-desc">Arte para comunicar horário diferenciado</p>
@@ -556,7 +571,7 @@ html, body {
         <div class="card-inner">
           <div class="card-icon icon-3">🏷️</div>
           <div class="card-body">
-            <p class="card-num">03</p>
+            <p class="card-num">04</p>
             <span class="card-badge badge-3">Promoção</span>
             <p class="card-title">Arte para promoção</p>
             <p class="card-desc">Brinde, desconto ou oferta especial da loja</p>
@@ -570,7 +585,7 @@ html, body {
         <div class="card-inner">
           <div class="card-icon" style="background:#FCE4EC;">🎊</div>
           <div class="card-body">
-            <p class="card-num">04</p>
+            <p class="card-num">05</p>
             <span class="card-badge" style="background:#FCE4EC;color:#C2185B;">Data especial</span>
             <p class="card-title">Folder de data comemorativa</p>
             <p class="card-desc">Arte com frase especial para datas como Mães, Namorados, Natal e mais</p>
@@ -590,6 +605,248 @@ html, body {
 
     <div class="rodape">
       <p>Arte no estilo do feed <strong>@helena_acessorios_semijoias</strong><br>logo sempre presente · publicação via WhatsApp ou Instagram 💜</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ VÍDEO CURTO ════════════ -->
+<div class="screen" id="video">
+  <div class="sub-screen">
+    <div class="sub-header">
+      <button class="back-btn" onclick="ir('home')">‹</button>
+      <div class="sub-header-info">
+        <p class="sub-header-title">Criar vídeo curto 🎬</p>
+        <p class="sub-header-sub">helena acessórios · conteúdo em vídeo</p>
+      </div>
+    </div>
+    <div class="sub-body">
+
+      <div class="claude-bubble">
+        <p class="claude-nome">Claude · para Camila e Rita</p>
+        <p class="claude-txt">Escolha como quer criar o vídeo curto da loja! 💜</p>
+      </div>
+
+      <p class="passo-label">Escolha o modo</p>
+      <p class="q-titulo">Como deseja criar o vídeo?</p>
+      <p class="q-hint" style="margin-bottom:14px;">Toque na opção desejada para continuar.</p>
+
+      <!-- OPÇÃO 1 — CRIAÇÃO RÁPIDA VIA CLAUDE -->
+      <div onclick="ir('video-claude')"
+        style="background:#fff;border-radius:18px;border:1.5px solid #EDE0F2;
+               padding:1.1rem 1.2rem;margin-bottom:12px;cursor:pointer;
+               display:flex;align-items:center;gap:14px;
+               box-shadow:0 2px 8px rgba(74,26,92,0.07);transition:transform 0.15s;"
+        onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+        <div style="width:48px;height:48px;border-radius:14px;background:#FCE4EC;
+                    display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">⚡</div>
+        <div style="flex:1;">
+          <p style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:3px;">Criação rápida com IA</p>
+          <p style="font-size:12px;color:#888;line-height:1.4;">Slideshow de fotos com música · gerado pelo Claude</p>
+          <span style="display:inline-block;margin-top:5px;background:#FCE4EC;color:#C2185B;
+                       font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;">⚡ Mais rápido</span>
+        </div>
+        <span style="font-size:20px;color:#ccc;">›</span>
+      </div>
+
+      <!-- OPÇÃO 2 — ADOBE EXPRESS -->
+      <div onclick="ir('video-adobe')"
+        style="background:#FCE4EC;border-radius:18px;border:1.5px solid #F48FB1;
+               padding:1.1rem 1.2rem;margin-bottom:12px;cursor:pointer;
+               display:flex;align-items:center;gap:14px;
+               box-shadow:0 2px 8px rgba(232,101,127,0.15);transition:transform 0.15s;"
+        onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+        <div style="width:48px;height:48px;border-radius:14px;background:#F48FB1;
+                    display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">✏️</div>
+        <div style="flex:1;">
+          <p style="font-size:15px;font-weight:600;color:#880E4F;margin-bottom:3px;">Criar no Adobe Express</p>
+          <p style="font-size:12px;color:#AD1457;line-height:1.4;">Vídeo status WhatsApp com templates prontos</p>
+          <span style="display:inline-block;margin-top:5px;background:#F48FB1;color:#fff;
+                       font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;">🎛️ Templates prontos</span>
+        </div>
+        <span style="font-size:20px;color:#F48FB1;">›</span>
+      </div>
+
+      <!-- OPÇÃO 3 — FIREFLY VIDEO -->
+      <div onclick="window.open('https://firefly.adobe.com/generate/video','_blank')"
+        style="background:linear-gradient(135deg,#2D0057,#6B2A82);border-radius:18px;
+               border:1.5px solid #9B5AB5;padding:1.1rem 1.2rem;margin-bottom:20px;cursor:pointer;
+               display:flex;align-items:center;gap:14px;
+               box-shadow:0 4px 16px rgba(74,26,92,0.25);transition:transform 0.15s;"
+        onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+        <div style="width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,0.15);
+                    display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🔥</div>
+        <div style="flex:1;">
+          <p style="font-size:15px;font-weight:600;color:#fff;margin-bottom:3px;">Criar com IA Firefly</p>
+          <p style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.4;">Vídeo gerado por inteligência artificial</p>
+          <span style="display:inline-block;margin-top:5px;background:rgba(232,101,127,0.35);color:#F4A0B4;
+                       font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;">✨ IA generativa</span>
+        </div>
+        <span style="font-size:20px;color:rgba(255,255,255,0.5);">›</span>
+      </div>
+
+      <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ VÍDEO — CRIAÇÃO RÁPIDA CLAUDE ════════════ -->
+<div class="screen" id="video-claude">
+  <div class="sub-screen">
+    <div class="sub-header">
+      <button class="back-btn" onclick="ir('video')">‹</button>
+      <div class="sub-header-info">
+        <p class="sub-header-title">Criação rápida ⚡</p>
+        <p class="sub-header-sub">slideshow de fotos · via claude</p>
+      </div>
+    </div>
+    <div class="sub-body">
+
+      <div class="claude-bubble">
+        <p class="claude-nome">Claude · para Camila e Rita</p>
+        <p class="claude-txt">Configure o vídeo abaixo e o Claude vai montar o slideshow com as fotos escolhidas, no tempo certo e com a música de fundo! 💜</p>
+      </div>
+
+      <!-- QTDE DE FOTOS -->
+      <p class="passo-label">Passo 1 — fotos</p>
+      <p class="q-titulo">Quantas fotos no vídeo?</p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.5rem;">
+        <div class="fundo-card" id="vf-3" onclick="escolheQtdFotos(3)" style="text-align:center;padding:0.8rem 0.3rem;">
+          <div style="font-size:18px;margin-bottom:3px;">📷</div>
+          <div style="font-size:13px;font-weight:700;">3</div>
+        </div>
+        <div class="fundo-card" id="vf-5" onclick="escolheQtdFotos(5)" style="text-align:center;padding:0.8rem 0.3rem;">
+          <div style="font-size:18px;margin-bottom:3px;">📷</div>
+          <div style="font-size:13px;font-weight:700;">5</div>
+        </div>
+        <div class="fundo-card" id="vf-7" onclick="escolheQtdFotos(7)" style="text-align:center;padding:0.8rem 0.3rem;">
+          <div style="font-size:18px;margin-bottom:3px;">📷</div>
+          <div style="font-size:13px;font-weight:700;">7</div>
+        </div>
+        <div class="fundo-card" id="vf-10" onclick="escolheQtdFotos(10)" style="text-align:center;padding:0.8rem 0.3rem;">
+          <div style="font-size:18px;margin-bottom:3px;">📷</div>
+          <div style="font-size:13px;font-weight:700;">10</div>
+        </div>
+      </div>
+
+      <!-- TEMPO POR FOTO -->
+      <p class="passo-label">Passo 2 — tempo por foto</p>
+      <p class="q-titulo">Quantos segundos cada foto?</p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.5rem;">
+        <div class="fundo-card" id="vt-2" onclick="escolheTempo(2)" style="text-align:center;padding:0.8rem 0.3rem;">
+          <div style="font-size:16px;margin-bottom:3px;">⏱️</div>
+          <div style="font-size:13px;font-weight:700;">2s</div>
+        </div>
+        <div class="fundo-card" id="vt-3" onclick="escolheTempo(3)" style="text-align:center;padding:0.8rem 0.3rem;">
+          <div style="font-size:16px;margin-bottom:3px;">⏱️</div>
+          <div style="font-size:13px;font-weight:700;">3s</div>
+        </div>
+        <div class="fundo-card" id="vt-5" onclick="escolheTempo(5)" style="text-align:center;padding:0.8rem 0.3rem;">
+          <div style="font-size:16px;margin-bottom:3px;">⏱️</div>
+          <div style="font-size:13px;font-weight:700;">5s</div>
+        </div>
+        <div class="fundo-card" id="vt-7" onclick="escolheTempo(7)" style="text-align:center;padding:0.8rem 0.3rem;">
+          <div style="font-size:16px;margin-bottom:3px;">⏱️</div>
+          <div style="font-size:13px;font-weight:700;">7s</div>
+        </div>
+      </div>
+
+      <!-- SOM DE FUNDO -->
+      <p class="passo-label">Passo 3 — som de fundo</p>
+      <p class="q-titulo">Qual estilo de música?</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
+        <div class="fundo-card" id="vs-elegante" onclick="escolheSom('elegante e sofisticado')" style="text-align:center;padding:0.9rem 0.5rem;">
+          <div style="font-size:20px;margin-bottom:3px;">🎻</div>
+          <div style="font-size:12px;font-weight:600;">Elegante</div>
+        </div>
+        <div class="fundo-card" id="vs-animado" onclick="escolheSom('animado e jovem')" style="text-align:center;padding:0.9rem 0.5rem;">
+          <div style="font-size:20px;margin-bottom:3px;">🎵</div>
+          <div style="font-size:12px;font-weight:600;">Animado</div>
+        </div>
+        <div class="fundo-card" id="vs-romantico" onclick="escolheSom('romântico e suave')" style="text-align:center;padding:0.9rem 0.5rem;">
+          <div style="font-size:20px;margin-bottom:3px;">🌸</div>
+          <div style="font-size:12px;font-weight:600;">Romântico</div>
+        </div>
+        <div class="fundo-card" id="vs-moderno" onclick="escolheSom('moderno e pop')" style="text-align:center;padding:0.9rem 0.5rem;">
+          <div style="font-size:20px;margin-bottom:3px;">🎧</div>
+          <div style="font-size:12px;font-weight:600;">Moderno</div>
+        </div>
+      </div>
+
+      <!-- BOTÃO -->
+      <button id="btnGerarVideo" onclick="abrirClaudeVideo()" disabled
+        style="width:100%;padding:1.1rem;background:#ccc;color:white;border:none;
+               border-radius:16px;font-size:16px;font-weight:600;
+               font-family:'DM Sans',sans-serif;margin-bottom:10px;
+               transition:background 0.2s;cursor:not-allowed;
+               display:flex;align-items:center;justify-content:center;gap:8px;">
+        🎬 Criar vídeo com Claude
+      </button>
+
+      <button class="btn-voltar" onclick="ir('video')">← Voltar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ VÍDEO — ADOBE EXPRESS ════════════ -->
+<div class="screen" id="video-adobe">
+  <div class="sub-screen">
+    <div class="sub-header">
+      <button class="back-btn" onclick="ir('video')">‹</button>
+      <div class="sub-header-info">
+        <p class="sub-header-title">Vídeo no Adobe Express ✏️</p>
+        <p class="sub-header-sub">status whatsapp · templates prontos</p>
+      </div>
+    </div>
+    <div class="sub-body">
+
+      <div class="claude-bubble">
+        <p class="claude-nome">Claude · para Camila e Rita</p>
+        <p class="claude-txt">Toque em <strong>Abrir Adobe Express</strong> → vá em <strong>"Vídeos"</strong> → escolha o template <strong>"Status do WhatsApp"</strong> e personalize com as fotos das peças! 💜</p>
+      </div>
+
+      <p class="passo-label">Como fazer</p>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem;">
+        <div style="background:#fff;border-radius:14px;border:1.5px solid #EDE0F2;padding:0.9rem 1rem;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:10px;background:#FCE4EC;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">1️⃣</div>
+          <div>
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px;">Abrir Adobe Express</p>
+            <p style="font-size:12px;color:#666;line-height:1.5;">Toque no botão abaixo para abrir o app ou site.</p>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:14px;border:1.5px solid #EDE0F2;padding:0.9rem 1rem;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:10px;background:#FCE4EC;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">2️⃣</div>
+          <div>
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px;">Ir em "Vídeos"</p>
+            <p style="font-size:12px;color:#666;line-height:1.5;">Na tela inicial toque em <strong>"Vídeos"</strong> no menu de criação.</p>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:14px;border:1.5px solid #EDE0F2;padding:0.9rem 1rem;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:10px;background:#FCE4EC;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">3️⃣</div>
+          <div>
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px;">Escolher "Status do WhatsApp"</p>
+            <p style="font-size:12px;color:#666;line-height:1.5;">Selecione o formato <strong>Status do WhatsApp</strong> (9:16 vertical) e escolha um template.</p>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:14px;border:1.5px solid #EDE0F2;padding:0.9rem 1rem;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:10px;background:#FCE4EC;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">4️⃣</div>
+          <div>
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px;">Adicionar fotos e logo</p>
+            <p style="font-size:12px;color:#666;line-height:1.5;">Insira as fotos das peças e adicione o logo da Helena no canto. Escolha a música e exporte!</p>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="abrirAdobeExpress()"
+        style="width:100%;padding:1.1rem;background:linear-gradient(135deg,#FF0000,#FF6B35);
+               color:white;border:none;border-radius:16px;font-size:16px;font-weight:600;
+               font-family:'DM Sans',sans-serif;margin-bottom:10px;cursor:pointer;
+               display:flex;align-items:center;justify-content:center;gap:10px;
+               box-shadow:0 4px 14px rgba(255,0,0,0.3);">
+        ✏️ Abrir Adobe Express
+      </button>
+
+      <button class="btn-voltar" onclick="ir('video')">← Voltar</button>
     </div>
   </div>
 </div>
@@ -1275,6 +1532,48 @@ function enviarPrompt(texto) {
     "original": "data:image/jpeg;base64,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",
     "preto": "data:image/jpeg;base64,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",
   };
+
+  // ── VÍDEO RÁPIDO ──
+  let _vQtdFotos = null, _vTempo = null, _vSom = null;
+
+  function escolheQtdFotos(n) {
+    _vQtdFotos = n;
+    [3,5,7,10].forEach(v => { const e=document.getElementById('vf-'+v); if(e) e.classList.remove('selecionado'); });
+    const el = document.getElementById('vf-'+n); if(el) el.classList.add('selecionado');
+    atualizaBotaoVideo();
+  }
+  function escolheTempo(s) {
+    _vTempo = s;
+    [2,3,5,7].forEach(v => { const e=document.getElementById('vt-'+v); if(e) e.classList.remove('selecionado'); });
+    const el = document.getElementById('vt-'+s); if(el) el.classList.add('selecionado');
+    atualizaBotaoVideo();
+  }
+  function escolheSom(estilo) {
+    _vSom = estilo;
+    ['vs-elegante','vs-animado','vs-romantico','vs-moderno'].forEach(id => { const e=document.getElementById(id); if(e) e.classList.remove('selecionado'); });
+    const mapa = {'elegante e sofisticado':'vs-elegante','animado e jovem':'vs-animado','romântico e suave':'vs-romantico','moderno e pop':'vs-moderno'};
+    const el = document.getElementById(mapa[estilo]); if(el) el.classList.add('selecionado');
+    atualizaBotaoVideo();
+  }
+  function atualizaBotaoVideo() {
+    const ok = _vQtdFotos && _vTempo && _vSom;
+    const btn = document.getElementById('btnGerarVideo'); if(!btn) return;
+    btn.disabled=!ok; btn.style.background=ok?'#E8657F':'#ccc'; btn.style.cursor=ok?'pointer':'not-allowed';
+  }
+  function abrirClaudeVideo() {
+    const durTotal = _vQtdFotos * _vTempo;
+    const prompt =
+      'Olá! Preciso criar um vídeo slideshow para a Helena Acessórios.\n\n' +
+      'CONFIGURAÇÕES:\n• ' + _vQtdFotos + ' fotos · ' + _vTempo + 's cada · ~' + durTotal + 's total · música: ' + _vSom + '\n\n' +
+      'PASSO 1 — Peça as fotos:\n"Oi! 💜 Envie as ' + _vQtdFotos + ' fotos das peças aqui no chat. A última deve ter o logo da Helena já aplicado."\n\n' +
+      'PASSO 2 — Após receber as fotos, monte o roteiro:\n' +
+      '• Liste cada foto na ordem com o tempo (' + _vTempo + 's cada)\n' +
+      '• Sugira 3 músicas gratuitas no estilo "' + _vSom + '" disponíveis no CapCut ou Reels\n' +
+      '• Passo a passo de como montar no CapCut (app gratuito)\n' +
+      '• A última foto com logo deve aparecer por pelo menos ' + Math.max(_vTempo,3) + 's\n\n' +
+      'PASSO 3 — Pergunte:\n"Gostou do roteiro? Posso ajustar a ordem, o tempo ou criar uma legenda para sobrepor no vídeo? 💜"';
+    window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt), '_blank');
+  }
 
   // ── ADOBE EXPRESS — tenta abrir app instalado, cai na web se não tiver ──
   function abrirAdobeExpress() {
