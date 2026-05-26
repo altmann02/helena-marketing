@@ -756,31 +756,9 @@ html, body {
 
       <!-- PASSO 3 — TRILHA SONORA -->
       <p class="passo-label">Passo 3 — trilha sonora</p>
-      <p class="q-titulo">Escolha o estilo da música</p>
-      <p class="q-hint" style="margin-bottom:10px;">Sugestão ideal para loja de semi joias 💎</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;">
-        <div class="fundo-card" id="st-elegante" onclick="escolheTrilha('elegante')" style="text-align:center;padding:0.85rem 0.5rem;cursor:pointer;">
-          <div style="font-size:20px;margin-bottom:3px;">🎻</div>
-          <div style="font-size:12px;font-weight:600;color:#1a1a1a;">Elegante</div>
-          <div style="font-size:10px;color:#888;margin-top:2px;">Clássico suave</div>
-        </div>
-        <div class="fundo-card" id="st-romantico" onclick="escolheTrilha('romantico')" style="text-align:center;padding:0.85rem 0.5rem;cursor:pointer;">
-          <div style="font-size:20px;margin-bottom:3px;">🌸</div>
-          <div style="font-size:12px;font-weight:600;color:#1a1a1a;">Romântico</div>
-          <div style="font-size:10px;color:#888;margin-top:2px;">Piano delicado</div>
-        </div>
-        <div class="fundo-card" id="st-moderno" onclick="escolheTrilha('moderno')" style="text-align:center;padding:0.85rem 0.5rem;cursor:pointer;">
-          <div style="font-size:20px;margin-bottom:3px;">✨</div>
-          <div style="font-size:12px;font-weight:600;color:#1a1a1a;">Moderno</div>
-          <div style="font-size:10px;color:#888;margin-top:2px;">Pop sofisticado</div>
-        </div>
-        <div class="fundo-card" id="st-upload" onclick="document.getElementById('inputTrilha').click()" style="text-align:center;padding:0.85rem 0.5rem;cursor:pointer;">
-          <div style="font-size:20px;margin-bottom:3px;">🎵</div>
-          <div style="font-size:12px;font-weight:600;color:#1a1a1a;">Minha música</div>
-          <div style="font-size:10px;color:#888;margin-top:2px;">Enviar MP3</div>
-        </div>
-      </div>
-      <input type="file" id="inputTrilha" accept="audio/*" style="display:none;" onchange="uploadTrilha(this)">
+      <p class="q-titulo">Escolha a música de fundo</p>
+      <p class="q-hint" style="margin-bottom:10px;">Toque para selecionar · ▶ para ouvir prévia 🎵</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;" id="listaMusicasItens"></div>
       <div id="trilhaStatus" style="display:none;background:#F5EEF8;border-radius:10px;padding:8px 12px;margin-bottom:1rem;">
         <p id="trilhaStatusTxt" style="font-size:12px;color:#6B2A82;font-weight:600;"></p>
       </div>
@@ -1736,7 +1714,7 @@ function enviarPrompt(texto) {
 
   function escolheTrilha(tipo) {
     _slideTrilha = tipo;
-    ['st-elegante','st-romantico','st-moderno','st-upload'].forEach(id => {
+    ['st-elegante','st-romantico','st-moderno','st-lista'].forEach(id => {
       const e=document.getElementById(id); if(e) e.classList.remove('selecionado');
     });
     const el=document.getElementById('st-'+tipo); if(el) el.classList.add('selecionado');
@@ -1746,18 +1724,97 @@ function enviarPrompt(texto) {
     atualizaBotaoSlide();
   }
 
-  function uploadTrilha(input) {
-    if(!input.files||!input.files[0]) return;
-    _slideTrilha = input.files[0];
-    ['st-elegante','st-romantico','st-moderno','st-upload'].forEach(id=>{
+  // ── LISTA DE MÚSICAS ──
+  // Quando tiver os MP3s, substitua os src: de '' para o caminho ou base64 do arquivo
+  const MUSICAS_LISTA = [
+    { id: 1, nome: 'Escape Your Love', estilo: 'Pop fashion · animado',  emoji: '✨', src: 'music_01.mp3' },
+    { id: 2, nome: 'Lo-Fi Chill',       estilo: 'Lo-fi · relaxante',      emoji: '🌸', src: 'music_02.mp3' },
+    { id: 3, nome: 'Space Sky Lo-Fi',   estilo: 'Lo-fi · suave e etéreo', emoji: '🎵', src: 'music_03.mp3' },
+    { id: 4, nome: 'Lo-Fi Background',  estilo: 'Lo-fi · fundo delicado', emoji: '🎻', src: 'music_04.mp3' },
+    { id: 5, nome: 'Trap Beat',         estilo: 'Trap · moderno',         emoji: '🎧', src: 'music_05.mp3' },
+  ];
+
+  let _musicaSelecionada = null; // objeto da música escolhida
+  let _audioAtual = null;        // Audio() para preview
+
+  // Inicializa lista de músicas automaticamente ao entrar na tela
+  function initListaMusicas() {
+    const container = document.getElementById('listaMusicasItens');
+    if(!container || container.children.length > 0) return;
+    renderListaMusicas();
+  }
+
+  function abrirListaMusicas() {
+    ['st-elegante','st-romantico','st-moderno','st-lista'].forEach(id=>{
       const e=document.getElementById(id); if(e) e.classList.remove('selecionado');
     });
-    const el=document.getElementById('st-upload'); if(el) el.classList.add('selecionado');
+    document.getElementById('st-lista').classList.add('selecionado');
+    const wrap = document.getElementById('listaMusicasWrap');
+    wrap.style.display = 'block';
+    renderListaMusicas();
+  }
+
+  function renderListaMusicas() {
+    const container = document.getElementById('listaMusicasItens');
+    if(!container) return;
+    container.innerHTML = '';
+    MUSICAS_LISTA.forEach(m => {
+      const item = document.createElement('div');
+      item.id = 'musica-item-' + m.id;
+      item.style.cssText = 'background:#fff;border-radius:12px;border:1.5px solid #EDE0F2;padding:0.75rem 1rem;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color 0.15s;';
+      item.innerHTML = `
+        <div style="width:36px;height:36px;border-radius:10px;background:#F5EEF8;
+                    display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">${m.emoji}</div>
+        <div style="flex:1;">
+          <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:1px;">${m.nome}</p>
+          <p style="font-size:11px;color:#888;">${m.estilo}</p>
+        </div>
+        <button onclick="event.stopPropagation();previewMusica(${m.id})"
+          style="background:none;border:1.5px solid #C9A8E0;border-radius:8px;
+                 padding:4px 10px;font-size:11px;color:#6B2A82;cursor:pointer;font-weight:600;flex-shrink:0;"
+          id="btnPreview-${m.id}">▶ Ouvir</button>`;
+      item.onclick = () => selecionarMusica(m);
+      container.appendChild(item);
+    });
+  }
+
+  function previewMusica(id) {
+    const m = MUSICAS_LISTA.find(x=>x.id===id);
+    if (!m || !m.src) {
+      alert('Música ainda não disponível. Em breve!');
+      return;
+    }
+    if (_audioAtual) { _audioAtual.pause(); _audioAtual = null; }
+    // Resetar todos os botões
+    MUSICAS_LISTA.forEach(x => {
+      const btn = document.getElementById('btnPreview-'+x.id);
+      if(btn) btn.textContent = '▶ Ouvir';
+    });
+    const btn = document.getElementById('btnPreview-'+id);
+    _audioAtual = new Audio(m.src);
+    _audioAtual.play();
+    if(btn) btn.textContent = '⏹ Parar';
+    _audioAtual.onended = () => { if(btn) btn.textContent = '▶ Ouvir'; };
+  }
+
+  function selecionarMusica(m) {
+    _musicaSelecionada = m;
+    _slideTrilha = 'lista:' + m.nome;
+    // Highlight no item selecionado
+    MUSICAS_LISTA.forEach(x => {
+      const el = document.getElementById('musica-item-'+x.id);
+      if(el) el.style.borderColor = '#EDE0F2';
+    });
+    const el = document.getElementById('musica-item-'+m.id);
+    if(el) el.style.borderColor = '#9B59B6';
     const s=document.getElementById('trilhaStatus');
     const t=document.getElementById('trilhaStatusTxt');
-    if(s&&t){s.style.display='block';t.textContent='🎵 '+input.files[0].name+' ✅';}
+    if(s&&t){s.style.display='block'; t.textContent='🎵 "'+m.nome+'" selecionada ✅';}
     atualizaBotaoSlide();
   }
+
+  function abrirBuscaMusica() {} // mantido para compatibilidade
+  function digitouMusica() {}    // mantido para compatibilidade
 
   function addFotosSlide(input) {
     if (!input.files || !input.files.length) return;
@@ -1813,101 +1870,80 @@ function enviarPrompt(texto) {
 
   async function gerarVideoSlide() {
     const btn=document.getElementById('btnGerarSlide');
-    btn.textContent='⏳ Gerando vídeo...'; btn.disabled=true; btn.style.background='#C9A8E0';
-
-    const SIZE=540; // 540px para performance — boa qualidade no celular
-    const FPS=30;
-    const frameDur=_slideTempo*1000; // ms por foto
-    const logoDur=3000; // 3s logo final
-
-    // Canvas de trabalho
-    const canvas=document.createElement('canvas');
-    canvas.width=SIZE; canvas.height=SIZE;
-    const ctx=canvas.getContext('2d');
-
-    // Carregar todas as imagens
-    const loadImg = src => new Promise(res=>{ const i=new Image(); i.onload=()=>res(i); i.src=src; });
-
-    // Carregar fotos
-    const fotoImgs = await Promise.all(_slideFotos.map(f=>{
-      return new Promise(res=>{ const r=new FileReader(); r.onload=e=>loadImg(e.target.result).then(res); r.readAsDataURL(f); });
-    }));
-
-    // Carregar logo se necessário
-    let logoImg=null;
-    if(_slideLogoKey!=='sem'&&LOGOS_FIN[_slideLogoKey]){
-      logoImg=await loadImg(LOGOS_FIN[_slideLogoKey]);
-    }
-
-    // Configurar MediaRecorder
-    const stream=canvas.captureStream(FPS);
-    const mimeType=MediaRecorder.isTypeSupported('video/webm;codecs=vp9')?'video/webm;codecs=vp9':'video/webm';
-    const recorder=new MediaRecorder(stream,{mimeType,videoBitsPerSecond:2500000});
-    const chunks=[];
-    recorder.ondataavailable=e=>{ if(e.data.size>0) chunks.push(e.data); };
-
-    recorder.onstop=()=>{
-      const blob=new Blob(chunks,{type:'video/webm'});
+    btn.textContent='⏳ Gerando...'; btn.disabled=true; btn.style.background='#C9A8E0';
+    try {
+      if(typeof MediaRecorder==='undefined') throw new Error('MediaRecorder não suportado. Use o Chrome.');
+      const SIZE=540, FPS=30, frameDur=_slideTempo*1000, logoDur=3000;
+      const canvas=document.createElement('canvas');
+      canvas.width=SIZE; canvas.height=SIZE;
+      const ctx=canvas.getContext('2d');
+      const loadImg=src=>new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src;});
+      btn.textContent='⏳ Carregando fotos...';
+      const fotoImgs=await Promise.all(_slideFotos.map(f=>new Promise((res,rej)=>{
+        const r=new FileReader();r.onload=e=>loadImg(e.target.result).then(res).catch(rej);r.onerror=rej;r.readAsDataURL(f);
+      })));
+      let logoImg=null;
+      if(_slideLogoKey!=='sem'&&LOGOS_FIN[_slideLogoKey]) logoImg=await loadImg(LOGOS_FIN[_slideLogoKey]);
+      const mimeType=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(m=>MediaRecorder.isTypeSupported(m))||'video/webm';
+      const stream=canvas.captureStream(FPS);
+      const recorder=new MediaRecorder(stream,{mimeType,videoBitsPerSecond:2500000});
+      const chunks=[];
+      recorder.ondataavailable=e=>{if(e.data&&e.data.size>0)chunks.push(e.data);};
+      await new Promise((resolve,reject)=>{
+        recorder.onerror=e=>reject(new Error('Erro recorder'));
+        recorder.onstop=resolve;
+        recorder.start(100);
+        const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+        const desenhar=img=>{const s=Math.min(img.width,img.height);ctx.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,SIZE,SIZE);};
+        (async()=>{
+          for(let i=0;i<fotoImgs.length;i++){
+            btn.textContent=`⏳ Foto ${i+1}/${fotoImgs.length}...`;
+            const t0=Date.now();
+            while(Date.now()-t0<frameDur){desenhar(fotoImgs[i]);await sleep(1000/FPS);}
+          }
+          if(logoImg){
+            btn.textContent='⏳ Logo final...';
+            const t0=Date.now();
+            while(Date.now()-t0<logoDur){ctx.fillStyle='#fff';ctx.fillRect(0,0,SIZE,SIZE);const lw=SIZE*0.65,lh=logoImg.height*(lw/logoImg.width);ctx.drawImage(logoImg,(SIZE-lw)/2,(SIZE-lh)/2,lw,lh);await sleep(1000/FPS);}
+          }
+          recorder.stop();
+        })();
+      });
+      const ext=mimeType.includes('webm')?'webm':'mp4';
+      const blob=new Blob(chunks,{type:mimeType});
       const url=URL.createObjectURL(blob);
-      // Mostrar resultado
+      const trilhaNome=_slideTrilha&&_slideTrilha.startsWith('lista:')?_slideTrilha.replace('lista:',''):_slideTrilha||'sem trilha';
       const framesDiv=document.getElementById('slideFrames');
       framesDiv.innerHTML='';
       const card=document.createElement('div');
-      card.style.cssText='background:#F5EEF8;border-radius:14px;border:1.5px solid #C9A8E0;padding:1rem;text-align:center;';
-      card.innerHTML=`
-        <div style="font-size:36px;margin-bottom:8px;">🎬</div>
-        <p style="font-size:14px;font-weight:700;color:#4A1A5C;margin-bottom:4px;">Vídeo pronto!</p>
-        <p style="font-size:11px;color:#888;margin-bottom:12px;">${fotoImgs.length} foto(s) · ${_slideTempo}s cada · trilha incluída</p>
-        <a href="${url}" download="helena_video_${Date.now()}.webm"
-          style="display:inline-block;padding:0.85rem 1.5rem;background:linear-gradient(135deg,#9B59B6,#6B2A82);
-                 color:white;border-radius:12px;font-size:14px;font-weight:600;text-decoration:none;">
-          ⬇️ Baixar vídeo (.webm)
-        </a>
-        <p style="font-size:10px;color:#aaa;margin-top:8px;">Compatível com WhatsApp, Instagram e CapCut</p>`;
+      card.style.cssText='background:#F5EEF8;border-radius:14px;border:1.5px solid #C9A8E0;padding:1.2rem;text-align:center;';
+      card.innerHTML=`<div style="font-size:40px;margin-bottom:8px;">🎬</div>
+        <p style="font-size:15px;font-weight:700;color:#4A1A5C;margin-bottom:4px;">Vídeo pronto!</p>
+        <p style="font-size:11px;color:#888;margin-bottom:14px;">${fotoImgs.length} foto(s) · ${_slideTempo}s cada · 🎵 ${trilhaNome}</p>
+        <a href="${url}" download="helena_video.${ext}"
+          style="display:inline-block;padding:0.9rem 2rem;background:linear-gradient(135deg,#9B59B6,#6B2A82);
+                 color:white;border-radius:12px;font-size:15px;font-weight:600;text-decoration:none;margin-bottom:8px;">
+          ⬇️ Baixar vídeo</a>
+        <p style="font-size:10px;color:#aaa;margin-top:6px;">Formato .${ext} · WhatsApp, Instagram e CapCut</p>`;
       framesDiv.appendChild(card);
       document.getElementById('slideResultado').style.display='block';
       document.getElementById('slideResultado').scrollIntoView({behavior:'smooth',block:'start'});
-      btn.textContent='🎬 Gerar vídeo'; btn.disabled=false; btn.style.background='#9B59B6';
-    };
-
-    recorder.start(100);
-
-    // Renderizar frames
-    const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-    const desenharFoto=(img)=>{
-      const s=Math.min(img.width,img.height);
-      ctx.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,SIZE,SIZE);
-    };
-
-    for(let i=0;i<fotoImgs.length;i++){
-      const start=Date.now();
-      while(Date.now()-start<frameDur){
-        desenharFoto(fotoImgs[i]);
-        await sleep(1000/FPS);
-      }
+    } catch(err) {
+      alert('❌ Erro: ' + err.message + '\n\nUse o Chrome para melhor compatibilidade.');
     }
-
-    // Frame do logo
-    if(logoImg){
-      const start=Date.now();
-      while(Date.now()-start<logoDur){
-        ctx.fillStyle='#fff'; ctx.fillRect(0,0,SIZE,SIZE);
-        const lw=SIZE*0.65, lh=logoImg.height*(lw/logoImg.width);
-        ctx.drawImage(logoImg,(SIZE-lw)/2,(SIZE-lh)/2,lw,lh);
-        await sleep(1000/FPS);
-      }
-    }
-
-    recorder.stop();
+    btn.textContent='🎬 Gerar vídeo'; btn.disabled=false; btn.style.background='#9B59B6';
   }
+
 
   function resetSlide() {
     limparFotosSlide();
     _slideTempo=null; _slideLogoKey=null; _slideTrilha=null;
     [2,3,5,7].forEach(v=>{const e=document.getElementById('svt-'+v);if(e)e.classList.remove('selecionado');});
     ['svl-sem','svl-rosa','svl-vio-rosa','svl-vio-bco','svl-original'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('selecionado');});
-    ['st-elegante','st-romantico','st-moderno','st-upload'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('selecionado');});
-    const s=document.getElementById('trilhaStatus'); if(s)s.style.display='none';
+    // trilha reset via renderListaMusicas
+    const buscaWrap=document.getElementById('listaMusicasWrap'); if(buscaWrap)buscaWrap.style.display='none';
+    _musicaSelecionada=null;
+    if(_audioAtual){_audioAtual.pause();_audioAtual=null;}
     document.getElementById('slideResultado').style.display='none';
     document.getElementById('slideFrames').innerHTML='';
     atualizaBotaoSlide();
