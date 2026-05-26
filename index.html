@@ -835,6 +835,64 @@ html, body {
             ▶ Ouvir</button>
         </div>
 
+        <div id="musica-item-6" onclick="selecionarMusica({id:6,nome:'Promo Logo',src:'music_06.mp3'})"
+          style="background:#fff;border-radius:12px;border:1.5px solid #EDE0F2;padding:0.75rem 1rem;
+                 display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <div style="width:36px;height:36px;border-radius:10px;background:#FCE4EC;
+                      display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📣</div>
+          <div style="flex:1;">
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:1px;">Promo Logo</p>
+            <p style="font-size:11px;color:#888;">Corporativo · elegante</p>
+          </div>
+          <button onclick="event.stopPropagation();previewMusica(6,'music_06.mp3')" id="btnPreview-6"
+            style="background:none;border:1.5px solid #C9A8E0;border-radius:8px;
+                   padding:4px 10px;font-size:11px;color:#6B2A82;cursor:pointer;font-weight:600;flex-shrink:0;">
+            ▶ Ouvir</button>
+        </div>
+
+        <div id="musica-item-7" onclick="selecionarMusica({id:7,nome:'Upbeat Advertising',src:'music_07.mp3'})"
+          style="background:#fff;border-radius:12px;border:1.5px solid #EDE0F2;padding:0.75rem 1rem;
+                 display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <div style="width:36px;height:36px;border-radius:10px;background:#FCE4EC;
+                      display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📢</div>
+          <div style="flex:1;">
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:1px;">Upbeat Advertising</p>
+            <p style="font-size:11px;color:#888;">Publicidade · animado</p>
+          </div>
+          <button onclick="event.stopPropagation();previewMusica(7,'music_07.mp3')" id="btnPreview-7"
+            style="background:none;border:1.5px solid #C9A8E0;border-radius:8px;
+                   padding:4px 10px;font-size:11px;color:#6B2A82;cursor:pointer;font-weight:600;flex-shrink:0;">
+            ▶ Ouvir</button>
+        </div>
+
+        <div id="musica-item-8" onclick="selecionarMusica({id:8,nome:'Product Launch',src:'music_08.mp3'})"
+          style="background:#fff;border-radius:12px;border:1.5px solid #EDE0F2;padding:0.75rem 1rem;
+                 display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <div style="width:36px;height:36px;border-radius:10px;background:#FCE4EC;
+                      display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🚀</div>
+          <div style="flex:1;">
+            <p style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:1px;">Product Launch</p>
+            <p style="font-size:11px;color:#888;">Lançamento · comercial</p>
+          </div>
+          <button onclick="event.stopPropagation();previewMusica(8,'music_08.mp3')" id="btnPreview-8"
+            style="background:none;border:1.5px solid #C9A8E0;border-radius:8px;
+                   padding:4px 10px;font-size:11px;color:#6B2A82;cursor:pointer;font-weight:600;flex-shrink:0;">
+            ▶ Ouvir</button>
+        </div>
+
+        <!-- OPÇÃO: enviar música própria -->
+        <div style="background:#F5EEF8;border-radius:12px;border:1.5px dashed #C9A8E0;padding:0.75rem 1rem;
+                    display:flex;align-items:center;gap:10px;cursor:pointer;"
+          onclick="document.getElementById('inputMusicaCustom').click()">
+          <div style="width:36px;height:36px;border-radius:10px;background:#EDE0F2;
+                      display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">➕</div>
+          <div style="flex:1;">
+            <p style="font-size:13px;font-weight:600;color:#6B2A82;margin-bottom:1px;">Outra música</p>
+            <p style="font-size:11px;color:#9B59B6;">Toque para anexar seu MP3</p>
+          </div>
+        </div>
+        <input type="file" id="inputMusicaCustom" accept="audio/mp3,audio/mpeg,audio/*" style="display:none;" onchange="musicaCustomSelecionada(this)">
+
       </div>
       <div id="trilhaStatus" style="display:none;background:#F5EEF8;border-radius:10px;padding:8px 12px;margin-bottom:1rem;">
         <p id="trilhaStatusTxt" style="font-size:12px;color:#6B2A82;font-weight:600;"></p>
@@ -1857,7 +1915,7 @@ function enviarPrompt(texto) {
 
   function previewMusica(id, src) {
     if (_audioAtual) { _audioAtual.pause(); _audioAtual = null; }
-    [1,2,3,4,5].forEach(x => {
+    [1,2,3,4,5,6,7,8].forEach(x => {
       const btn = document.getElementById('btnPreview-'+x);
       if(btn) btn.textContent = '▶ Ouvir';
     });
@@ -1871,7 +1929,7 @@ function enviarPrompt(texto) {
   function selecionarMusica(m) {
     _musicaSelecionada = m;
     _slideTrilha = 'lista:' + m.nome;
-    [1,2,3,4,5].forEach(x => {
+    [1,2,3,4,5,6,7,8].forEach(x => {
       const el = document.getElementById('musica-item-'+x);
       if(el) el.style.borderColor = '#EDE0F2';
     });
@@ -1883,8 +1941,22 @@ function enviarPrompt(texto) {
     atualizaBotaoSlide();
   }
 
-  function abrirBuscaMusica() {} // mantido para compatibilidade
-  function digitouMusica() {}    // mantido para compatibilidade
+  function musicaCustomSelecionada(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const url  = URL.createObjectURL(file);
+    _musicaSelecionada = {id: 99, nome: file.name.replace(/\.[^.]+$/, ''), src: url};
+    _slideTrilha = 'lista:' + _musicaSelecionada.nome;
+    // Limpar seleção dos outros itens
+    [1,2,3,4,5,6,7,8].forEach(x => {
+      const el = document.getElementById('musica-item-'+x);
+      if(el) el.style.borderColor = '#EDE0F2';
+    });
+    const s = document.getElementById('trilhaStatus');
+    const t = document.getElementById('trilhaStatusTxt');
+    if(s&&t){s.style.display='block'; t.textContent='🎵 "'+_musicaSelecionada.nome+'" anexada ✅';}
+    atualizaBotaoSlide();
+  }
 
   function addFotosSlide(input) {
     if (!input.files || !input.files.length) return;
