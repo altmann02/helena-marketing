@@ -1581,20 +1581,20 @@ function enviarPrompt(texto) {
     const isIOS     = /iphone|ipad|ipod/i.test(navigator.userAgent);
 
     if (isAndroid) {
-      // Tenta abrir via Intent (abre app se instalado, senão Play Store)
-      const intent = 'intent://express.adobe.com/#Intent;scheme=https;package=com.adobe.spark.post;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.adobe.spark.post;end';
-      window.location.href = intent;
+      // Tenta abrir o app via intent; se falhar abre web em nova aba
+      const webUrl = 'https://express.adobe.com';
+      const intent = 'intent://express.adobe.com/#Intent;scheme=https;package=com.adobe.spark.post;S.browser_fallback_url=' + encodeURIComponent(webUrl) + ';end';
+      // Abre web como fallback imediato em nova aba
+      const w = window.open(webUrl, '_blank');
+      // Tenta redirecionar para o app (se instalado o browser intercepta)
+      try { window.location.href = intent; } catch(e) {}
     } else if (isIOS) {
-      // Tenta abrir via URL scheme da Adobe
-      const appUrl = 'adobeexpress://';
-      const appStore = 'https://apps.apple.com/app/adobe-express/id1609773939';
-      // Tenta o app; se não abrir em 2s, abre App Store
-      window.location.href = appUrl;
-      setTimeout(function() {
-        window.open(appStore, '_blank');
-      }, 2000);
+      // iOS: tenta scheme do app, fallback para web após 1.5s
+      const webUrl = 'https://express.adobe.com';
+      window.open(webUrl, '_blank'); // abre web garantido
+      try { window.location.href = 'adobeexpress://'; } catch(e) {}
     } else {
-      // Desktop — abre na web normalmente
+      // Desktop
       window.open('https://express.adobe.com', '_blank');
     }
   }
