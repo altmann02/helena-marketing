@@ -14,6 +14,9 @@
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <title>Helena Acessórios · Painel</title>
+  <!-- FFmpeg.wasm — converte WebM para MP4 no browser -->
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -2021,98 +2024,120 @@ function enviarPrompt(texto) {
       if(_slideLogoKey!=='sem'&&LOGOS_FIN[_slideLogoKey]) logoImg=await loadImg(LOGOS_FIN[_slideLogoKey]);
 
       // ── ÁUDIO ──
-      let audioTracks = [];
-      let audioCtx = null;
-      let audioSrc  = null;
-
-      // Descobrir src da música selecionada
-      let musicSrc = null;
-      if(_musicaSelecionada && _musicaSelecionada.src) {
-        musicSrc = _musicaSelecionada.src; // URL de objeto (upload custom) ou caminho relativo
-      }
+      let audioTracks=[], audioCtx=null, audioSrc=null;
+      let musicSrc = _musicaSelecionada&&_musicaSelecionada.src ? _musicaSelecionada.src : null;
 
       if(musicSrc) {
         try {
           btn.textContent='⏳ Carregando áudio...';
-          audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-          const resp = await fetch(musicSrc);
-          const arrayBuf = await resp.arrayBuffer();
-          const audioBuf = await audioCtx.decodeAudioData(arrayBuf);
-          const dest = audioCtx.createMediaStreamDestination();
-          audioSrc = audioCtx.createBufferSource();
-          audioSrc.buffer = audioBuf;
-          audioSrc.loop = true;
+          audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+          const resp=await fetch(musicSrc);
+          const arrayBuf=await resp.arrayBuffer();
+          const audioBuf=await audioCtx.decodeAudioData(arrayBuf);
+          const dest=audioCtx.createMediaStreamDestination();
+          audioSrc=audioCtx.createBufferSource();
+          audioSrc.buffer=audioBuf;
+          audioSrc.loop=true;
           audioSrc.connect(dest);
-          audioTracks = dest.stream.getAudioTracks();
-        } catch(e) {
-          console.warn('Áudio não carregado:', e.message);
-          audioTracks = [];
-        }
+          audioTracks=dest.stream.getAudioTracks();
+        } catch(e){ console.warn('Áudio não carregado:',e.message); audioTracks=[]; }
       }
 
-      const mimeType=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']
+      const mimeType=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']
         .find(m=>MediaRecorder.isTypeSupported(m))||'video/webm';
 
-      // Combinar stream do canvas + stream de áudio
-      const videoStream = canvas.captureStream(FPS);
-      const tracks = [...videoStream.getVideoTracks(), ...audioTracks];
-      const combinedStream = new MediaStream(tracks);
-
+      const videoStream=canvas.captureStream(FPS);
+      const combinedStream=new MediaStream([...videoStream.getVideoTracks(),...audioTracks]);
       const recorder=new MediaRecorder(combinedStream,{mimeType,videoBitsPerSecond:2500000});
       const chunks=[];
       recorder.ondataavailable=e=>{if(e.data&&e.data.size>0)chunks.push(e.data);};
 
+      // ── GRAVAR ──
       await new Promise((resolve,reject)=>{
         recorder.onerror=e=>reject(new Error('Erro recorder'));
         recorder.onstop=resolve;
         recorder.start(100);
-
-        // Iniciar áudio junto com a gravação
         if(audioSrc) audioSrc.start(0);
-
         const sleep=ms=>new Promise(r=>setTimeout(r,ms));
         const desenhar=img=>{const s=Math.min(img.width,img.height);ctx.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,SIZE,SIZE);};
-
         (async()=>{
           for(let i=0;i<fotoImgs.length;i++){
-            btn.textContent=`⏳ Foto ${i+1}/${fotoImgs.length}...`;
+            btn.textContent=`⏳ Gravando foto ${i+1}/${fotoImgs.length}...`;
             const t0=Date.now();
             while(Date.now()-t0<frameDur){desenhar(fotoImgs[i]);await sleep(1000/FPS);}
           }
           if(logoImg){
-            btn.textContent='⏳ Logo final...';
+            btn.textContent='⏳ Gravando logo...';
             const t0=Date.now();
             while(Date.now()-t0<logoDur){ctx.fillStyle='#fff';ctx.fillRect(0,0,SIZE,SIZE);const lw=SIZE*0.65,lh=logoImg.height*(lw/logoImg.width);ctx.drawImage(logoImg,(SIZE-lw)/2,(SIZE-lh)/2,lw,lh);await sleep(1000/FPS);}
           }
-          if(audioSrc) try{audioSrc.stop();}catch(e){}
-          if(audioCtx) audioCtx.close();
+          try{if(audioSrc)audioSrc.stop();}catch(e){}
+          if(audioCtx)audioCtx.close();
           recorder.stop();
         })();
       });
 
-      const ext=mimeType.includes('webm')?'webm':'mp4';
-      const blob=new Blob(chunks,{type:mimeType});
-      const url=URL.createObjectURL(blob);
+      const webmBlob=new Blob(chunks,{type:mimeType});
       const trilhaNome=_slideTrilha&&_slideTrilha.startsWith('lista:')?_slideTrilha.replace('lista:',''):_slideTrilha||'sem trilha';
 
+      // ── CONVERTER PARA MP4 VIA FFMPEG.WASM ──
+      let finalUrl, finalExt, finalMime;
+      try {
+        btn.textContent='⏳ Convertendo para MP4...';
+        const { FFmpeg } = FFmpegWASM;
+        const { fetchFile } = FFmpegUtil;
+        const ff = new FFmpeg();
+        ff.on('progress',({progress})=>{
+          btn.textContent=`⏳ Convertendo MP4... ${Math.round(progress*100)}%`;
+        });
+        await ff.load({
+          coreURL: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+        });
+        await ff.writeFile('input.webm', await fetchFile(webmBlob));
+        await ff.exec([
+          '-i','input.webm',
+          '-c:v','libx264',
+          '-c:a','aac',
+          '-preset','ultrafast',
+          '-movflags','+faststart',
+          '-vf','scale=540:540',
+          'output.mp4'
+        ]);
+        const data=await ff.readFile('output.mp4');
+        const mp4Blob=new Blob([data.buffer],{type:'video/mp4'});
+        finalUrl=URL.createObjectURL(mp4Blob);
+        finalExt='mp4';
+        finalMime='video/mp4';
+      } catch(ffErr) {
+        console.warn('FFmpeg falhou, usando WebM:', ffErr.message);
+        finalUrl=URL.createObjectURL(webmBlob);
+        finalExt='webm';
+        finalMime=mimeType;
+      }
+
+      // ── RESULTADO ──
       const framesDiv=document.getElementById('slideFrames');
       framesDiv.innerHTML='';
       const card=document.createElement('div');
       card.style.cssText='background:#F5EEF8;border-radius:14px;border:1.5px solid #C9A8E0;padding:1.2rem;text-align:center;';
+      const formatoInfo = finalExt==='mp4'
+        ? '✅ MP4 · pronto para WhatsApp e Instagram'
+        : '⚠️ WebM · abra no CapCut para converter para MP4';
       card.innerHTML=`<div style="font-size:40px;margin-bottom:8px;">🎬</div>
         <p style="font-size:15px;font-weight:700;color:#4A1A5C;margin-bottom:4px;">Vídeo pronto!</p>
-        <p style="font-size:11px;color:#888;margin-bottom:14px;">${fotoImgs.length} foto(s) · ${_slideTempo}s cada · 🎵 ${trilhaNome}</p>
-        <a href="${url}" download="helena_video.${ext}"
+        <p style="font-size:11px;color:#888;margin-bottom:6px;">${fotoImgs.length} foto(s) · ${_slideTempo}s cada · 🎵 ${trilhaNome}</p>
+        <p style="font-size:11px;font-weight:600;color:#6B2A82;margin-bottom:14px;">${formatoInfo}</p>
+        <a href="${finalUrl}" download="helena_video.${finalExt}"
           style="display:inline-block;padding:0.9rem 2rem;background:linear-gradient(135deg,#9B59B6,#6B2A82);
                  color:white;border-radius:12px;font-size:15px;font-weight:600;text-decoration:none;margin-bottom:8px;">
-          ⬇️ Baixar vídeo</a>
-        <p style="font-size:10px;color:#aaa;margin-top:6px;">Formato .${ext} · com trilha sonora incluída</p>`;
+          ⬇️ Baixar vídeo .${finalExt}</a>
+        <p style="font-size:10px;color:#aaa;margin-top:6px;">Compatível com Status do WhatsApp e Instagram Reels</p>`;
       framesDiv.appendChild(card);
       document.getElementById('slideResultado').style.display='block';
       document.getElementById('slideResultado').scrollIntoView({behavior:'smooth',block:'start'});
 
     } catch(err) {
-      alert('❌ Erro: ' + err.message + '\n\nUse o Chrome para melhor compatibilidade.');
+      alert('❌ Erro: '+err.message+'\n\nUse o Chrome para melhor compatibilidade.');
     }
     btn.textContent='🎬 Gerar vídeo'; btn.disabled=false; btn.style.background='#9B59B6';
   }
