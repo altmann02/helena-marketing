@@ -1475,16 +1475,35 @@ html, body {
 
         <!-- PASSO 1 — FOTO -->
         <p class="passo-label">Passo 1 — foto da peça</p>
-        <label for="inputFotoCanva" style="display:block;cursor:pointer;">
-          <div id="fotoDropZone" style="border:2px dashed #C9A8E0;border-radius:14px;padding:1.5rem;
-               text-align:center;background:#FAF5FF;margin-bottom:1.5rem;transition:border-color 0.2s;">
-            <div style="font-size:32px;margin-bottom:6px;">📷</div>
-            <p style="font-size:14px;font-weight:600;color:#6B2A82;">Clique ou toque para escolher a foto</p>
-            <p style="font-size:11px;color:#999;margin-top:4px;">câmera, galeria ou arquivo do computador</p>
-          </div>
-        </label>
-        <input type="file" id="inputFotoCanva" accept="image/*"
+        <p class="q-hint" style="margin-bottom:10px;">Tire uma foto agora ou escolha da galeria.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <label for="inputFotoCanvaCamera" style="cursor:pointer;">
+            <div style="background:#FCE4EC;border-radius:14px;border:1.5px solid #F48FB1;
+                        padding:1rem;text-align:center;">
+              <div style="font-size:28px;margin-bottom:4px;">📷</div>
+              <div style="font-size:13px;font-weight:600;color:#880E4F;">Câmera</div>
+              <div style="font-size:10px;color:#AD1457;margin-top:2px;">Tirar foto agora</div>
+            </div>
+          </label>
+          <label for="inputFotoCanvaGaleria" style="cursor:pointer;">
+            <div style="background:#F5EEF8;border-radius:14px;border:1.5px solid #C9A8E0;
+                        padding:1rem;text-align:center;">
+              <div style="font-size:28px;margin-bottom:4px;">🖼️</div>
+              <div style="font-size:13px;font-weight:600;color:#4A1A5C;">Galeria</div>
+              <div style="font-size:10px;color:#6B2A82;margin-top:2px;">Escolher foto salva</div>
+            </div>
+          </label>
+        </div>
+        <input type="file" id="inputFotoCanvaCamera"  accept="image/*" capture="environment"
           style="display:none;" onchange="fotoCanvaSelecionada(this)">
+        <input type="file" id="inputFotoCanvaGaleria" accept="image/*"
+          style="display:none;" onchange="fotoCanvaSelecionada(this)">
+
+        <!-- preview foto selecionada -->
+        <div id="fotoDropZone" style="display:none;border-radius:14px;padding:0.9rem 1rem;
+             background:#F0E6FA;border:1.5px solid #9B59B6;margin-bottom:1.5rem;text-align:center;">
+          <p id="fotoDropZoneTxt" style="font-size:13px;font-weight:600;color:#6B2A82;"></p>
+        </div>
 
         <!-- PASSO 2 — ESTILO -->
         <p class="passo-label">Passo 2 — estilo</p>
@@ -2533,28 +2552,25 @@ function enviarPrompt(texto) {
       if (el && LOGOS_B64[id]) el.src = LOGOS_B64[id];
     });
 
-    // Drag & drop para desktop
+    // Drag & drop para desktop — sobre toda a área do passo 1
     const zone = document.getElementById('fotoDropZone');
-    if (zone) {
-      zone.addEventListener('dragover', function(e) {
+    const camBtn = document.getElementById('inputFotoCanvaCamera');
+    const galBtn = document.getElementById('inputFotoCanvaGaleria');
+    // Pegar o container pai dos dois botões para drag&drop
+    if (camBtn && camBtn.parentElement) {
+      const dropArea = camBtn.parentElement;
+      dropArea.addEventListener('dragover', function(e) {
         e.preventDefault();
-        zone.style.borderColor = '#9B59B6';
-        zone.style.background  = '#F0E6FA';
       });
-      zone.addEventListener('dragleave', function() {
-        zone.style.borderColor = '#C9A8E0';
-        zone.style.background  = '#FAF5FF';
-      });
-      zone.addEventListener('drop', function(e) {
+      dropArea.addEventListener('drop', function(e) {
         e.preventDefault();
         const files = e.dataTransfer.files;
         if (files && files[0] && files[0].type.startsWith('image/')) {
           _fotoCanvaFile = files[0];
-          zone.style.borderColor = '#9B59B6';
-          zone.style.background  = '#F0E6FA';
-          zone.innerHTML = '<div style="font-size:28px;margin-bottom:4px;">✅</div>' +
-            '<p style="font-size:13px;font-weight:600;color:#6B2A82;">' + files[0].name + '</p>' +
-            '<p style="font-size:11px;color:#9B59B6;margin-top:3px;">Foto selecionada!</p>';
+          const z = document.getElementById('fotoDropZone');
+          const t = document.getElementById('fotoDropZoneTxt');
+          if (z) z.style.display = 'block';
+          if (t) t.textContent = '✅ ' + files[0].name + ' — foto selecionada!';
           atualizaBotaoGerarCanva();
         }
       });
@@ -2570,11 +2586,9 @@ function enviarPrompt(texto) {
     if (!input.files || !input.files[0]) return;
     _fotoCanvaFile = input.files[0];
     const zone = document.getElementById('fotoDropZone');
-    zone.style.borderColor = '#9B59B6';
-    zone.style.background  = '#F0E6FA';
-    zone.innerHTML = '<div style="font-size:28px;margin-bottom:4px;">✅</div>' +
-      '<p style="font-size:13px;font-weight:600;color:#6B2A82;">' + input.files[0].name + '</p>' +
-      '<p style="font-size:11px;color:#9B59B6;margin-top:3px;">Foto selecionada!</p>';
+    const txt  = document.getElementById('fotoDropZoneTxt');
+    if (zone) zone.style.display = 'block';
+    if (txt)  txt.textContent = '✅ ' + input.files[0].name + ' — foto selecionada!';
     atualizaBotaoGerarCanva();
   }
 
