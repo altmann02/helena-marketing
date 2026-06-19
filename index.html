@@ -1966,36 +1966,127 @@ html, body {
       </div>
     </div>
     <div class="sub-body">
+
       <div class="claude-bubble">
-        <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">Ótimo! 💜 Vou criar um aviso elegante para as clientes ficarem por dentro. <strong>Primeiro me conta: é para alguma data especial?</strong></p>
+        <p class="claude-nome">Assistente · Helena Acessórios</p>
+        <p class="claude-txt">Escolha a ocasião, defina o período e o horário — a arte é gerada na hora com as cores da loja! 💜</p>
       </div>
 
-      <p class="passo-label">Tipo de aviso</p>
-      <p class="q-titulo">É para uma ocasião especial?</p>
-      <p class="q-hint">Se for data comemorativa a arte ganha elementos temáticos. Se não, segue o estilo da marca.</p>
+      <!-- PASSO 1 — OCASIÃO -->
+      <p class="passo-label">Passo 1 — ocasião</p>
+      <p class="q-titulo">Qual o motivo do horário especial?</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem;" id="ocasiaoLista">
 
-      <div class="opcoes">
-        <div class="opc" onclick="enviarPrompt('Quero criar arte de aviso de horário especial de atendimento para a Helena Acessórios. É para uma DATA COMEMORATIVA. Pergunte uma coisa de cada vez: 1) Qual a ocasião (Natal, Mães, Namorados, Páscoa, Réveillon, outra?); 2) Período: de qual data até qual data?; 3) Horário: abre às que horas e fecha às que horas?; 4) Fundo preferido (identidade da marca ou vou enviar uma imagem?). Depois gere a arte no estilo do @helena_acessorios_semijoias com elementos temáticos da ocasião, cores violeta #4A1A5C e rosa #E8657F, logo como marca dágua discreta.')">
-          <div class="opc-icon oi-6">🎉</div>
-          <div class="opc-body">
-            <p class="opc-titulo">Sim, data comemorativa</p>
-            <p class="opc-desc">Natal, Mães, Namorados, Páscoa, Réveillon...</p>
-          </div>
-          <span class="opc-arr">›</span>
+        <div class="fundo-card" onclick="escolheOcasiao('namorados','Dia dos Namorados')" id="oc-namorados"
+          style="display:flex;align-items:center;gap:12px;padding:0.85rem 1rem;cursor:pointer;">
+          <span style="font-size:22px;">💕</span>
+          <p style="font-size:14px;font-weight:600;color:#1a1a1a;">Dia dos Namorados</p>
         </div>
 
-        <div class="opc" onclick="enviarPrompt('Quero criar arte de aviso de horário especial de atendimento para a Helena Acessórios, sem tema específico. Pergunte uma coisa de cada vez: 1) Período: de qual data até qual data?; 2) Horário: abre às que horas e fecha às que horas?; 3) Fundo preferido (identidade da marca violeta/rosa ou vou enviar uma imagem?). Depois gere a arte no estilo do @helena_acessorios_semijoias, cores violeta #4A1A5C e rosa #E8657F, logo como marca dágua discreta.')">
-          <div class="opc-icon oi-2">🕐</div>
-          <div class="opc-body">
-            <p class="opc-titulo">Não, só horário diferente</p>
-            <p class="opc-desc">Arte limpa no estilo da marca</p>
-          </div>
-          <span class="opc-arr">›</span>
+        <div class="fundo-card" onclick="escolheOcasiao('consumidor','Semana do Consumidor')" id="oc-consumidor"
+          style="display:flex;align-items:center;gap:12px;padding:0.85rem 1rem;cursor:pointer;">
+          <span style="font-size:22px;">🛍️</span>
+          <p style="font-size:14px;font-weight:600;color:#1a1a1a;">Semana do Consumidor</p>
+        </div>
+
+        <div class="fundo-card" onclick="escolheOcasiao('maes','Dia das Mães')" id="oc-maes"
+          style="display:flex;align-items:center;gap:12px;padding:0.85rem 1rem;cursor:pointer;">
+          <span style="font-size:22px;">🌷</span>
+          <p style="font-size:14px;font-weight:600;color:#1a1a1a;">Dia das Mães</p>
+        </div>
+
+        <div class="fundo-card" onclick="escolheOcasiao('natal','Natal')" id="oc-natal"
+          style="display:flex;align-items:center;gap:12px;padding:0.85rem 1rem;cursor:pointer;">
+          <span style="font-size:22px;">🎄</span>
+          <p style="font-size:14px;font-weight:600;color:#1a1a1a;">Natal</p>
+        </div>
+
+        <div class="fundo-card" onclick="escolheOcasiao('mulheres','Dia Internacional das Mulheres')" id="oc-mulheres"
+          style="display:flex;align-items:center;gap:12px;padding:0.85rem 1rem;cursor:pointer;">
+          <span style="font-size:22px;">♀️</span>
+          <p style="font-size:14px;font-weight:600;color:#1a1a1a;">Dia Internacional das Mulheres</p>
+        </div>
+
+        <div class="fundo-card" onclick="escolheOcasiaoCustom()" id="oc-outro"
+          style="display:flex;align-items:center;gap:12px;padding:0.85rem 1rem;cursor:pointer;">
+          <span style="font-size:22px;">✏️</span>
+          <p style="font-size:14px;font-weight:600;color:#1a1a1a;">Outro motivo</p>
+        </div>
+
+      </div>
+
+      <div id="ocasiaoCustomWrap" style="display:none;margin-bottom:1.5rem;margin-top:-0.8rem;">
+        <input id="inputOcasiaoCustom" type="text" placeholder="Digite o motivo do horário especial..."
+          oninput="digitouOcasiao(this)"
+          style="width:100%;padding:0.85rem 1rem;border-radius:14px;border:1.5px solid #C9A8E0;
+                 font-size:14px;font-family:'DM Sans',sans-serif;color:#1a1a1a;outline:none;">
+      </div>
+
+      <!-- PASSO 2 — PERÍODO -->
+      <p class="passo-label">Passo 2 — período do horário especial</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+        <div>
+          <p style="font-size:11px;color:#888;margin-bottom:4px;font-weight:600;">Data início</p>
+          <input id="dataInicio" type="date" oninput="atualizaBotaoHorario()"
+            style="width:100%;padding:0.7rem;border-radius:12px;border:1.5px solid #EDE0F2;
+                   font-size:13px;font-family:'DM Sans',sans-serif;color:#1a1a1a;">
+        </div>
+        <div>
+          <p style="font-size:11px;color:#888;margin-bottom:4px;font-weight:600;">Data fim</p>
+          <input id="dataFim" type="date" oninput="atualizaBotaoHorario()"
+            style="width:100%;padding:0.7rem;border-radius:12px;border:1.5px solid #EDE0F2;
+                   font-size:13px;font-family:'DM Sans',sans-serif;color:#1a1a1a;">
         </div>
       </div>
+
+      <!-- PASSO 3 — HORÁRIO -->
+      <p class="passo-label">Passo 3 — horário de atendimento</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;">
+        <div>
+          <p style="font-size:11px;color:#888;margin-bottom:4px;font-weight:600;">Abre às</p>
+          <input id="horaInicio" type="time" oninput="atualizaBotaoHorario()"
+            style="width:100%;padding:0.7rem;border-radius:12px;border:1.5px solid #EDE0F2;
+                   font-size:13px;font-family:'DM Sans',sans-serif;color:#1a1a1a;">
+        </div>
+        <div>
+          <p style="font-size:11px;color:#888;margin-bottom:4px;font-weight:600;">Fecha às</p>
+          <input id="horaFim" type="time" oninput="atualizaBotaoHorario()"
+            style="width:100%;padding:0.7rem;border-radius:12px;border:1.5px solid #EDE0F2;
+                   font-size:13px;font-family:'DM Sans',sans-serif;color:#1a1a1a;">
+        </div>
+      </div>
+
+      <!-- BOTÃO GERAR -->
+      <button id="btnGerarHorario" onclick="gerarArteHorario()" disabled
+        style="width:100%;padding:1.1rem;background:#ccc;color:white;border:none;
+               border-radius:16px;font-size:16px;font-weight:600;
+               font-family:'DM Sans',sans-serif;margin-bottom:10px;
+               transition:background 0.2s;cursor:not-allowed;
+               display:flex;align-items:center;justify-content:center;gap:8px;">
+        🎨 Gerar arte
+      </button>
 
       <button class="btn-voltar" onclick="ir('home')">← Voltar ao menu</button>
+
+      <!-- RESULTADO -->
+      <div id="horarioResultado" style="display:none;margin-top:1.2rem;">
+        <p class="passo-label" style="margin-bottom:8px;">Arte pronta! 🎉</p>
+        <canvas id="canvasHorario" width="1080" height="1080" style="display:none;"></canvas>
+        <img id="previewHorario" style="width:100%;border-radius:14px;border:1.5px solid #EDE0F2;margin-bottom:12px;">
+        <a id="btnBaixarHorario" download="helena_horario_especial.jpg"
+          style="display:block;width:100%;padding:1rem;background:linear-gradient(135deg,#9B59B6,#6B2A82);
+                 color:white;border-radius:14px;font-size:15px;font-weight:600;text-decoration:none;
+                 text-align:center;margin-bottom:10px;">
+          ⬇️ Baixar em JPEG
+        </a>
+        <button onclick="resetHorario()"
+          style="width:100%;padding:0.85rem;background:transparent;color:#9B59B6;
+                 border:1.5px solid #9B59B6;border-radius:12px;font-size:14px;
+                 font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">
+          🔄 Criar nova arte
+        </button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -2613,6 +2704,200 @@ function enviarPrompt(texto) {
   }
 
   // ── ADOBE EXPRESS — tenta abrir app instalado, cai na web se não tiver ──
+
+  // -- HORARIO ESPECIAL: GERADOR DE ARTE --
+  let _hOcasiao = null;
+  let _hOcasiaoLabel = null;
+
+  const LOGO_HELENA_ARTE = "data:image/jpeg;base64,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";
+
+  const OCASIAO_TEMA = {
+    namorados: { emoji:'💕', cor1:'#C2185B', cor2:'#E8657F', titulo:'Horário Especial', sub:'Dia dos Namorados' },
+    consumidor:{ emoji:'🛍️', cor1:'#4A1A5C', cor2:'#6B2A82', titulo:'Horário Especial', sub:'Semana do Consumidor' },
+    maes:      { emoji:'🌷', cor1:'#C2185B', cor2:'#F48FB1', titulo:'Horário Especial', sub:'Dia das Mães' },
+    natal:     { emoji:'🎄', cor1:'#4A1A5C', cor2:'#C2185B', titulo:'Horário Especial', sub:'Natal' },
+    mulheres:  { emoji:'♀️', cor1:'#6B2A82', cor2:'#E8657F', titulo:'Horário Especial', sub:'Dia Internacional das Mulheres' },
+    custom:    { emoji:'✨', cor1:'#4A1A5C', cor2:'#E8657F', titulo:'Horário Especial', sub:'' },
+  };
+
+  function escolheOcasiao(key, label) {
+    _hOcasiao = key;
+    _hOcasiaoLabel = label;
+    document.getElementById('ocasiaoCustomWrap').style.display = 'none';
+    ['oc-namorados','oc-consumidor','oc-maes','oc-natal','oc-mulheres','oc-outro'].forEach(id=>{
+      const e = document.getElementById(id); if(e) e.classList.remove('selecionado');
+    });
+    const el = document.getElementById('oc-' + key);
+    if(el) el.classList.add('selecionado');
+    atualizaBotaoHorario();
+  }
+
+  function escolheOcasiaoCustom() {
+    document.getElementById('ocasiaoCustomWrap').style.display = 'block';
+    ['oc-namorados','oc-consumidor','oc-maes','oc-natal','oc-mulheres','oc-outro'].forEach(id=>{
+      const e = document.getElementById(id); if(e) e.classList.remove('selecionado');
+    });
+    document.getElementById('oc-outro').classList.add('selecionado');
+    document.getElementById('inputOcasiaoCustom').focus();
+  }
+
+  function digitouOcasiao(input) {
+    const val = input.value.trim();
+    if (val.length > 0) {
+      _hOcasiao = 'custom';
+      _hOcasiaoLabel = val;
+    } else {
+      _hOcasiao = null;
+      _hOcasiaoLabel = null;
+    }
+    atualizaBotaoHorario();
+  }
+
+  function atualizaBotaoHorario() {
+    const di = document.getElementById('dataInicio').value;
+    const df = document.getElementById('dataFim').value;
+    const hi = document.getElementById('horaInicio').value;
+    const hf = document.getElementById('horaFim').value;
+    const ok = _hOcasiao && _hOcasiaoLabel && di && df && hi && hf;
+    const btn = document.getElementById('btnGerarHorario');
+    if (!btn) return;
+    btn.disabled = !ok;
+    btn.style.background = ok ? '#9B59B6' : '#ccc';
+    btn.style.cursor = ok ? 'pointer' : 'not-allowed';
+  }
+
+  function formatarDataBR(isoDate) {
+    if (!isoDate) return '';
+    const [y,m,d] = isoDate.split('-');
+    return d + '/' + m;
+  }
+
+  function gerarArteHorario() {
+    const canvas = document.getElementById('canvasHorario');
+    const ctx = canvas.getContext('2d');
+    const SIZE = 1080;
+
+    const tema = OCASIAO_TEMA[_hOcasiao];
+    const di = formatarDataBR(document.getElementById('dataInicio').value);
+    const df = formatarDataBR(document.getElementById('dataFim').value);
+    const hi = document.getElementById('horaInicio').value;
+    const hf = document.getElementById('horaFim').value;
+    const subtitulo = _hOcasiao === 'custom' ? _hOcasiaoLabel : tema.sub;
+
+    // Fundo gradiente com cores da marca
+    const grad = ctx.createLinearGradient(0, 0, SIZE, SIZE);
+    grad.addColorStop(0, tema.cor1);
+    grad.addColorStop(1, tema.cor2);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, SIZE, SIZE);
+
+    // Padrão decorativo sutil (círculos)
+    ctx.globalAlpha = 0.08;
+    ctx.fillStyle = '#ffffff';
+    for (let i = 0; i < 8; i++) {
+      const rx = Math.random() * SIZE;
+      const ry = Math.random() * SIZE;
+      const r = 40 + Math.random() * 100;
+      ctx.beginPath();
+      ctx.arc(rx, ry, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Emoji grande no topo
+    ctx.font = '120px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(tema.emoji, SIZE/2, 280);
+
+    // Subtítulo (ocasião)
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = '600 38px DM Sans, sans-serif';
+    ctx.fillText(subtitulo.toUpperCase(), SIZE/2, 360);
+
+    // Título principal
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 76px DM Sans, sans-serif';
+    ctx.fillText('Horário Especial', SIZE/2, 460);
+
+    // Linha decorativa
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(SIZE/2 - 100, 510);
+    ctx.lineTo(SIZE/2 + 100, 510);
+    ctx.stroke();
+
+    // Card central com período e horário
+    const cardY = 580;
+    const cardH = 320;
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    roundRectArte(ctx, 100, cardY, SIZE-200, cardH, 30);
+    ctx.fill();
+
+    // Período
+    ctx.fillStyle = tema.cor1;
+    ctx.font = '600 32px DM Sans, sans-serif';
+    ctx.fillText('PERÍODO', SIZE/2, cardY + 70);
+    ctx.font = '700 56px DM Sans, sans-serif';
+    ctx.fillText(di + ' a ' + df, SIZE/2, cardY + 140);
+
+    // Linha divisória
+    ctx.strokeStyle = '#EDE0F2';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(180, cardY + 175);
+    ctx.lineTo(SIZE-180, cardY + 175);
+    ctx.stroke();
+
+    // Horário
+    ctx.fillStyle = tema.cor1;
+    ctx.font = '600 32px DM Sans, sans-serif';
+    ctx.fillText('HORÁRIO DE ATENDIMENTO', SIZE/2, cardY + 230);
+    ctx.font = '700 64px DM Sans, sans-serif';
+    ctx.fillText(hi + ' às ' + hf, SIZE/2, cardY + 300);
+
+    // Logo no rodapé
+    const logoImg = new Image();
+    logoImg.onload = function() {
+      const lw = 240;
+      const lh = logoImg.height * (lw / logoImg.width);
+      ctx.drawImage(logoImg, (SIZE-lw)/2, SIZE - lh - 60, lw, lh);
+
+      // Finalizar — gerar preview e link de download
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+      document.getElementById('previewHorario').src = dataUrl;
+      document.getElementById('btnBaixarHorario').href = dataUrl;
+      document.getElementById('horarioResultado').style.display = 'block';
+      document.getElementById('horarioResultado').scrollIntoView({behavior:'smooth', block:'start'});
+    };
+    logoImg.src = LOGO_HELENA_ARTE;
+  }
+
+  function roundRectArte(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+w, y,   x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x,   y+h, r);
+    ctx.arcTo(x,   y+h, x,   y,   r);
+    ctx.arcTo(x,   y,   x+w, y,   r);
+    ctx.closePath();
+  }
+
+  function resetHorario() {
+    _hOcasiao = null; _hOcasiaoLabel = null;
+    ['oc-namorados','oc-consumidor','oc-maes','oc-natal','oc-mulheres','oc-outro'].forEach(id=>{
+      const e = document.getElementById(id); if(e) e.classList.remove('selecionado');
+    });
+    document.getElementById('ocasiaoCustomWrap').style.display = 'none';
+    document.getElementById('inputOcasiaoCustom').value = '';
+    document.getElementById('dataInicio').value = '';
+    document.getElementById('dataFim').value = '';
+    document.getElementById('horaInicio').value = '';
+    document.getElementById('horaFim').value = '';
+    document.getElementById('horarioResultado').style.display = 'none';
+    atualizaBotaoHorario();
+  }
+
 
   // -- TOGGLE PASSO A PASSO --
   function togglePassos(id) {
