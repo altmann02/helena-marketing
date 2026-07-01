@@ -1010,7 +1010,8 @@ function gerarArteHorario(){
   ctx.strokeStyle='rgba(255,255,255,0.6)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(SIZE/2-100,510);ctx.lineTo(SIZE/2+100,510);ctx.stroke();
   var cardY=580,cardH=320;
   ctx.fillStyle='rgba(255,255,255,0.95)';
-  ctx.beginPath();ctx.roundRect(100,cardY,SIZE-200,cardH,30);ctx.fill();
+  (function(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();})(100,cardY,SIZE-200,cardH,30);
+  ctx.fill();
   ctx.fillStyle=tema.cor1;ctx.font='600 32px DM Sans,sans-serif';ctx.fillText('PERÍODO',SIZE/2,cardY+70);
   ctx.font='700 56px DM Sans,sans-serif';ctx.fillText(di+' a '+df,SIZE/2,cardY+140);
   ctx.strokeStyle='#EDE0F2';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(180,cardY+175);ctx.lineTo(SIZE-180,cardY+175);ctx.stroke();
