@@ -2533,94 +2533,25 @@ document.addEventListener('touchend',function(e){
 
     <div class="sub-body">
 
-      <div class="claude-bubble">
-        <p class="claude-nome">Claude · para Camila e Rita</p>
-        <p class="claude-txt">
-          Assista ao tutorial antes de editar — tem um para celular e outro para computador com IA. Depois toque em <strong>Abrir Adobe Express</strong>! 💜
-        </p>
-      </div>
-
-      <!-- TUTORIAIS -->
-      <div style="margin-bottom:1.2rem;">
-        <button onclick="togglePassos('toggle-adobe')" id="toggle-adobe-btn"
-          style="width:100%;padding:0.9rem 1rem;background:#F5EEF8;color:#4A1A5C;
-                 border:1.5px solid #C9A8E0;border-radius:14px;font-size:14px;
-                 font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;
-                 display:flex;align-items:center;justify-content:center;gap:8px;">
-          📋 Ver passo a passo
-        </button>
-      </div>
-
-      <div id="toggle-adobe" style="display:none;">
-        <p class="passo-label">Tutoriais</p>
-      <p class="q-titulo">Como usar o Adobe Express</p>
-
-      <!-- Tutorial Celular -->
-      <div onclick="window.open('https://drive.google.com/file/d/1TBiR_J1Kx2B1gmMyZ3so6VKpKxTQGSaC/view?usp=sharing','_blank')"
-        style="background:#fff;border-radius:16px;border:1.5px solid #EDE0F2;
-               padding:1rem 1.1rem;margin-bottom:10px;cursor:pointer;
-               display:flex;align-items:center;gap:14px;
-               box-shadow:0 2px 8px rgba(74,26,92,0.07);">
-        <div style="width:52px;height:52px;border-radius:14px;
-                    background:linear-gradient(135deg,#FF0000,#FF6B35);
-                    display:flex;align-items:center;justify-content:center;
-                    font-size:26px;flex-shrink:0;">📱</div>
-        <div style="flex:1;">
-          <p style="font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:3px;">Tutorial — Celular</p>
-          <p style="font-size:12px;color:#888;line-height:1.4;">Como editar foto manualmente no app</p>
-          <span style="display:inline-block;margin-top:5px;background:#FFF3E0;color:#E65100;
-                       font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;">
-            ▶ Assistir vídeo
-          </span>
-        </div>
-        <span style="font-size:20px;color:#ccc;">›</span>
-      </div>
-
-      <!-- Tutorial Computador IA -->
-      <div onclick="window.open('https://drive.google.com/file/d/1ZjIuXOmIj5aGOIz-dHJX_lXiRkEVX-Sw/view?usp=sharing','_blank')"
-        style="background:#fff;border-radius:16px;border:1.5px solid #EDE0F2;
-               padding:1rem 1.1rem;margin-bottom:1.5rem;cursor:pointer;
-               display:flex;align-items:center;gap:14px;
-               box-shadow:0 2px 8px rgba(74,26,92,0.07);">
-        <div style="width:52px;height:52px;border-radius:14px;
-                    background:linear-gradient(135deg,#6B2A82,#9B59B6);
-                    display:flex;align-items:center;justify-content:center;
-                    font-size:26px;flex-shrink:0;">🖥️</div>
-        <div style="flex:1;">
-          <p style="font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:3px;">Tutorial — Computador com IA</p>
-          <p style="font-size:12px;color:#888;line-height:1.4;">Como usar o assistente de IA do Adobe Express</p>
-          <span style="display:inline-block;margin-top:5px;background:#F3E5F5;color:#6B2A82;
-                       font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;">
-            ▶ Assistir vídeo
-          </span>
-        </div>
-        <span style="font-size:20px;color:#ccc;">›</span>
-      </div>
-
       <!-- BOTÃO ABRIR APP -->
       <button onclick="abrirAdobeExpress()"
         style="width:100%;padding:1.1rem;background:linear-gradient(135deg,#FF0000,#FF6B35);
                color:white;border:none;border-radius:16px;font-size:16px;font-weight:600;
-               font-family:'DM Sans',sans-serif;margin-bottom:10px;cursor:pointer;
+               font-family:'DM Sans',sans-serif;margin-bottom:14px;cursor:pointer;
                display:flex;align-items:center;justify-content:center;gap:10px;
                box-shadow:0 4px 14px rgba(255,0,0,0.3);">
         ✏️ Abrir Adobe Express
       </button>
 
+      <!-- DICA MODO DESKTOP -->
       <div style="background:#FFF8E1;border-radius:14px;border:1.5px solid #FFD54F;
                   padding:0.9rem 1rem;margin-bottom:10px;">
-        <p style="font-size:12px;font-weight:700;color:#E65100;margin-bottom:6px;">💡 Ao abrir o Adobe Express:</p>
+        <p style="font-size:12px;font-weight:700;color:#E65100;margin-bottom:6px;">💡 Para usar o assistente de IA:</p>
         <p style="font-size:12px;color:#555;line-height:1.8;">
-          1 · Toque em <strong>"Foto"</strong> no menu superior<br>
-          2 · Escolha <strong>"Editar foto"</strong> ou selecione um template<br>
-          3 · Faça upload da foto da peça que deseja otimizar<br>
-          4 · Use <strong>Ajustar</strong> para brilho, contraste e nitidez<br>
-          5 · Adicione o logo em <strong>Elementos → Logotipo</strong><br>
-          6 · Toque em <strong>"Baixar"</strong> para salvar 📲
+          Toque nos <strong>3 pontinhos</strong> (⋮) do navegador → <strong>"Site para computador"</strong> para ativar o modo desktop e acessar todos os recursos de IA.
         </p>
       </div>
 
-            </div>
       <button class="btn-voltar" onclick="ir('novidade')">← Voltar</button>
 
     </div>
