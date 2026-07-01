@@ -739,6 +739,25 @@ function escolheLogoAdobe(l){
   var el=document.getElementById('la-'+l);if(el)el.classList.add('selecionado');
 }
 
+function abrirAdobeExpressVideo(){
+  var ua=navigator.userAgent;
+  var isAndroid=/android/i.test(ua);
+  var isIOS=/iphone|ipad|ipod/i.test(ua);
+  // URL que funciona no celular e desktop — seção de vídeo do Adobe Express
+  var webUrl='https://new.express.adobe.com';
+  if(isAndroid){
+    // Tenta abrir app; fallback para web
+    var intent='intent://express.adobe.com/#Intent;scheme=https;package=com.adobe.spark.post;S.browser_fallback_url='+encodeURIComponent(webUrl)+';end';
+    var w=window.open(webUrl,'_blank');
+    try{window.location.href=intent;}catch(e){}
+  } else if(isIOS){
+    window.open(webUrl,'_blank');
+    try{window.location.href='adobeexpress://';}catch(e){}
+  } else {
+    window.open(webUrl,'_blank');
+  }
+}
+
 function abrirAdobeExpress(){
   var ua=navigator.userAgent;
   var isAndroid=/android/i.test(ua),isIOS=/iphone|ipad|ipod/i.test(ua);
@@ -1632,7 +1651,7 @@ document.addEventListener('touchend',function(e){
       </div>
 
       <!-- BOTÃO PRIMEIRO -->
-      <button onclick="window.open('https://express.adobe.com/create/video','_blank')"
+      <button onclick="abrirAdobeExpressVideo()"
         style="width:100%;padding:1.1rem;background:linear-gradient(135deg,#FF0000,#FF6B35);
                color:white;border:none;border-radius:16px;font-size:16px;font-weight:600;
                font-family:'DM Sans',sans-serif;margin-bottom:1.2rem;cursor:pointer;
