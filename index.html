@@ -1086,24 +1086,50 @@ document.addEventListener('touchend',function(e){
   }
   function _renderArtePromo(img){
     var cv=document.getElementById("canvasPromo"),ctx=cv.getContext("2d"),S=1080;
-    var g=ctx.createLinearGradient(0,0,S,S);g.addColorStop(0,"#4A1A5C");g.addColorStop(1,"#6B2A82");
+
+    // Fundo gradiente violeta
+    var g=ctx.createLinearGradient(0,0,S,S);
+    g.addColorStop(0,"#4A1A5C");g.addColorStop(1,"#6B2A82");
     ctx.fillStyle=g;ctx.fillRect(0,0,S,S);
-    var fH=S*0.62,s=Math.min(img.width,img.height);
-    ctx.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,S,fH);
-    var gf=ctx.createLinearGradient(0,fH*0.65,0,fH);
+
+    // Foto da peça — proporcional, SEM distorção (cover)
+    var fH=S*0.52;
+    var escala=Math.max(S/img.width, fH/img.height);
+    var dw=img.width*escala, dh=img.height*escala;
+    ctx.save();
+    ctx.rect(0,0,S,fH);
+    ctx.clip();
+    ctx.drawImage(img,(S-dw)/2,(fH-dh)/2,dw,dh);
+    ctx.restore();
+
+    // Degradê suave na parte inferior da foto
+    var gf=ctx.createLinearGradient(0,fH*0.55,0,fH);
     gf.addColorStop(0,"rgba(74,26,92,0)");gf.addColorStop(1,"rgba(74,26,92,0.9)");
     ctx.fillStyle=gf;ctx.fillRect(0,0,S,fH);
-    ctx.fillStyle="#E8657F";ctx.fillRect(0,fH,S,6);
-    var bx=S/2,by=fH-20,br=115;
-    ctx.fillStyle="#E8657F";ctx.beginPath();ctx.arc(bx,by,br,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle="#fff";ctx.lineWidth=6;ctx.beginPath();ctx.arc(bx,by,br-9,0,Math.PI*2);ctx.stroke();
+
+    // Linha rosa separadora
+    ctx.fillStyle="#E8657F";ctx.fillRect(0,fH,S,5);
+
+    // Badge de desconto — metade acima, metade abaixo da linha
+    var bx=S/2, by=fH, br=105;
+    ctx.fillStyle="#E8657F";
+    ctx.beginPath();ctx.arc(bx,by,br,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="#fff";ctx.lineWidth=5;
+    ctx.beginPath();ctx.arc(bx,by,br-8,0,Math.PI*2);ctx.stroke();
     ctx.fillStyle="#fff";ctx.textAlign="center";
-    ctx.font="bold 84px DM Sans,sans-serif";ctx.fillText(_promoDesconto+"%",bx,by-8);
-    ctx.font="600 30px DM Sans,sans-serif";ctx.fillText("DE DESCONTO",bx,by+36);
-    ctx.fillStyle="#fff";ctx.font="bold 52px DM Sans,sans-serif";
-    ctx.fillText("Está com "+_promoDesconto+"% de desconto.",S/2,fH+100);
-    ctx.fillStyle="#F4A0B4";ctx.font="600 42px DM Sans,sans-serif";
-    ctx.fillText("Venha conferir!",S/2,fH+158);
+    ctx.font="bold 84px DM Sans,sans-serif";
+    ctx.fillText(_promoDesconto+"%",bx,by-2);
+    ctx.font="700 26px DM Sans,sans-serif";
+    ctx.fillText("DE DESCONTO",bx,by+36);
+
+    // Faixa inferior — "Venha conferir!" + logo
+    var rodapeY = fH + br + 50; // começa abaixo do badge
+
+    ctx.fillStyle="#F4A0B4";
+    ctx.font="700 52px DM Sans,sans-serif";
+    ctx.fillText("Venha conferir!",S/2,rodapeY);
+
+    // Logo abaixo do texto, sem sobrepor nada
     function fin(){
       var u=cv.toDataURL("image/jpeg",0.92);
       document.getElementById("previewPromo").src=u;
@@ -1113,7 +1139,17 @@ document.addEventListener('touchend',function(e){
     }
     if(_promoLogo!=="sem"){
       var src=_promoLogo==="preto"?_LOGO_PRETO_P:_LOGO_ORIG_P;
-      var li=new Image();li.onload=function(){var lw=220,lh=li.height*(lw/li.width);ctx.globalAlpha=0.88;ctx.drawImage(li,(S-lw)/2,S-lh-36,lw,lh);ctx.globalAlpha=1;fin();};li.src=src;
+      var li=new Image();
+      li.onload=function(){
+        var lw=190, lh=li.height*(lw/li.width);
+        var logoY=rodapeY+40;
+        if(logoY+lh>S-15) logoY=S-lh-15;
+        ctx.globalAlpha=0.92;
+        ctx.drawImage(li,(S-lw)/2,logoY,lw,lh);
+        ctx.globalAlpha=1;
+        fin();
+      };
+      li.src=src;
     } else {fin();}
   }
   function resetPromo(){
