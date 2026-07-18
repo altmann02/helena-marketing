@@ -14,6 +14,9 @@
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <title>Helena Acessórios · Painel</title>
+  <!-- FFmpeg.wasm -->
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
   <!-- FFmpeg.wasm — converte WebM para MP4 no browser -->
   <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
@@ -900,49 +903,78 @@ async function gerarVideoSlide(){
       try{
         btn.textContent='⏳ Carregando áudio...';
         audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-        var resp=await fetch(musicSrc);var arrayBuf=await resp.arrayBuffer();
-        var audioBuf=await audioCtx.decodeAudioData(arrayBuf);
+        var resp=await fetch(musicSrc);var ab=await resp.arrayBuffer();
+        var buf=await audioCtx.decodeAudioData(ab);
         var dest=audioCtx.createMediaStreamDestination();
-        audioSrc=audioCtx.createBufferSource();audioSrc.buffer=audioBuf;audioSrc.loop=true;
+        audioSrc=audioCtx.createBufferSource();audioSrc.buffer=buf;audioSrc.loop=true;
         audioSrc.connect(dest);audioTracks=dest.stream.getAudioTracks();
-      }catch(e){console.warn('Áudio:',e.message);audioTracks=[];}
+      }catch(e){console.warn('Audio:',e.message);audioTracks=[];}
     }
-    var mimeType=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(function(m){return MediaRecorder.isTypeSupported(m);})||'video/webm';
-    var videoStream=canvas.captureStream(FPS);
-    var combinedStream=new MediaStream([].concat(videoStream.getVideoTracks(),audioTracks));
-    var recorder=new MediaRecorder(combinedStream,{mimeType:mimeType,videoBitsPerSecond:2500000});
+    var mime=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']
+      .find(function(m){return MediaRecorder.isTypeSupported(m);})||'video/webm';
+    var vs=canvas.captureStream(FPS);
+    var cs=new MediaStream([].concat(vs.getVideoTracks(),audioTracks));
+    var rec=new MediaRecorder(cs,{mimeType:mime,videoBitsPerSecond:2500000});
     var chunks=[];
-    recorder.ondataavailable=function(e){if(e.data&&e.data.size>0)chunks.push(e.data);};
+    rec.ondataavailable=function(e){if(e.data&&e.data.size>0)chunks.push(e.data);};
     await new Promise(function(resolve,reject){
-      recorder.onerror=function(){reject(new Error('Erro recorder'));};
-      recorder.onstop=resolve;
-      recorder.start(100);
+      rec.onerror=function(){reject(new Error('Erro recorder'));};
+      rec.onstop=resolve;rec.start(100);
       if(audioSrc)audioSrc.start(0);
       var sleep=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
-      var desenhar=function(img){var s=Math.min(img.width,img.height);ctx.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,SIZE,SIZE);};
+      var draw=function(img){var s=Math.min(img.width,img.height);ctx.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,SIZE,SIZE);};
       (async function(){
         for(var i=0;i<fotoImgs.length;i++){
-          btn.textContent='⏳ Gravando foto '+(i+1)+'/'+fotoImgs.length+'...';
-          var t0=Date.now();while(Date.now()-t0<frameDur){desenhar(fotoImgs[i]);await sleep(1000/FPS);}
+          btn.textContent='⏳ Foto '+(i+1)+'/'+fotoImgs.length+'...';
+          var t0=Date.now();while(Date.now()-t0<frameDur){draw(fotoImgs[i]);await sleep(1000/FPS);}
         }
         if(logoImg){
           btn.textContent='⏳ Logo final...';var t0=Date.now();
           while(Date.now()-t0<logoDur){ctx.fillStyle='#fff';ctx.fillRect(0,0,SIZE,SIZE);var lw=SIZE*0.65,lh=logoImg.height*(lw/logoImg.width);ctx.drawImage(logoImg,(SIZE-lw)/2,(SIZE-lh)/2,lw,lh);await sleep(1000/FPS);}
         }
         try{if(audioSrc)audioSrc.stop();}catch(e){}
-        if(audioCtx)audioCtx.close();recorder.stop();
+        if(audioCtx)audioCtx.close();
+        rec.stop();
       })();
     });
-    var ext=mimeType.includes('webm')?'webm':'mp4';
-    var blob=new Blob(chunks,{type:mimeType});var url=URL.createObjectURL(blob);
-    var trilhaNome=_slideTrilha&&_slideTrilha.startsWith('lista:')?_slideTrilha.replace('lista:',''):_slideTrilha||'sem trilha';
+    var webmBlob=new Blob(chunks,{type:mime});
+    var trilha=_slideTrilha&&_slideTrilha.startsWith('lista:')?_slideTrilha.replace('lista:',''):_slideTrilha||'sem trilha';
+    var finalUrl,finalExt='webm',isMp4=false;
+    try{
+      if(typeof FFmpegWASM!=='undefined'&&FFmpegWASM.FFmpeg&&typeof FFmpegUtil!=='undefined'){
+        btn.textContent='⏳ Convertendo para MP4...';
+        var ff=new FFmpegWASM.FFmpeg();
+        ff.on('progress',function(p){btn.textContent='⏳ Convertendo '+Math.round((p.progress||0)*100)+'%';});
+        await ff.load({coreURL:'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js'});
+        await ff.writeFile('in.webm',await FFmpegUtil.fetchFile(webmBlob));
+        await ff.exec(['-i','in.webm','-c:v','libx264','-preset','ultrafast','-c:a','aac','-movflags','+faststart','-vf','scale=540:540','out.mp4']);
+        var mp4Data=await ff.readFile('out.mp4');
+        finalUrl=URL.createObjectURL(new Blob([mp4Data.buffer],{type:'video/mp4'}));
+        finalExt='mp4';isMp4=true;
+      } else {throw new Error('FFmpeg nao carregado');}
+    }catch(ffErr){
+      console.warn('FFmpeg:',ffErr.message);
+      finalUrl=URL.createObjectURL(webmBlob);finalExt='webm';
+    }
     var framesDiv=document.getElementById('slideFrames');framesDiv.innerHTML='';
-    var card=document.createElement('div');card.style.cssText='background:#F5EEF8;border-radius:14px;border:1.5px solid #C9A8E0;padding:1.2rem;text-align:center;';
-    card.innerHTML='<div style="font-size:40px;margin-bottom:8px;">🎬</div><p style="font-size:15px;font-weight:700;color:#4A1A5C;margin-bottom:4px;">Vídeo pronto!</p><p style="font-size:11px;color:#888;margin-bottom:14px;">'+fotoImgs.length+' foto(s) · '+_slideTempo+'s cada · 🎵 '+trilhaNome+'</p><a href="'+url+'" download="helena_video.'+ext+'" style="display:inline-block;padding:0.9rem 2rem;background:linear-gradient(135deg,#9B59B6,#6B2A82);color:white;border-radius:12px;font-size:15px;font-weight:600;text-decoration:none;margin-bottom:8px;">⬇️ Baixar vídeo</a><p style="font-size:10px;color:#aaa;margin-top:6px;">Formato .'+ext+' · com trilha sonora incluída</p>';
+    var card=document.createElement('div');
+    card.style.cssText='background:#F5EEF8;border-radius:14px;border:1.5px solid #C9A8E0;padding:1.2rem;text-align:center;';
+    var info=isMp4
+      ?'<p style="font-size:12px;color:#2E7D32;font-weight:600;margin-bottom:12px;">✅ MP4 · pronto para WhatsApp e Instagram</p>'
+      :'<p style="font-size:12px;color:#E65100;font-weight:600;margin-bottom:12px;">⚠️ WebM gerado · abra no CapCut e exporte como MP4 para WhatsApp</p>';
+    card.innerHTML='<div style="font-size:40px;margin-bottom:8px;">🎬</div>'
+      +'<p style="font-size:15px;font-weight:700;color:#4A1A5C;margin-bottom:4px;">Vídeo pronto!</p>'
+      +'<p style="font-size:11px;color:#888;margin-bottom:8px;">'+fotoImgs.length+' foto(s) · '+_slideTempo+'s · 🎵 '+trilha+'</p>'
+      +info
+      +'<a href="'+finalUrl+'" download="helena_video.'+finalExt+'"'
+      +' style="display:inline-block;padding:0.9rem 2rem;background:linear-gradient(135deg,#9B59B6,#6B2A82);'
+      +'color:white;border-radius:12px;font-size:15px;font-weight:600;text-decoration:none;">⬇️ Baixar .'+finalExt+'</a>';
     framesDiv.appendChild(card);
     document.getElementById('slideResultado').style.display='block';
     document.getElementById('slideResultado').scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(err){alert('❌ Erro: '+err.message+'\n\nUse o Chrome para melhor compatibilidade.');}
+  }catch(err){alert('❌ '+err.message+'
+
+Use o Chrome.');}
   btn.textContent='🎬 Gerar vídeo';btn.disabled=false;btn.style.background='#9B59B6';
 }
 
