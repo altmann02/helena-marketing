@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- COI Service Worker — habilita SharedArrayBuffer para FFmpeg.wasm no GitHub Pages -->
+<script src="coi-serviceworker.js"></script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Helena">
@@ -934,7 +936,7 @@ async function gerarVideoSlide(){
         audioSrc.buffer=buf;audioSrc.loop=true;
         audioSrc.connect(dest);
         audioTracks=dest.stream.getAudioTracks();
-      }catch(e){console.warn('Audio falhou:',e.message);audioTracks=[];}
+      }catch(e){console.warn('Audio:',e.message);audioTracks=[];}
     }
 
     var mime=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']
@@ -976,64 +978,73 @@ async function gerarVideoSlide(){
 
     var webmBlob=new Blob(chunks,{type:mime});
 
-    // Converter para MP4 usando FFmpeg.wasm
-    btn.textContent='Baixando conversor MP4...';
-
-    // Carregar scripts se necessario
+    // Tentar converter para MP4 com core single-thread (sem SharedArrayBuffer)
+    btn.textContent='Preparando conversor...';
     var loadScript=function(url){
       return new Promise(function(res,rej){
         if(document.querySelector('script[src="'+url+'"]')){res();return;}
-        var s=document.createElement('script');
-        s.src=url;s.onload=res;s.onerror=rej;
+        var s=document.createElement('script');s.src=url;s.onload=res;s.onerror=rej;
         document.head.appendChild(s);
       });
     };
 
-    await loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js');
-    await loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js');
+    var mp4Url=null;
+    try{
+      await loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js');
+      await loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js');
 
-    // Verificar API disponivel
-    var FFmpeg, fetchFile;
-    if(typeof FFmpegWASM!=='undefined'&&FFmpegWASM.FFmpeg){
-      FFmpeg=FFmpegWASM.FFmpeg;
-      fetchFile=FFmpegUtil.fetchFile;
-    } else if(typeof window.FFmpeg!=='undefined'){
-      FFmpeg=window.FFmpeg;
-      fetchFile=window.fetchFile||function(b){return new Promise(function(r){var rd=new FileReader();rd.onload=function(e){r(new Uint8Array(e.target.result));};rd.readAsArrayBuffer(b);});};
-    } else {
-      throw new Error('Conversor MP4 nao disponivel. Verifique sua conexao com internet.');
+      var FF=null,FC=null;
+      if(typeof FFmpegWASM!=='undefined'&&FFmpegWASM.FFmpeg){FF=FFmpegWASM.FFmpeg;FC=FFmpegUtil.fetchFile;}
+      if(!FF)throw new Error('lib nao carregada');
+
+      btn.textContent='Convertendo para MP4...';
+      var ff=new FF();
+      ff.on('progress',function(p){
+        var pct=Math.round((p.progress||0)*100);
+        if(pct>0&&pct<=100)btn.textContent='Convertendo '+pct+'%...';
+      });
+
+      // Usar versao single-thread do core (nao precisa de SharedArrayBuffer)
+      var _hasSAB=typeof SharedArrayBuffer!=='undefined'&&window.crossOriginIsolated;
+    var _coreBase='https://cdn.jsdelivr.net/npm/@ffmpeg/core'+(_hasSAB?'-mt':'')+'@0.12.6/dist/umd/';
+    var _loadOpts={coreURL:_coreBase+'ffmpeg-core.js',wasmURL:_coreBase+'ffmpeg-core.wasm'};
+    if(_hasSAB)_loadOpts.workerURL=_coreBase+'ffmpeg-core.worker.js';
+    await ff.load(_loadOpts);
+
+      await ff.writeFile('in.webm',await FC(webmBlob));
+      await ff.exec(['-i','in.webm','-c:v','libx264','-preset','ultrafast','-c:a','aac','-movflags','+faststart','-vf','scale=540:540','out.mp4']);
+      var mp4Data=await ff.readFile('out.mp4');
+      mp4Url=URL.createObjectURL(new Blob([mp4Data.buffer],{type:'video/mp4'}));
+
+    }catch(ffErr){
+      console.warn('FFmpeg falhou:',ffErr.message);
+      // Fallback: baixar como WebM com instrucao
+      mp4Url=null;
     }
-
-    btn.textContent='Convertendo para MP4...';
-    var ff=new FFmpeg();
-    ff.on('progress',function(p){
-      var pct=Math.round((p.progress||0)*100);
-      if(pct>0)btn.textContent='Convertendo '+pct+'%...';
-    });
-
-    await ff.load({
-      coreURL:'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js'
-    });
-
-    var inData=await fetchFile(webmBlob);
-    await ff.writeFile('in.webm',inData);
-    await ff.exec(['-i','in.webm','-c:v','libx264','-preset','ultrafast','-c:a','aac','-movflags','+faststart','-vf','scale=540:540','out.mp4']);
-    var mp4Data=await ff.readFile('out.mp4');
-    var mp4Url=URL.createObjectURL(new Blob([mp4Data.buffer],{type:'video/mp4'}));
 
     var trilha=_slideTrilha&&_slideTrilha.startsWith('lista:')?_slideTrilha.replace('lista:',''):(_slideTrilha||'sem trilha');
     var framesDiv=document.getElementById('slideFrames');
     framesDiv.innerHTML='';
     var card=document.createElement('div');
     card.style.cssText='background:#F5EEF8;border-radius:14px;border:1.5px solid #C9A8E0;padding:1.2rem;text-align:center;';
-    card.innerHTML=
-      '<div style="font-size:40px;margin-bottom:8px;">🎬</div>'+
-      '<p style="font-size:15px;font-weight:700;color:#4A1A5C;margin-bottom:4px;">Video pronto!</p>'+
-      '<p style="font-size:11px;color:#888;margin-bottom:6px;">'+fotoImgs.length+' foto(s) | '+_slideTempo+'s cada | '+trilha+'</p>'+
-      '<p style="font-size:12px;color:#2E7D32;font-weight:600;margin-bottom:14px;">MP4 pronto para WhatsApp e Instagram</p>'+
-      '<a href="'+mp4Url+'" download="helena_video.mp4" style="display:inline-block;padding:0.9rem 2rem;'+
-      'background:linear-gradient(135deg,#9B59B6,#6B2A82);color:white;border-radius:12px;'+
-      'font-size:15px;font-weight:600;text-decoration:none;">Baixar MP4</a>';
+
+    if(mp4Url){
+      card.innerHTML=
+        '<div style="font-size:40px;margin-bottom:8px;">🎬</div>'+
+        '<p style="font-size:15px;font-weight:700;color:#4A1A5C;margin-bottom:4px;">Video pronto!</p>'+
+        '<p style="font-size:11px;color:#888;margin-bottom:6px;">'+fotoImgs.length+' foto(s) | '+_slideTempo+'s | '+trilha+'</p>'+
+        '<p style="font-size:12px;color:#2E7D32;font-weight:600;margin-bottom:14px;">MP4 pronto para WhatsApp</p>'+
+        '<a href="'+mp4Url+'" download="helena_video.mp4" style="display:inline-block;padding:0.9rem 2rem;background:linear-gradient(135deg,#9B59B6,#6B2A82);color:white;border-radius:12px;font-size:15px;font-weight:600;text-decoration:none;">Baixar MP4</a>';
+    } else {
+      var webmUrl=URL.createObjectURL(webmBlob);
+      card.innerHTML=
+        '<div style="font-size:40px;margin-bottom:8px;">🎬</div>'+
+        '<p style="font-size:15px;font-weight:700;color:#4A1A5C;margin-bottom:4px;">Video gerado!</p>'+
+        '<p style="font-size:11px;color:#888;margin-bottom:6px;">'+fotoImgs.length+' foto(s) | '+_slideTempo+'s | '+trilha+'</p>'+
+        '<p style="font-size:12px;color:#E65100;font-weight:600;margin-bottom:8px;">Formato WebM — abra no CapCut e exporte como MP4 para WhatsApp</p>'+
+        '<a href="'+webmUrl+'" download="helena_video.webm" style="display:inline-block;padding:0.9rem 2rem;background:linear-gradient(135deg,#9B59B6,#6B2A82);color:white;border-radius:12px;font-size:15px;font-weight:600;text-decoration:none;">Baixar video</a>';
+    }
+
     framesDiv.appendChild(card);
     document.getElementById('slideResultado').style.display='block';
     document.getElementById('slideResultado').scrollIntoView({behavior:'smooth',block:'start'});
