@@ -1003,9 +1003,7 @@ async function gerarVideoSlide(){
     framesDiv.appendChild(card);
     document.getElementById('slideResultado').style.display='block';
     document.getElementById('slideResultado').scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(err){alert('❌ '+err.message+'
-
-Use o Chrome.');}
+  }catch(err){alert('Erro: '+err.message+'. Use o Chrome.');}
   btn.textContent='🎬 Gerar vídeo';btn.disabled=false;btn.style.background='#9B59B6';
 }
 
