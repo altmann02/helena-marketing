@@ -909,13 +909,14 @@ async function gerarVideoSlide(){
     }
 
     var SIZE=540, FPS=30, frameDur=_slideTempo*1000, logoDur=3000;
-    var totalDur=(_slideFotos.length*frameDur)+(LOGOS_FIN[_slideLogoKey]?logoDur:0);
+    var totalDurSec=(_slideFotos.length*_slideTempo)+(LOGOS_FIN[_slideLogoKey]?3:0);
 
     var loadImg=function(src){return new Promise(function(res,rej){
-      var i=new Image();i.onload=function(){res(i);};i.onerror=rej;i.src=src;
+      var img=new Image();img.onload=function(){res(img);};img.onerror=rej;img.src=src;
     });};
     var sleep=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
 
+    // Carregar fotos
     btn.textContent='Carregando fotos...';
     var fotoImgs=await Promise.all(_slideFotos.map(function(f){
       return new Promise(function(res,rej){
@@ -928,161 +929,148 @@ async function gerarVideoSlide(){
     var logoImg=null;
     if(_slideLogoKey!=='sem'&&LOGOS_FIN[_slideLogoKey])logoImg=await loadImg(LOGOS_FIN[_slideLogoKey]);
 
-    // Carregar e decodificar audio
-    var audioBuffer=null;
+    // Carregar audio via Web Audio API
+    var audioCtxForDecode=null;
+    var decodedAudio=null;
     var musicSrc=_musicaSelecionada&&_musicaSelecionada.src?_musicaSelecionada.src:null;
     if(musicSrc){
       try{
-        btn.textContent='Carregando audio...';
-        var audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+        btn.textContent='Carregando musica...';
+        audioCtxForDecode=new(window.AudioContext||window.webkitAudioContext)();
         var resp=await fetch(musicSrc);
         var arrayBuf=await resp.arrayBuffer();
-        audioBuffer=await audioCtx.decodeAudioData(arrayBuf);
-        audioCtx.close();
-      }catch(e){console.warn('Audio falhou:',e.message);audioBuffer=null;}
+        decodedAudio=await audioCtxForDecode.decodeAudioData(arrayBuf);
+        audioCtxForDecode.close();
+      }catch(e){
+        console.warn('Audio nao carregou:',e.message);
+        decodedAudio=null;
+      }
     }
 
-    // Configurar muxer com video + audio (se tiver)
-    var muxerOpts={
+    // Configurar muxer — SÓ video primeiro, audio adicionado depois se disponivel
+    var hasAudio=decodedAudio!==null;
+    var SR=hasAudio?decodedAudio.sampleRate:44100;
+    var NCH=hasAudio?decodedAudio.numberOfChannels:2;
+
+    var muxerCfg={
       target:new Mp4Muxer.ArrayBufferTarget(),
       video:{codec:'avc',width:SIZE,height:SIZE,frameRate:FPS},
       fastStart:'in-memory'
     };
-    if(audioBuffer){
-      muxerOpts.audio={codec:'aac',sampleRate:audioBuffer.sampleRate,numberOfChannels:audioBuffer.numberOfChannels};
-    }
-    var muxer=new Mp4Muxer.Muxer(muxerOpts);
+    if(hasAudio) muxerCfg.audio={codec:'aac',sampleRate:SR,numberOfChannels:NCH};
+    var muxer=new Mp4Muxer.Muxer(muxerCfg);
 
     // VideoEncoder
-    var videoEncoder=new VideoEncoder({
+    var venc=new VideoEncoder({
       output:function(chunk,meta){muxer.addVideoChunk(chunk,meta);},
-      error:function(e){console.error('VideoEncoder:',e);}
+      error:function(e){console.error('venc:',e);}
     });
-    videoEncoder.configure({codec:'avc1.42001f',width:SIZE,height:SIZE,bitrate:2000000,framerate:FPS});
+    venc.configure({codec:'avc1.42001f',width:SIZE,height:SIZE,bitrate:2000000,framerate:FPS});
 
-    // AudioEncoder (se tiver audio)
-    var audioEncoder=null;
-    if(audioBuffer&&typeof AudioEncoder!=='undefined'){
+    // AudioEncoder — só se AAC suportado
+    var aenc=null;
+    if(hasAudio&&typeof AudioEncoder!=='undefined'){
       try{
-        // Verificar suporte ao codec AAC
-        var support=await AudioEncoder.isConfigSupported({
-          codec:'mp4a.40.2',
-          sampleRate:audioBuffer.sampleRate,
-          numberOfChannels:audioBuffer.numberOfChannels,
-          bitrate:128000
-        });
-        if(!support.supported) throw new Error('AAC nao suportado');
-
-        audioEncoder=new AudioEncoder({
-          output:function(chunk,meta){muxer.addAudioChunk(chunk,meta);},
-          error:function(e){console.warn('AudioEncoder erro:',e);}
-        });
-        audioEncoder.configure({
-          codec:'mp4a.40.2',
-          sampleRate:audioBuffer.sampleRate,
-          numberOfChannels:audioBuffer.numberOfChannels,
-          bitrate:128000
-        });
-        console.log('AudioEncoder configurado OK, sr='+audioBuffer.sampleRate+' ch='+audioBuffer.numberOfChannels);
-      }catch(e){
-        console.warn('AudioEncoder nao disponivel:',e.message);
-        audioEncoder=null;
-      }
+        var sup=await AudioEncoder.isConfigSupported({codec:'mp4a.40.2',sampleRate:SR,numberOfChannels:NCH,bitrate:128000});
+        if(sup.supported){
+          aenc=new AudioEncoder({
+            output:function(chunk,meta){muxer.addAudioChunk(chunk,meta);},
+            error:function(e){console.warn('aenc:',e);}
+          });
+          aenc.configure({codec:'mp4a.40.2',sampleRate:SR,numberOfChannels:NCH,bitrate:128000});
+        }
+      }catch(e){console.warn('AAC nao suportado:',e.message);}
     }
 
-    // Renderizar video frames
+    // Renderizar video
     var canvas=new OffscreenCanvas(SIZE,SIZE);
     var ctx=canvas.getContext('2d');
     var frameNum=0;
-    var draw=function(img){var s=Math.min(img.width,img.height);ctx.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,SIZE,SIZE);};
-
+    var draw=function(img){
+      var s=Math.min(img.width,img.height);
+      ctx.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,SIZE,SIZE);
+    };
     var encodeFrame=async function(){
       var ts=Math.round(frameNum*(1000000/FPS));
-      var frame=new VideoFrame(canvas,{timestamp:ts,duration:Math.round(1000000/FPS)});
-      videoEncoder.encode(frame,{keyFrame:frameNum%30===0});
-      frame.close();
+      var vf=new VideoFrame(canvas,{timestamp:ts,duration:Math.round(1000000/FPS)});
+      venc.encode(vf,{keyFrame:frameNum%FPS===0});
+      vf.close();
       frameNum++;
     };
 
     for(var i=0;i<fotoImgs.length;i++){
       btn.textContent='Gerando foto '+(i+1)+'/'+fotoImgs.length+'...';
-      var nFrames=Math.round(frameDur/1000*FPS);
+      var nf=Math.round(frameDur/1000*FPS);
       draw(fotoImgs[i]);
-      for(var f=0;f<nFrames;f++){await encodeFrame();if(f%15===0)await sleep(0);}
+      for(var f=0;f<nf;f++){await encodeFrame();if(f%10===0)await sleep(0);}
     }
     if(logoImg){
-      btn.textContent='Adicionando logo...';
-      var nFrames=Math.round(logoDur/1000*FPS);
+      btn.textContent='Logo de encerramento...';
+      var nf=Math.round(logoDur/1000*FPS);
       ctx.fillStyle='#fff';ctx.fillRect(0,0,SIZE,SIZE);
       var lw=SIZE*0.65,lh=logoImg.height*(lw/logoImg.width);
       ctx.drawImage(logoImg,(SIZE-lw)/2,(SIZE-lh)/2,lw,lh);
-      for(var f=0;f<nFrames;f++){await encodeFrame();if(f%15===0)await sleep(0);}
+      for(var f=0;f<nf;f++){await encodeFrame();if(f%10===0)await sleep(0);}
     }
-    await videoEncoder.flush();
+    await venc.flush();
 
-    // Encodar audio se disponivel
-    if(audioEncoder&&audioBuffer){
+    // Encodar audio em chunks de 4096 samples
+    if(aenc&&decodedAudio){
       btn.textContent='Adicionando musica...';
-      var sr=audioBuffer.sampleRate;
-      var nc=audioBuffer.numberOfChannels;
-      var totalSamples=Math.ceil(totalDur/1000*sr);
-      var chunkSize=4096; // chunks menores = mais estavel
+      var totalSamples=Math.ceil(totalDurSec*SR);
+      var CHUNK=4096;
       var offset=0;
-      var audioTs=0;
-
-      // Pre-extrair dados de cada canal
-      var chanData=[];
-      for(var ch=0;ch<nc;ch++) chanData.push(audioBuffer.getChannelData(ch));
+      var ts=0;
+      // Pre-ler canais
+      var chs=[];
+      for(var c2=0;c2<NCH;c2++) chs.push(decodedAudio.getChannelData(c2));
+      var srcLen=chs[0].length;
 
       while(offset<totalSamples){
-        var size=Math.min(chunkSize,totalSamples-offset);
-
-        // f32-planar: cada canal em sequencia no mesmo buffer
-        var planar=new Float32Array(size*nc);
-        for(var ch=0;ch<nc;ch++){
-          var src=chanData[ch];
-          var srcLen=src.length;
-          for(var s=0;s<size;s++){
-            planar[ch*size+s]=src[(offset+s)%srcLen];
+        var sz=Math.min(CHUNK,totalSamples-offset);
+        // f32-planar: canal0[sz] + canal1[sz] + ...
+        var buf=new Float32Array(sz*NCH);
+        for(var c2=0;c2<NCH;c2++){
+          for(var s=0;s<sz;s++){
+            buf[c2*sz+s]=chs[c2][(offset+s)%srcLen];
           }
         }
-
-        var audioData=new AudioData({
+        var ad=new AudioData({
           format:'f32-planar',
-          sampleRate:sr,
-          numberOfFrames:size,
-          numberOfChannels:nc,
-          timestamp:Math.round(audioTs*(1000000/sr)),
-          data:planar
+          sampleRate:SR,
+          numberOfFrames:sz,
+          numberOfChannels:NCH,
+          timestamp:Math.round(ts*(1000000/SR)),
+          data:buf
         });
-        audioEncoder.encode(audioData);
-        audioData.close();
-        offset+=size;
-        audioTs+=size;
-        await sleep(0);
+        aenc.encode(ad);
+        ad.close();
+        offset+=sz;
+        ts+=sz;
+        if(offset%44100===0)await sleep(0);
       }
-      await audioEncoder.flush();
+      await aenc.flush();
     }
 
-    btn.textContent='Finalizando MP4...';
+    btn.textContent='Finalizando...';
     muxer.finalize();
+
+    var trilha=_slideTrilha&&_slideTrilha.startsWith('lista:')?_slideTrilha.replace('lista:',''):(_slideTrilha||'');
     var mp4Blob=new Blob([muxer.target.buffer],{type:'video/mp4'});
     var mp4Url=URL.createObjectURL(mp4Blob);
 
-    var trilha=_slideTrilha&&_slideTrilha.startsWith('lista:')?_slideTrilha.replace('lista:',''):(_slideTrilha||'sem trilha');
     var framesDiv=document.getElementById('slideFrames');
     framesDiv.innerHTML='';
     var card=document.createElement('div');
     card.style.cssText='background:#F5EEF8;border-radius:14px;border:1.5px solid #C9A8E0;padding:1.2rem;text-align:center;';
-    var audioInfo=audioEncoder?(' + musica: '+trilha):'(sem musica)';
     card.innerHTML=
       '<div style="font-size:40px;margin-bottom:8px;">🎬</div>'+
       '<p style="font-size:15px;font-weight:700;color:#4A1A5C;margin-bottom:4px;">Video MP4 pronto!</p>'+
-      '<p style="font-size:11px;color:#888;margin-bottom:6px;">'+fotoImgs.length+' foto(s) | '+_slideTempo+'s'+audioInfo+'</p>'+
+      '<p style="font-size:11px;color:#888;margin-bottom:6px;">'+fotoImgs.length+' foto(s) | '+_slideTempo+'s'+(trilha?' | 🎵 '+trilha:'')+'</p>'+
       '<p style="font-size:11px;color:#2E7D32;font-weight:600;margin-bottom:14px;">Pronto para WhatsApp e Instagram</p>'+
       '<a href="'+mp4Url+'" download="helena_video.mp4" style="display:inline-block;padding:0.9rem 2rem;'+
       'background:linear-gradient(135deg,#9B59B6,#6B2A82);color:white;border-radius:12px;'+
-      'font-size:15px;font-weight:600;text-decoration:none;">Baixar MP4</a>';
+      'font-size:15px;font-weight:600;text-decoration:none;">⬇️ Baixar MP4</a>';
     framesDiv.appendChild(card);
     document.getElementById('slideResultado').style.display='block';
     document.getElementById('slideResultado').scrollIntoView({behavior:'smooth',block:'start'});
