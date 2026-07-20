@@ -1516,9 +1516,7 @@ document.addEventListener('touchend',function(e){
           <div style="font-size:10px;color:#6B2A82;margin-top:2px;">Múltiplas fotos</div>
         </div>
       </div>
-      <input type="file" id="inputVidCamera"  accept="image/*" capture="environment" multiple style="display:none;" onchange="addFotosSlide(this)">
-      <input type="file" id="inputVidGaleria" accept="image/*" multiple style="display:none;" onchange="addFotosSlide(this)">
-
+            
       <!-- grade de fotos adicionadas -->
       <div id="slideGrade" style="display:none;margin-bottom:1rem;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
@@ -1678,8 +1676,7 @@ document.addEventListener('touchend',function(e){
             <p style="font-size:11px;color:#9B59B6;">Toque para anexar seu MP3</p>
           </div>
         </div>
-        <input type="file" id="inputMusicaCustom" accept="audio/mp3,audio/mpeg,audio/*" style="display:none;" onchange="musicaCustomSelecionada(this)">
-
+        
       </div>
       <div id="trilhaStatus" style="display:none;background:#F5EEF8;border-radius:10px;padding:8px 12px;margin-bottom:1rem;">
         <p id="trilhaStatusTxt" style="font-size:12px;color:#6B2A82;font-weight:600;"></p>
@@ -2429,11 +2426,7 @@ document.addEventListener('touchend',function(e){
             </div>
         </div>
         </div>
-        <input type="file" id="inputFotoCanvaCamera"  accept="image/*" capture="environment"
-          style="display:none;" onchange="fotoCanvaSelecionada(this)">
-        <input type="file" id="inputFotoCanvaGaleria" accept="image/*"
-          style="display:none;" onchange="fotoCanvaSelecionada(this)">
-
+                
         <!-- preview foto selecionada -->
         <div id="fotoDropZone" style="display:none;border-radius:14px;padding:0.9rem 1rem;
              background:#F0E6FA;border:1.5px solid #9B59B6;margin-bottom:1.5rem;text-align:center;">
@@ -2848,9 +2841,7 @@ document.addEventListener('touchend',function(e){
           <div style="background:#F5EEF8;border-radius:14px;border:1.5px solid #C9A8E0;padding:1rem;text-align:center;"><div style="font-size:28px;margin-bottom:4px;">🖼️</div><div style="font-size:13px;font-weight:600;color:#4A1A5C;">Galeria</div><div style="font-size:10px;color:#6B2A82;margin-top:2px;">Escolher foto</div></div>
         </div>
       </div>
-      <input type="file" id="inputPromoCamera"  accept="image/*" capture="environment" style="display:none;" onchange="promoFotoSelecionada(this)">
-      <input type="file" id="inputPromoGaleria" accept="image/*" style="display:none;" onchange="promoFotoSelecionada(this)">
-      <div id="promoFotoStatus" style="display:none;background:#F0E6FA;border-radius:10px;padding:8px 12px;margin-bottom:1rem;border:1.5px solid #9B59B6;">
+                  <div id="promoFotoStatus" style="display:none;background:#F0E6FA;border-radius:10px;padding:8px 12px;margin-bottom:1rem;border:1.5px solid #9B59B6;">
         <p id="promoFotoTxt" style="font-size:12px;color:#6B2A82;font-weight:600;"></p>
       </div>
 
@@ -2991,5 +2982,16 @@ document.addEventListener('touchend',function(e){
   </div>
 </div>
 
+
+<!-- Inputs de arquivo globais -->
+<input type="file" id="inputVidCamera"  accept="image/*" capture="environment" multiple style="display:none;" onchange="addFotosSlide(this)">
+<input type="file" id="inputVidGaleria" accept="image/*" multiple style="display:none;" onchange="addFotosSlide(this)">
+<input type="file" id="inputMusicaCustom" accept="audio/mp3,audio/mpeg,audio/*" style="display:none;" onchange="musicaCustomSelecionada(this)">
+<input type="file" id="inputFotoCanvaCamera"  accept="image/*" capture="environment"
+          style="display:none;" onchange="fotoCanvaSelecionada(this)">
+<input type="file" id="inputFotoCanvaGaleria" accept="image/*"
+          style="display:none;" onchange="fotoCanvaSelecionada(this)">
+<input type="file" id="inputPromoCamera"  accept="image/*" capture="environment" style="display:none;" onchange="promoFotoSelecionada(this)">
+<input type="file" id="inputPromoGaleria" accept="image/*" style="display:none;" onchange="promoFotoSelecionada(this)">
 </body>
 </html>
