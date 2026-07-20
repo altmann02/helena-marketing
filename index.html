@@ -3,8 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<!-- COI Service Worker — habilita SharedArrayBuffer para FFmpeg.wasm no GitHub Pages -->
-<script src="coi-serviceworker.js"></script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Helena">
@@ -50,8 +48,8 @@ html, body {
 }
 
 /* ── TELAS ── */
-.screen { display: none; min-height: 100vh; }
-.screen.active { display: block; }
+.screen { visibility:hidden; height:0; overflow:hidden; position:absolute; width:100%; }
+.screen.active { visibility:visible; height:auto; overflow:visible; position:relative; min-height:100vh; }
 
 /* ════════════════════════════════
    TELA HOME
