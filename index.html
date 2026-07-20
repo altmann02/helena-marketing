@@ -964,9 +964,18 @@ async function gerarVideoSlide(){
     var audioEncoder=null;
     if(audioBuffer&&typeof AudioEncoder!=='undefined'){
       try{
+        // Verificar suporte ao codec AAC
+        var support=await AudioEncoder.isConfigSupported({
+          codec:'mp4a.40.2',
+          sampleRate:audioBuffer.sampleRate,
+          numberOfChannels:audioBuffer.numberOfChannels,
+          bitrate:128000
+        });
+        if(!support.supported) throw new Error('AAC nao suportado');
+
         audioEncoder=new AudioEncoder({
           output:function(chunk,meta){muxer.addAudioChunk(chunk,meta);},
-          error:function(e){console.warn('AudioEncoder:',e);}
+          error:function(e){console.warn('AudioEncoder erro:',e);}
         });
         audioEncoder.configure({
           codec:'mp4a.40.2',
@@ -974,7 +983,11 @@ async function gerarVideoSlide(){
           numberOfChannels:audioBuffer.numberOfChannels,
           bitrate:128000
         });
-      }catch(e){console.warn('AudioEncoder nao disponivel:',e.message);audioEncoder=null;}
+        console.log('AudioEncoder configurado OK, sr='+audioBuffer.sampleRate+' ch='+audioBuffer.numberOfChannels);
+      }catch(e){
+        console.warn('AudioEncoder nao disponivel:',e.message);
+        audioEncoder=null;
+      }
     }
 
     // Renderizar video frames
@@ -1013,30 +1026,34 @@ async function gerarVideoSlide(){
       var sr=audioBuffer.sampleRate;
       var nc=audioBuffer.numberOfChannels;
       var totalSamples=Math.ceil(totalDur/1000*sr);
-      var chunkSize=sr; // 1 segundo por chunk
+      var chunkSize=4096; // chunks menores = mais estavel
       var offset=0;
       var audioTs=0;
 
+      // Pre-extrair dados de cada canal
+      var chanData=[];
+      for(var ch=0;ch<nc;ch++) chanData.push(audioBuffer.getChannelData(ch));
+
       while(offset<totalSamples){
         var size=Math.min(chunkSize,totalSamples-offset);
-        var channels=[];
+
+        // f32-planar: cada canal em sequencia no mesmo buffer
+        var planar=new Float32Array(size*nc);
         for(var ch=0;ch<nc;ch++){
-          var src=audioBuffer.getChannelData(ch);
-          var dst=new Float32Array(size);
+          var src=chanData[ch];
+          var srcLen=src.length;
           for(var s=0;s<size;s++){
-            // Loop do audio
-            dst[s]=src[(offset+s)%src.length];
+            planar[ch*size+s]=src[(offset+s)%srcLen];
           }
-          channels.push(dst);
         }
+
         var audioData=new AudioData({
           format:'f32-planar',
           sampleRate:sr,
           numberOfFrames:size,
           numberOfChannels:nc,
           timestamp:Math.round(audioTs*(1000000/sr)),
-          data:channels.length===1?channels[0]:
-            (function(){var buf=new Float32Array(size*nc);channels.forEach(function(ch,i){buf.set(ch,i*size);});return buf;})()
+          data:planar
         });
         audioEncoder.encode(audioData);
         audioData.close();
