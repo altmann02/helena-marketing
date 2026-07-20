@@ -1501,20 +1501,28 @@ document.addEventListener('touchend',function(e){
       <p class="q-hint" style="margin-bottom:10px;">Toque para adicionar da câmera ou galeria. Pode adicionar várias!</p>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
-        <div onclick="document.getElementById('inputVidCamera').click()"
-          style="background:#FCE4EC;border-radius:14px;border:1.5px solid #F48FB1;
-                 padding:1rem;text-align:center;cursor:pointer;">
-          <div style="font-size:28px;margin-bottom:4px;">📷</div>
-          <div style="font-size:13px;font-weight:600;color:#880E4F;">Câmera</div>
-          <div style="font-size:10px;color:#AD1457;margin-top:2px;">Tirar agora</div>
-        </div>
-        <div onclick="document.getElementById('inputVidGaleria').click()"
-          style="background:#F5EEF8;border-radius:14px;border:1.5px solid #C9A8E0;
-                 padding:1rem;text-align:center;cursor:pointer;">
-          <div style="font-size:28px;margin-bottom:4px;">🖼️</div>
-          <div style="font-size:13px;font-weight:600;color:#4A1A5C;">Galeria</div>
-          <div style="font-size:10px;color:#6B2A82;margin-top:2px;">Múltiplas fotos</div>
-        </div>
+        <label style="display:block;position:relative;cursor:pointer;">
+          <div style="background:#FCE4EC;border-radius:14px;border:1.5px solid #F48FB1;
+                      padding:1rem;text-align:center;pointer-events:none;">
+            <div style="font-size:28px;margin-bottom:4px;">📷</div>
+            <div style="font-size:13px;font-weight:600;color:#880E4F;">Câmera</div>
+            <div style="font-size:10px;color:#AD1457;margin-top:2px;">Tirar agora</div>
+          </div>
+          <input type="file" accept="image/*" capture="environment" multiple
+            style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;"
+            onchange="addFotosSlide(this)">
+        </label>
+        <label style="display:block;position:relative;cursor:pointer;">
+          <div style="background:#F5EEF8;border-radius:14px;border:1.5px solid #C9A8E0;
+                      padding:1rem;text-align:center;pointer-events:none;">
+            <div style="font-size:28px;margin-bottom:4px;">🖼️</div>
+            <div style="font-size:13px;font-weight:600;color:#4A1A5C;">Galeria</div>
+            <div style="font-size:10px;color:#6B2A82;margin-top:2px;">Múltiplas fotos</div>
+          </div>
+          <input type="file" accept="image/*" multiple
+            style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;"
+            onchange="addFotosSlide(this)">
+        </label>
       </div>
             
       <!-- grade de fotos adicionadas -->
@@ -2984,14 +2992,6 @@ document.addEventListener('touchend',function(e){
 
 
 <!-- Inputs de arquivo globais -->
-<input type="file" id="inputVidCamera"  accept="image/*" capture="environment" multiple style="display:none;" onchange="addFotosSlide(this)">
-<input type="file" id="inputVidGaleria" accept="image/*" multiple style="display:none;" onchange="addFotosSlide(this)">
 <input type="file" id="inputMusicaCustom" accept="audio/mp3,audio/mpeg,audio/*" style="display:none;" onchange="musicaCustomSelecionada(this)">
-<input type="file" id="inputFotoCanvaCamera"  accept="image/*" capture="environment"
-          style="display:none;" onchange="fotoCanvaSelecionada(this)">
-<input type="file" id="inputFotoCanvaGaleria" accept="image/*"
-          style="display:none;" onchange="fotoCanvaSelecionada(this)">
-<input type="file" id="inputPromoCamera"  accept="image/*" capture="environment" style="display:none;" onchange="promoFotoSelecionada(this)">
-<input type="file" id="inputPromoGaleria" accept="image/*" style="display:none;" onchange="promoFotoSelecionada(this)">
 </body>
 </html>
