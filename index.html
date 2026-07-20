@@ -14,6 +14,8 @@
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <title>Helena Acessórios · Painel</title>
+  <!-- mp4-muxer: gera MP4 nativo no browser sem FFmpeg/WASM -->
+  <script src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.1.3/build/mp4-muxer.js"></script>
 
   <!-- FFmpeg.wasm -->
 
@@ -902,11 +904,17 @@ async function gerarVideoSlide(){
   var btn=document.getElementById('btnGerarSlide');
   btn.textContent='Iniciando...';btn.disabled=true;btn.style.background='#C9A8E0';
   try{
-    if(typeof MediaRecorder==='undefined')throw new Error('Use o Chrome para gerar video.');
-    var SIZE=540,FPS=30,frameDur=_slideTempo*1000,logoDur=3000;
-    var canvas=document.createElement('canvas');canvas.width=SIZE;canvas.height=SIZE;
-    var ctx=canvas.getContext('2d');
-    var loadImg=function(src){return new Promise(function(res,rej){var img=new Image();img.onload=function(){res(img);};img.onerror=rej;img.src=src;});};
+    if(typeof VideoEncoder==='undefined'){
+      throw new Error('Use o Chrome atualizado para gerar MP4.');
+    }
+
+    var SIZE=540, FPS=30, frameDur=_slideTempo*1000, logoDur=3000;
+    var totalDur=(_slideFotos.length*frameDur)+(LOGOS_FIN[_slideLogoKey]?logoDur:0);
+
+    var loadImg=function(src){return new Promise(function(res,rej){
+      var i=new Image();i.onload=function(){res(i);};i.onerror=rej;i.src=src;
+    });};
+    var sleep=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
 
     btn.textContent='Carregando fotos...';
     var fotoImgs=await Promise.all(_slideFotos.map(function(f){
@@ -920,136 +928,150 @@ async function gerarVideoSlide(){
     var logoImg=null;
     if(_slideLogoKey!=='sem'&&LOGOS_FIN[_slideLogoKey])logoImg=await loadImg(LOGOS_FIN[_slideLogoKey]);
 
-    var audioTracks=[],audioCtx=null,audioSrc=null;
+    // Carregar e decodificar audio
+    var audioBuffer=null;
     var musicSrc=_musicaSelecionada&&_musicaSelecionada.src?_musicaSelecionada.src:null;
     if(musicSrc){
       try{
         btn.textContent='Carregando audio...';
-        audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+        var audioCtx=new(window.AudioContext||window.webkitAudioContext)();
         var resp=await fetch(musicSrc);
-        var ab=await resp.arrayBuffer();
-        var buf=await audioCtx.decodeAudioData(ab);
-        var dest=audioCtx.createMediaStreamDestination();
-        audioSrc=audioCtx.createBufferSource();
-        audioSrc.buffer=buf;audioSrc.loop=true;
-        audioSrc.connect(dest);
-        audioTracks=dest.stream.getAudioTracks();
-      }catch(e){console.warn('Audio:',e.message);audioTracks=[];}
+        var arrayBuf=await resp.arrayBuffer();
+        audioBuffer=await audioCtx.decodeAudioData(arrayBuf);
+        audioCtx.close();
+      }catch(e){console.warn('Audio falhou:',e.message);audioBuffer=null;}
     }
 
-    var mime=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']
-      .find(function(m){return MediaRecorder.isTypeSupported(m);})||'video/webm';
-    var vs=canvas.captureStream(FPS);
-    var cs=new MediaStream([].concat(vs.getVideoTracks(),audioTracks));
-    var rec=new MediaRecorder(cs,{mimeType:mime,videoBitsPerSecond:2000000});
-    var chunks=[];
-    rec.ondataavailable=function(e){if(e.data&&e.data.size>0)chunks.push(e.data);};
+    // Configurar muxer com video + audio (se tiver)
+    var muxerOpts={
+      target:new Mp4Muxer.ArrayBufferTarget(),
+      video:{codec:'avc',width:SIZE,height:SIZE,frameRate:FPS},
+      fastStart:'in-memory'
+    };
+    if(audioBuffer){
+      muxerOpts.audio={codec:'aac',sampleRate:audioBuffer.sampleRate,numberOfChannels:audioBuffer.numberOfChannels};
+    }
+    var muxer=new Mp4Muxer.Muxer(muxerOpts);
 
-    await new Promise(function(resolve,reject){
-      rec.onerror=function(){reject(new Error('Erro no gravador'));};
-      rec.onstop=resolve;
-      rec.start(100);
-      if(audioSrc)audioSrc.start(0);
-      var sleep=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
-      var draw=function(img){var s=Math.min(img.width,img.height);ctx.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,SIZE,SIZE);};
-      (async function(){
-        for(var i=0;i<fotoImgs.length;i++){
-          btn.textContent='Gravando '+(i+1)+'/'+fotoImgs.length+'...';
-          var t0=Date.now();
-          while(Date.now()-t0<frameDur){draw(fotoImgs[i]);await sleep(1000/FPS);}
-        }
-        if(logoImg){
-          btn.textContent='Gravando encerramento...';
-          var t0=Date.now();
-          while(Date.now()-t0<logoDur){
-            ctx.fillStyle='#fff';ctx.fillRect(0,0,SIZE,SIZE);
-            var lw=SIZE*0.65,lh=logoImg.height*(lw/logoImg.width);
-            ctx.drawImage(logoImg,(SIZE-lw)/2,(SIZE-lh)/2,lw,lh);
-            await sleep(1000/FPS);
-          }
-        }
-        try{if(audioSrc)audioSrc.stop();}catch(e){}
-        if(audioCtx)audioCtx.close();
-        rec.stop();
-      })();
+    // VideoEncoder
+    var videoEncoder=new VideoEncoder({
+      output:function(chunk,meta){muxer.addVideoChunk(chunk,meta);},
+      error:function(e){console.error('VideoEncoder:',e);}
     });
+    videoEncoder.configure({codec:'avc1.42001f',width:SIZE,height:SIZE,bitrate:2000000,framerate:FPS});
 
-    var webmBlob=new Blob(chunks,{type:mime});
+    // AudioEncoder (se tiver audio)
+    var audioEncoder=null;
+    if(audioBuffer&&typeof AudioEncoder!=='undefined'){
+      try{
+        audioEncoder=new AudioEncoder({
+          output:function(chunk,meta){muxer.addAudioChunk(chunk,meta);},
+          error:function(e){console.warn('AudioEncoder:',e);}
+        });
+        audioEncoder.configure({
+          codec:'mp4a.40.2',
+          sampleRate:audioBuffer.sampleRate,
+          numberOfChannels:audioBuffer.numberOfChannels,
+          bitrate:128000
+        });
+      }catch(e){console.warn('AudioEncoder nao disponivel:',e.message);audioEncoder=null;}
+    }
 
-    // Tentar converter para MP4 com core single-thread (sem SharedArrayBuffer)
-    btn.textContent='Preparando conversor...';
-    var loadScript=function(url){
-      return new Promise(function(res,rej){
-        if(document.querySelector('script[src="'+url+'"]')){res();return;}
-        var s=document.createElement('script');s.src=url;s.onload=res;s.onerror=rej;
-        document.head.appendChild(s);
-      });
+    // Renderizar video frames
+    var canvas=new OffscreenCanvas(SIZE,SIZE);
+    var ctx=canvas.getContext('2d');
+    var frameNum=0;
+    var draw=function(img){var s=Math.min(img.width,img.height);ctx.drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,SIZE,SIZE);};
+
+    var encodeFrame=async function(){
+      var ts=Math.round(frameNum*(1000000/FPS));
+      var frame=new VideoFrame(canvas,{timestamp:ts,duration:Math.round(1000000/FPS)});
+      videoEncoder.encode(frame,{keyFrame:frameNum%30===0});
+      frame.close();
+      frameNum++;
     };
 
-    var mp4Url=null;
-    try{
-      await loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js');
-      await loadScript('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js');
-
-      var FF=null,FC=null;
-      if(typeof FFmpegWASM!=='undefined'&&FFmpegWASM.FFmpeg){FF=FFmpegWASM.FFmpeg;FC=FFmpegUtil.fetchFile;}
-      if(!FF)throw new Error('lib nao carregada');
-
-      btn.textContent='Convertendo para MP4...';
-      var ff=new FF();
-      ff.on('progress',function(p){
-        var pct=Math.round((p.progress||0)*100);
-        if(pct>0&&pct<=100)btn.textContent='Convertendo '+pct+'%...';
-      });
-
-      // Usar versao single-thread do core (nao precisa de SharedArrayBuffer)
-      var _hasSAB=typeof SharedArrayBuffer!=='undefined'&&window.crossOriginIsolated;
-    var _coreBase='https://cdn.jsdelivr.net/npm/@ffmpeg/core'+(_hasSAB?'-mt':'')+'@0.12.6/dist/umd/';
-    var _loadOpts={coreURL:_coreBase+'ffmpeg-core.js',wasmURL:_coreBase+'ffmpeg-core.wasm'};
-    if(_hasSAB)_loadOpts.workerURL=_coreBase+'ffmpeg-core.worker.js';
-    await ff.load(_loadOpts);
-
-      await ff.writeFile('in.webm',await FC(webmBlob));
-      await ff.exec(['-i','in.webm','-c:v','libx264','-preset','ultrafast','-c:a','aac','-movflags','+faststart','-vf','scale=540:540','out.mp4']);
-      var mp4Data=await ff.readFile('out.mp4');
-      mp4Url=URL.createObjectURL(new Blob([mp4Data.buffer],{type:'video/mp4'}));
-
-    }catch(ffErr){
-      console.warn('FFmpeg falhou:',ffErr.message);
-      // Fallback: baixar como WebM com instrucao
-      mp4Url=null;
+    for(var i=0;i<fotoImgs.length;i++){
+      btn.textContent='Gerando foto '+(i+1)+'/'+fotoImgs.length+'...';
+      var nFrames=Math.round(frameDur/1000*FPS);
+      draw(fotoImgs[i]);
+      for(var f=0;f<nFrames;f++){await encodeFrame();if(f%15===0)await sleep(0);}
     }
+    if(logoImg){
+      btn.textContent='Adicionando logo...';
+      var nFrames=Math.round(logoDur/1000*FPS);
+      ctx.fillStyle='#fff';ctx.fillRect(0,0,SIZE,SIZE);
+      var lw=SIZE*0.65,lh=logoImg.height*(lw/logoImg.width);
+      ctx.drawImage(logoImg,(SIZE-lw)/2,(SIZE-lh)/2,lw,lh);
+      for(var f=0;f<nFrames;f++){await encodeFrame();if(f%15===0)await sleep(0);}
+    }
+    await videoEncoder.flush();
+
+    // Encodar audio se disponivel
+    if(audioEncoder&&audioBuffer){
+      btn.textContent='Adicionando musica...';
+      var sr=audioBuffer.sampleRate;
+      var nc=audioBuffer.numberOfChannels;
+      var totalSamples=Math.ceil(totalDur/1000*sr);
+      var chunkSize=sr; // 1 segundo por chunk
+      var offset=0;
+      var audioTs=0;
+
+      while(offset<totalSamples){
+        var size=Math.min(chunkSize,totalSamples-offset);
+        var channels=[];
+        for(var ch=0;ch<nc;ch++){
+          var src=audioBuffer.getChannelData(ch);
+          var dst=new Float32Array(size);
+          for(var s=0;s<size;s++){
+            // Loop do audio
+            dst[s]=src[(offset+s)%src.length];
+          }
+          channels.push(dst);
+        }
+        var audioData=new AudioData({
+          format:'f32-planar',
+          sampleRate:sr,
+          numberOfFrames:size,
+          numberOfChannels:nc,
+          timestamp:Math.round(audioTs*(1000000/sr)),
+          data:channels.length===1?channels[0]:
+            (function(){var buf=new Float32Array(size*nc);channels.forEach(function(ch,i){buf.set(ch,i*size);});return buf;})()
+        });
+        audioEncoder.encode(audioData);
+        audioData.close();
+        offset+=size;
+        audioTs+=size;
+        await sleep(0);
+      }
+      await audioEncoder.flush();
+    }
+
+    btn.textContent='Finalizando MP4...';
+    muxer.finalize();
+    var mp4Blob=new Blob([muxer.target.buffer],{type:'video/mp4'});
+    var mp4Url=URL.createObjectURL(mp4Blob);
 
     var trilha=_slideTrilha&&_slideTrilha.startsWith('lista:')?_slideTrilha.replace('lista:',''):(_slideTrilha||'sem trilha');
     var framesDiv=document.getElementById('slideFrames');
     framesDiv.innerHTML='';
     var card=document.createElement('div');
     card.style.cssText='background:#F5EEF8;border-radius:14px;border:1.5px solid #C9A8E0;padding:1.2rem;text-align:center;';
-
-    if(mp4Url){
-      card.innerHTML=
-        '<div style="font-size:40px;margin-bottom:8px;">🎬</div>'+
-        '<p style="font-size:15px;font-weight:700;color:#4A1A5C;margin-bottom:4px;">Video pronto!</p>'+
-        '<p style="font-size:11px;color:#888;margin-bottom:6px;">'+fotoImgs.length+' foto(s) | '+_slideTempo+'s | '+trilha+'</p>'+
-        '<p style="font-size:12px;color:#2E7D32;font-weight:600;margin-bottom:14px;">MP4 pronto para WhatsApp</p>'+
-        '<a href="'+mp4Url+'" download="helena_video.mp4" style="display:inline-block;padding:0.9rem 2rem;background:linear-gradient(135deg,#9B59B6,#6B2A82);color:white;border-radius:12px;font-size:15px;font-weight:600;text-decoration:none;">Baixar MP4</a>';
-    } else {
-      var webmUrl=URL.createObjectURL(webmBlob);
-      card.innerHTML=
-        '<div style="font-size:40px;margin-bottom:8px;">🎬</div>'+
-        '<p style="font-size:15px;font-weight:700;color:#4A1A5C;margin-bottom:4px;">Video gerado!</p>'+
-        '<p style="font-size:11px;color:#888;margin-bottom:6px;">'+fotoImgs.length+' foto(s) | '+_slideTempo+'s | '+trilha+'</p>'+
-        '<p style="font-size:12px;color:#E65100;font-weight:600;margin-bottom:8px;">Formato WebM — abra no CapCut e exporte como MP4 para WhatsApp</p>'+
-        '<a href="'+webmUrl+'" download="helena_video.webm" style="display:inline-block;padding:0.9rem 2rem;background:linear-gradient(135deg,#9B59B6,#6B2A82);color:white;border-radius:12px;font-size:15px;font-weight:600;text-decoration:none;">Baixar video</a>';
-    }
-
+    var audioInfo=audioEncoder?(' + musica: '+trilha):'(sem musica)';
+    card.innerHTML=
+      '<div style="font-size:40px;margin-bottom:8px;">🎬</div>'+
+      '<p style="font-size:15px;font-weight:700;color:#4A1A5C;margin-bottom:4px;">Video MP4 pronto!</p>'+
+      '<p style="font-size:11px;color:#888;margin-bottom:6px;">'+fotoImgs.length+' foto(s) | '+_slideTempo+'s'+audioInfo+'</p>'+
+      '<p style="font-size:11px;color:#2E7D32;font-weight:600;margin-bottom:14px;">Pronto para WhatsApp e Instagram</p>'+
+      '<a href="'+mp4Url+'" download="helena_video.mp4" style="display:inline-block;padding:0.9rem 2rem;'+
+      'background:linear-gradient(135deg,#9B59B6,#6B2A82);color:white;border-radius:12px;'+
+      'font-size:15px;font-weight:600;text-decoration:none;">Baixar MP4</a>';
     framesDiv.appendChild(card);
     document.getElementById('slideResultado').style.display='block';
     document.getElementById('slideResultado').scrollIntoView({behavior:'smooth',block:'start'});
 
   }catch(err){
-    var msg=err&&err.message?err.message:String(err);
-    alert('Erro: '+msg);
+    alert('Erro: '+(err&&err.message?err.message:String(err)));
   }
   btn.textContent='🎬 Gerar video';btn.disabled=false;btn.style.background='#9B59B6';
 }
