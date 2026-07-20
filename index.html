@@ -936,14 +936,22 @@ async function gerarVideoSlide(){
     if(musicSrc){
       try{
         btn.textContent='Carregando musica...';
+        console.log('Carregando audio:', musicSrc);
         audioCtxForDecode=new(window.AudioContext||window.webkitAudioContext)();
         var resp=await fetch(musicSrc);
+        if(!resp.ok) throw new Error('Arquivo nao encontrado: '+musicSrc+' ('+resp.status+')');
         var arrayBuf=await resp.arrayBuffer();
+        if(arrayBuf.byteLength===0) throw new Error('Arquivo de audio vazio: '+musicSrc);
         decodedAudio=await audioCtxForDecode.decodeAudioData(arrayBuf);
         audioCtxForDecode.close();
+        console.log('Audio carregado OK:', decodedAudio.duration.toFixed(1)+'s', decodedAudio.sampleRate+'Hz', decodedAudio.numberOfChannels+'ch');
       }catch(e){
-        console.warn('Audio nao carregou:',e.message);
+        console.warn('Audio falhou:',e.message);
+        if(audioCtxForDecode) try{audioCtxForDecode.close();}catch(x){}
         decodedAudio=null;
+        // Avisar usuario que musica nao sera incluida
+        btn.textContent='Audio indisponivel, gerando sem musica...';
+        await new Promise(function(r){setTimeout(r,1500);});
       }
     }
 
